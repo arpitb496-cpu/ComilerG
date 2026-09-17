@@ -101,7 +101,7 @@ def execute_code(lang, code, stdin, files):
                 res = subprocess.run(
                     [sys.executable, script_path],
                     input=stdin or '',
-                    capture_output=True, text=True, timeout=10
+                    capture_output=True, text=True, timeout=12
                 )
                 elapsed_sec = time.perf_counter() - t0
                 is_success = res.returncode == 0
@@ -116,7 +116,23 @@ def execute_code(lang, code, stdin, files):
                     'compileOutput': '',
                     'time': f'{round(elapsed_sec * 1000)} ms',
                     'memory': 'Server Turbo',
-                    'engine': 'Server Turbo Runner',
+                    'engine': 'Server Turbo Python',
+                    'elapsedMs': round(elapsed_sec * 1000)
+                }
+            except subprocess.TimeoutExpired:
+                elapsed_sec = time.perf_counter() - t0
+                return {
+                    'supported': True,
+                    'isSuccess': False,
+                    'isError': True,
+                    'statusCode': 5,
+                    'statusDescription': 'Time Limit Exceeded (TLE)',
+                    'stdout': '',
+                    'stderr': 'Time Limit Exceeded: Execution took longer than 12 seconds.\nCheck for infinite loops or reduce input size.',
+                    'compileOutput': '',
+                    'time': f'{round(elapsed_sec * 1000)} ms',
+                    'memory': 'Server Turbo',
+                    'engine': 'Server Turbo Python',
                     'elapsedMs': round(elapsed_sec * 1000)
                 }
             except Exception:
@@ -181,7 +197,7 @@ def execute_onecompiler(lang, code, stdin, files):
                 'Referer': f'https://onecompiler.com/{cfg["mode"]}',
                 'Origin': 'https://onecompiler.com'
             },
-            timeout=10
+            timeout=15
         )
         data = resp.json()
         elapsed_sec = time.perf_counter() - t0
@@ -234,7 +250,7 @@ def execute_wandbox(lang, code, stdin):
             'https://wandbox.org/api/compile.json',
             json={'compiler': compiler_name, 'code': code, 'stdin': stdin or ''},
             headers={'User-Agent': 'Mozilla/5.0'},
-            timeout=12
+            timeout=15
         )
         wb_res = resp.json()
         elapsed_sec = time.perf_counter() - t0

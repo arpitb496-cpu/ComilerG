@@ -204,6 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return files[0];
     }
 
+    let saveDebounceTimer = null;
+    function debouncedSaveCurrentFiles() {
+        clearTimeout(saveDebounceTimer);
+        saveDebounceTimer = setTimeout(() => {
+            saveCurrentFiles();
+        }, 400);
+    }
+
     function saveCurrentFiles() {
         if (!state.files || state.files.length === 0) return;
         const activeFile = state.files.find(f => f.id === state.activeFileId);
@@ -214,7 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem(`compilerg_code_${state.currentLanguage}`, activeFile.content);
             }
         }
-        localStorage.setItem(`compilerg_files_${state.currentLanguage}`, JSON.stringify(state.files));
+        try {
+            localStorage.setItem(`compilerg_files_${state.currentLanguage}`, JSON.stringify(state.files));
+        } catch (e) {
+            // In case localStorage is full with very large projects
+        }
     }
 
     function renderFileTabs() {
@@ -557,7 +569,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (webPreviewFrame) webPreviewFrame.srcdoc = result.htmlContent;
                 if (outputScreen) outputScreen.innerHTML = `<span class="stdout">${result.stdout}</span>`;
             } else if (result.isSuccess) {
-                const stdoutText = result.stdout || '';
+                let stdoutText = result.stdout || '';
+                if (stdoutText.length > 80000) {
+                    stdoutText = stdoutText.slice(0, 80000) + '\n\n... [Output truncated: Exceeded 80,000 characters for browser performance]';
+                }
                 if (statusBadge) {
                     statusBadge.textContent = 'ACCEPTED (TURBO)';
                     statusBadge.className = 'status-badge turbo';
@@ -574,12 +589,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     statusBadge.className = 'status-badge error';
                 }
 
-                const errCombined = (result.compileOutput ? result.compileOutput + '\n' : '') + (result.stderr || '');
+                let errCombined = (result.compileOutput ? result.compileOutput + '\n' : '') + (result.stderr || '');
+                if (errCombined.length > 50000) {
+                    errCombined = errCombined.slice(0, 50000) + '\n\n... [Error output truncated for performance]';
+                }
                 state.lastErrorOutput = errCombined || result.statusDescription || 'Runtime error occurred';
 
                 let outputHtml = '';
                 if (result.stdout) {
-                    outputHtml += `<span class="stdout">${escapeHtml(result.stdout)}</span>\n`;
+                    let st = result.stdout;
+                    if (st.length > 50000) st = st.slice(0, 50000) + '\n... [Output truncated]';
+                    outputHtml += `<span class="stdout">${escapeHtml(st)}</span>\n`;
                 }
                 outputHtml += `<div class="stderr">${escapeHtml(state.lastErrorOutput)}</div>`;
                 if (outputScreen) outputScreen.innerHTML = outputHtml;
@@ -634,12 +654,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Trigger pulse suggest on editor change
+    // Trigger pulse suggest & debounced save on editor change
     editorManager.onDidChangeContent(() => {
         if (runBtn && !state.isExecuting) {
             runBtn.classList.add('pulse-suggest');
         }
-        saveCurrentFiles();
+        debouncedSaveCurrentFiles();
     });
 
     // 6. AI Debugger Drawer Logic
@@ -1066,7 +1086,8 @@ document.addEventListener('DOMContentLoaded', () => {
             testCases.forEach(tc => { tc.status = 'running'; tc.output = null; });
             renderTestCases();
 
-            for (const tc of testCases) {
+            // Run all test cases in parallel for maximum speed
+            await Promise.all(testCases.map(async (tc) => {
                 try {
                     const result = await executor.execute({
                         languageKey: state.currentLanguage,
@@ -1086,7 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     tc.status = 'fail';
                 }
                 renderTestCases();
-            }
+            }));
             const passed = testCases.filter(t => t.status === 'pass').length;
             showToast(`Tests: ${passed}/${testCases.length} passed`, passed === testCases.length ? 'success' : 'error');
         });

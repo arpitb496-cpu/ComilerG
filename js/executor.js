@@ -46,7 +46,7 @@ class CodeExecutor {
      */
     async executeLocalTurbo({ languageKey, code, stdin, files = [] }) {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
 
         try {
             const res = await fetch('/api/run', {
@@ -57,11 +57,29 @@ class CodeExecutor {
             });
             clearTimeout(timeoutId);
 
-            if (!res.ok) return { supported: false };
+            if (!res.ok) {
+                // If 404, server has no /api/run (e.g. static hosting) -> fallback to Judge0
+                return { supported: false };
+            }
             const data = await res.json();
             return data;
         } catch (err) {
             clearTimeout(timeoutId);
+            if (err.name === 'AbortError') {
+                return {
+                    supported: true,
+                    isSuccess: false,
+                    isError: true,
+                    statusCode: 5,
+                    statusDescription: 'Time Limit Exceeded (TLE)',
+                    stdout: '',
+                    stderr: 'Execution timed out after 25 seconds. Please check for infinite loops or reduce complexity.',
+                    compileOutput: '',
+                    time: '25.0s',
+                    memory: 'Turbo Engine',
+                    elapsedMs: 25000
+                };
+            }
             return { supported: false };
         }
     }
