@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="codedex">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompilerG - Modern Online Compiler & AI Code Runner</title>
+    <meta name="description"
+        content="High-speed online code compiler & IDE supporting 15+ programming languages with Monaco editor, instant execution, and AI error auto-fix.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Pixelify+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23ffd43f'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='60' font-weight='900' fill='%23120f22' font-family='sans-serif'>G</text></svg>">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css?v=2.0">
+
+    <!-- Monaco Editor AMD Loader with multi-CDN fallback -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"
+        onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js';"></script>
+</head>
+
+<body>
+    <!-- Interactive Background Particle & Aurora Canvas (Codédex Starfield) -->
+    <canvas id="bgCanvas" class="bg-canvas"></canvas>
+
+    <div class="app-container">
+        <!-- Top Navbar -->
+        <!-- Top Navbar (Balanced 3-Zone Layout) -->
+        <header class="header-navbar">
+            <div class="nav-left">
+                <a href="#" class="brand-logo" id="brandLogo">
+                    <div class="brand-icon">⚡</div>
+                    <span class="brand-title">CompilerG</span>
+                </a>
+
+                <!-- Language Dropdown Pill -->
+                <div class="languages-nav" id="languagesNav">
+                    <select id="langSelect" class="lang-dropdown-btn" title="Select Programming Language">
+                        <optgroup label="Popular Languages">
+                            <option value="python">Python 3 (3.12)</option>
+                            <option value="cpp">C++ (GCC 14.1)</option>
+                            <option value="c">C (GCC 14.1)</option>
+                            <option value="java">Java (JDK 17)</option>
+                            <option value="javascript">JavaScript (Node.js 22)</option>
+                            <option value="typescript">TypeScript (5.6)</option>
+                            <option value="html">HTML / CSS / JS (Live Web)</option>
+                        </optgroup>
+                        <optgroup label="Systems & Compiled">
+                            <option value="go">Go (1.23)</option>
+                            <option value="rust">Rust (1.85)</option>
+                            <option value="csharp">C# (Mono 6.6)</option>
+                        </optgroup>
+                        <optgroup label="Scripting & Backend">
+                            <option value="php">PHP (8.3)</option>
+                            <option value="ruby">Ruby (2.7)</option>
+                            <option value="bash">Bash Shell</option>
+                        </optgroup>
+                        <optgroup label="Mobile & Modern">
+                            <option value="kotlin">Kotlin (2.1)</option>
+                            <option value="swift">Swift (5.2)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Run Button -->
+                <button id="runBtn" class="btn-run" title="Execute Code (Ctrl + Enter)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5 3l14 9-14 9V3z" />
+                    </svg>
+                    <span>Run</span>
+                    <span class="shortcut-badge">Ctrl+↵</span>
+                </button>
+            </div>
+
+            <div class="nav-right">
+                <!-- AI Assistant Trigger -->
+                <button id="aiAssistBtn" class="btn-ai" title="CompilerG AI Debugger & Code Mentor">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                    </svg>
+                    <span>AI Fix</span>
+                </button>
+
+                <!-- Icon Actions -->
+                <button id="resetCodeBtn" class="btn-icon" title="Reset Code to Starter Template">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <path d="M3 3v5h5" />
+                    </svg>
+                </button>
+                <button id="downloadCodeBtn" class="btn-icon" title="Download Source File">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                </button>
+                <button id="shortcutsBtn" class="btn-icon" title="Keyboard Shortcuts">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10" />
+                    </svg>
+                </button>
+
+                <!-- Theme Palette Dropdown -->
+                <div class="theme-dropdown-container" id="themeDropdownContainer">
+                    <button id="themeToggleBtn" class="btn-theme-selector" title="Choose Visual Theme">
+                        <span class="theme-indicator-dot" id="themeIndicatorDot"
+                            style="background: #38bdf8; box-shadow: 0 0 10px #38bdf8;"></span>
+                        <span id="themeNameLabel">Theme</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                    </button>
+                    <div id="themeDropdownMenu" class="theme-dropdown-menu">
+                        <div class="theme-option-item active" data-theme="dark">
+                            <span>🌙 Modern Dark</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #0b0f19;"></span>
+                                <span class="theme-swatch-dot" style="background: #38bdf8;"></span>
+                                <span class="theme-swatch-dot" style="background: #3b82f6;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="obsidian">
+                            <span>🖤 Obsidian (OneCompiler)</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot"
+                                    style="background: #06070a; border: 1px solid #10b981;"></span>
+                                <span class="theme-swatch-dot" style="background: #10b981;"></span>
+                                <span class="theme-swatch-dot" style="background: #ec4899;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="tokyo-night">
+                            <span>🌌 Tokyo Night</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #1a1b26;"></span>
+                                <span class="theme-swatch-dot" style="background: #7dcfff;"></span>
+                                <span class="theme-swatch-dot" style="background: #bb9af7;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="cyberpunk">
+                            <span>⚡ Cyberpunk 2077</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #120422;"></span>
+                                <span class="theme-swatch-dot" style="background: #ff007f;"></span>
+                                <span class="theme-swatch-dot" style="background: #00f5ff;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="dracula">
+                            <span>🧛 Dracula Pro</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #282a36;"></span>
+                                <span class="theme-swatch-dot" style="background: #bd93f9;"></span>
+                                <span class="theme-swatch-dot" style="background: #ff79c6;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="one-dark">
+                            <span>💎 One Dark Pro</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #21252b;"></span>
+                                <span class="theme-swatch-dot" style="background: #61afef;"></span>
+                                <span class="theme-swatch-dot" style="background: #98c379;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="nord">
+                            <span>❄️ Nord Frost</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #2e3440;"></span>
+                                <span class="theme-swatch-dot" style="background: #88c0d0;"></span>
+                                <span class="theme-swatch-dot" style="background: #a3be8c;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="monokai">
+                            <span>🌿 Monokai Pro</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #272822;"></span>
+                                <span class="theme-swatch-dot" style="background: #f92672;"></span>
+                                <span class="theme-swatch-dot" style="background: #a6e22e;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="solarized">
+                            <span>☀️ Solarized Dark</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #002b36;"></span>
+                                <span class="theme-swatch-dot" style="background: #268bd2;"></span>
+                                <span class="theme-swatch-dot" style="background: #859900;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="codedex">
+                            <span>✨ Midnight Purple</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot" style="background: #0e0c18;"></span>
+                                <span class="theme-swatch-dot" style="background: #ffd43f;"></span>
+                                <span class="theme-swatch-dot" style="background: #a855f7;"></span>
+                            </div>
+                        </div>
+                        <div class="theme-option-item" data-theme="light">
+                            <span>☀️ Clean Light</span>
+                            <div class="theme-swatches">
+                                <span class="theme-swatch-dot"
+                                    style="background: #ffffff; border: 1px solid #cbd5e1;"></span>
+                                <span class="theme-swatch-dot" style="background: #2563eb;"></span>
+                                <span class="theme-swatch-dot" style="background: #10b981;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <button id="settingsBtn" class="btn-icon" title="Editor Settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace (Editor + Splitter + Console) -->
+        <main class="workspace-container" id="workspaceContainer">
+            <!-- Middle: Monaco Code Editor Pane -->
+            <section class="editor-pane" id="editorPane">
+                <div class="pane-toolbar">
+                    <div class="file-tabs-bar" id="fileTabsBar">
+                        <div class="file-tabs-list" id="fileTabsList">
+                            <div class="file-tab-item active" data-file-id="main">
+                                <span class="file-tab-icon" id="fileIcon">🐍</span>
+                                <span class="file-tab-name" id="currentFileName">main.py</span>
+                                <button class="file-tab-close" title="Close Tab" style="display: none;">✕</button>
+                            </div>
+                        </div>
+                        <button id="addFileBtn" class="btn-add-file" title="Add new file / page (+)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span>Add Page</span>
+                        </button>
+                    </div>
+                    <div class="pane-actions">
+                        <button id="formatCodeBtn" class="btn-subtle" title="Format Code">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="21" y1="10" x2="7" y2="10" />
+                                <line x1="21" y1="6" x2="3" y2="6" />
+                                <line x1="21" y1="14" x2="3" y2="14" />
+                                <line x1="21" y1="18" x2="7" y2="18" />
+                            </svg>
+                            <span>Format</span>
+                        </button>
+                        <button id="copyCodeBtn" class="btn-subtle" title="Copy Code">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Monaco Editor Mount Container -->
+                <div id="monacoContainer"></div>
+            </section>
+
+            <!-- Splitter Resizer Divider -->
+            <div class="split-resizer" id="splitResizer" title="Drag to Resize"></div>
+
+            <!-- Right: Terminal, STDIN & Web Preview Pane -->
+            <section class="terminal-pane" id="terminalPane">
+                <div class="terminal-tabs">
+                    <div class="tabs-group">
+                        <button id="outputTabBtn" class="tab-btn active" data-tab="output">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="4 17 10 11 4 5" />
+                                <line x1="12" y1="19" x2="20" y2="19" />
+                            </svg>
+                            <span>Output</span>
+                        </button>
+                        <button id="stdinTabBtn" class="tab-btn" data-tab="stdin">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M20 16.5a2.5 2.5 0 0 1-2.5 2.5H6.5A2.5 2.5 0 0 1 4 16.5V7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9z" />
+                                <polyline points="8 10 12 14 16 10" />
+                            </svg>
+                            <span>STDIN</span>
+                        </button>
+                        <button id="webPreviewTabBtn" class="tab-btn" data-tab="preview" style="display: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="2" y1="12" x2="22" y2="12" />
+                                <path
+                                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                            </svg>
+                            <span>Live Preview</span>
+                        </button>
+                    </div>
+
+                    <!-- Execution Metrics -->
+                    <div class="terminal-metrics">
+                        <span id="statusBadge" class="status-badge">Ready</span>
+                        <div class="metric-item" title="Execution Time">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span id="execTime">0.00s</span>
+                        </div>
+                        <div class="metric-item" title="Memory Used">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+                                <line x1="6" y1="6" x2="6.01" y2="6" />
+                                <line x1="6" y1="18" x2="6.01" y2="18" />
+                            </svg>
+                            <span id="execMemory">0 KB</span>
+                        </div>
+                        <button id="clearConsoleBtn" class="btn-subtle" title="Clear Console">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Panels Area -->
+                <div class="tab-content-area">
+                    <!-- Panel 1: Output Terminal -->
+                    <div id="outputPanel" class="tab-panel active">
+                        <!-- AI Debug Banner (Triggered dynamically on error) -->
+                        <div id="aiDebugBanner" class="ai-debug-banner" style="display: none;">
+                            <div class="ai-debug-text">
+                                <div class="ai-beacon-dot"></div>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 8v4M12 16h.01" />
+                                </svg>
+                                <span>Code error detected! CompilerG AI can diagnose and fix this for you.</span>
+                            </div>
+                            <div class="ai-banner-actions">
+                                <button id="bannerQuickFixBtn" class="btn-ai-quick-fix" style="display: none;"
+                                    title="Instantly apply recommended fix to editor">
+                                    <span>⚡ Instant Fix</span>
+                                </button>
+                                <button id="bannerDebugBtn" class="btn-ai-fix">
+                                    <span>🤖 Fix with AI</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <pre id="outputScreen" class="output-screen"><div class="terminal-welcome-card">
+    <div class="welcome-header">
+        <span class="welcome-icon">💻</span>
+        <div>
+            <div class="welcome-title">Console Output Ready</div>
+            <div class="welcome-sub">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> or click <strong>Run</strong> to compile and execute</div>
+        </div>
+    </div>
+    <div class="welcome-features">
+        <div class="feature-tag">⚡ High-Speed Turbo Execution</div>
+        <div class="feature-tag">🤖 AI Debugger & Auto-Fix</div>
+        <div class="feature-tag">🌐 15+ Languages Supported</div>
+    </div>
+</div></pre>
+                    </div>
+
+                    <!-- Panel 2: STDIN Input -->
+                    <div id="stdinPanel" class="tab-panel">
+                        <div class="stdin-container">
+                            <p class="stdin-hint">Input entered here will be passed to standard input (e.g. cin
+                                &gt;&gt;, input(), Scanner):</p>
+                            <textarea id="stdinInput" class="stdin-textarea"
+                                placeholder="Enter input values here (separate multiple inputs with newlines or spaces)..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Panel 3: HTML/CSS/JS Live Preview -->
+                    <div id="previewPanel" class="tab-panel">
+                        <iframe id="webPreviewFrame" class="web-preview-frame" sandbox="allow-scripts allow-modals"
+                            src="about:blank"></iframe>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- AI Debugger Slide-over Drawer -->
+        <aside id="aiDrawer" class="ai-drawer">
+            <div class="ai-drawer-header">
+                <div class="ai-drawer-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                    </svg>
+                    <span>🤖 CompilerG AI - Debugger & Mentor</span>
+                </div>
+                <button id="closeAiDrawerBtn" class="btn-icon" title="Close AI Drawer">✕</button>
+            </div>
+
+            <div class="ai-drawer-body" id="aiDrawerBody">
+                <div class="ai-card">
+                    <div class="ai-card-title">Error Diagnosis</div>
+                    <span id="aiErrorBadge" class="ai-error-tag">Ready</span>
+                    <p id="aiExplanation" class="ai-text">Run your code to see AI diagnostics, or ask AI to explain your
+                        code.</p>
+                </div>
+
+                <div class="ai-card" id="aiSolutionCard">
+                    <div class="ai-card-title">Recommended Solution</div>
+                    <p id="aiSolutionText" class="ai-text">No fixes required at this moment.</p>
+                </div>
+
+                <div class="ai-card" id="aiCodeCard" style="display: none;">
+                    <div class="ai-card-title">Suggested Code Fix</div>
+                    <pre id="aiFixedCodeSnippet" class="ai-code-diff"></pre>
+                </div>
+            </div>
+
+            <div class="ai-drawer-footer">
+                <button id="aiExplainBtn" class="btn-subtle" style="margin-right: auto;">📖 Explain Code</button>
+                <button id="applyAiFixBtn" class="btn-apply-fix" style="display: none;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>⚡ Apply Fix to Editor</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- New File / Page Modal -->
+        <div id="newFileModal" class="modal-overlay">
+            <div class="modal-window" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h3>Add New File / Page</h3>
+                    <button class="btn-icon modal-close-btn" data-close="newFileModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div style="margin-bottom: 12px;">
+                        <label class="setting-label" for="newFileNameInput" style="display: block; margin-bottom: 6px;">File / Page Name</label>
+                        <input type="text" id="newFileNameInput" class="setting-input" style="width: 100%; font-family: var(--font-code);" placeholder="e.g. NewFile1.c, helper.h, style.css">
+                        <div class="setting-desc" style="margin-top: 6px;">Include file extension matching your code language.</div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
+                        <button class="btn-subtle" data-close="newFileModal">Cancel</button>
+                        <button id="confirmAddFileBtn" class="btn-run" style="padding: 6px 18px; font-size: 0.85rem;">Create File</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal-overlay">
+            <div class="modal-window">
+                <div class="modal-header">
+                    <h3>Editor & AI Settings</h3>
+                    <button class="btn-icon modal-close-btn" data-close="settingsModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Visual Theme</div>
+                            <div class="setting-desc">Select editor & UI color palette</div>
+                        </div>
+                        <select id="themeSelectInput" class="setting-input">
+                            <option value="codedex" selected>✨ Codédex 16-Bit RPG (Default)</option>
+                            <option value="obsidian">🖤 Obsidian (OneCompiler Dark)</option>
+                            <option value="tokyo-night">🌌 Tokyo Night</option>
+                            <option value="cyberpunk">⚡ Cyberpunk 2077</option>
+                            <option value="dracula">🧛 Dracula Pro</option>
+                            <option value="one-dark">💎 One Dark Pro</option>
+                            <option value="nord">❄️ Nord Frost</option>
+                            <option value="monokai">🌿 Monokai Pro</option>
+                            <option value="solarized">☀️ Solarized Dark</option>
+                            <option value="dark">🌙 CompilerG Dark</option>
+                            <option value="light">☀️ Clean Light</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Font Size</div>
+                            <div class="setting-desc">Adjust code editor font size</div>
+                        </div>
+                        <select id="fontSizeSelect" class="setting-input">
+                            <option value="12">12px</option>
+                            <option value="14" selected>14px</option>
+                            <option value="16">16px</option>
+                            <option value="18">18px</option>
+                            <option value="20">20px</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Minimap</div>
+                            <div class="setting-desc">Show code minimap on the right</div>
+                        </div>
+                        <input type="checkbox" id="minimapToggle" checked>
+                    </div>
+
+                    <div class="setting-row" style="flex-direction: column; align-items: flex-start;">
+                        <div>
+                            <div class="setting-label">Google Gemini API Key (Optional)</div>
+                            <div class="setting-desc">For enhanced multi-turn AI debugging & reasoning. Key stays in
+                                your browser.</div>
+                        </div>
+                        <input type="password" id="geminiApiKeyInput" class="setting-input"
+                            style="width: 100%; margin-top: 8px;" placeholder="AIzaSy...">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shortcuts Modal -->
+        <div id="shortcutsModal" class="modal-overlay">
+            <div class="modal-window">
+                <div class="modal-header">
+                    <h3>Keyboard Shortcuts</h3>
+                    <button class="btn-icon modal-close-btn" data-close="shortcutsModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <table class="shortcuts-table">
+                        <tr>
+                            <td>Run Code</td>
+                            <td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td>
+                        </tr>
+                        <tr>
+                            <td>Save / Bookmark</td>
+                            <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+                        </tr>
+                        <tr>
+                            <td>Format Document</td>
+                            <td><kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd></td>
+                        </tr>
+                        <tr>
+                            <td>Toggle AI Debugger</td>
+                            <td><kbd>Ctrl</kbd> + <kbd>B</kbd></td>
+                        </tr>
+                        <tr>
+                            <td>Clear Output</td>
+                            <td><kbd>Ctrl</kbd> + <kbd>K</kbd></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications Container -->
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script src="js/languages.js?v=2.0"></script>
+    <script src="js/boilerplates.js?v=2.0"></script>
+    <script src="js/particles.js?v=2.0"></script>
+    <script src="js/ai_debugger.js?v=2.0"></script>
+    <script src="js/executor.js?v=2.0"></script>
+    <script src="js/editor.js?v=2.0"></script>
+    <script src="js/app.js?v=2.0"></script>
+</body>
+
+</html>

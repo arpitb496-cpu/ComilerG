@@ -1,0 +1,14 @@
+{
+  "version": "1.14.0",
+  "project_name": "CompilerG",
+  "runtime": "antigravity",
+  "profile": "full",
+  "review": {
+    "auto_review": true,
+    "reviewers": ["coderabbit"]
+  },
+  "testing": {
+    "command": "node scripts/verify_project.js",
+    "loop": "node scripts/ralph_loop.js"
+  }
+}

@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+early_access: false
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "master"
+      - "develop"
+
+  tools:
+    ast-grep:
+      enabled: true
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+
+  path_instructions:
+    - path: "js/**/*.js"
+      instructions: |
+        - Maintain vanilla JavaScript architecture; do not introduce heavy framework runtimes unless explicitly requested.
+        - Ensure XSS safety: always sanitize and escape stdout, stderr, and code inputs before rendering in the DOM.
+        - Verify Monaco Editor performance: ensure event listeners and delta decorations are properly managed to prevent memory leaks.
+        - Verify Judge0 CE execution error handling and polling resiliency for long-running compilations.
+        - Maintain secure handling of optional Gemini AI keys stored only in localStorage.
+    - path: "index.html"
+      instructions: |
+        - Ensure proper HTML5 semantics, meta viewport responsiveness, and clean ARIA attributes for screen readers.
+        - Verify all script references match existing filenames in js/.
+    - path: "css/**/*.css"
+      instructions: |
+        - Follow the custom design system with CSS custom properties (variables) for theme tokens.
+        - Ensure responsive layout behavior across desktop, tablet, and mobile breakpoints.
+    - path: "server.py"
+      instructions: |
+        - Maintain zero external Python dependencies for local development.
+        - Enforce proper MIME headers (application/javascript, text/css) and CORS allow headers.
+
+chat:
+  auto_reply: true

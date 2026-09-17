@@ -1,0 +1,27 @@
+{
+  "name": "compilerg",
+  "version": "1.0.0",
+  "description": "CompilerG - Online Code Compiler, Monaco Editor & AI Debugger",
+  "main": "server.py",
+  "scripts": {
+    "start": "python server.py",
+    "test": "node scripts/verify_project.js",
+    "verify": "node scripts/verify_project.js",
+    "ralph-loop": "node scripts/ralph_loop.js",
+    "ralph-loop:watch": "node scripts/ralph_loop.js --watch"
+  },
+  "keywords": [
+    "compiler",
+    "code-editor",
+    "monaco-editor",
+    "judge0",
+    "ai-debugger",
+    "gemini",
+    "gsd",
+    "coderabbit",
+    "ralph-loop",
+    "roo-code"
+  ],
+  "author": "CompilerG Team",
+  "license": "MIT"
+}

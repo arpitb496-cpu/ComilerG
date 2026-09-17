@@ -1,0 +1,19 @@
+# CompilerG Development & Quality Rules for Roo Code
+
+You are working on **CompilerG**, a high-performance online code compiler and AI runner with Monaco Editor, 15+ languages, and dual-engine AI debugging.
+
+## Architecture Guidelines
+1. **Zero-Dependency Vanilla Frontend**: The frontend uses modern ECMAScript, HTML5, and CSS3 without heavy UI frameworks. Keep modules decoupled and modular in `js/`.
+2. **Monaco Editor Lifecycle**:
+   - Always manage Monaco decorations through `EditorManager.highlightErrorLine()` and `EditorManager.clearDecorations()`.
+   - Never load Monaco synchronously; maintain the instant fallback textarea so the app is instantly interactive even on slow network connections.
+   - Use `compilerg-dark` and `compilerg-light` custom Monaco themes.
+3. **Security & Sanitization**:
+   - User code and compiler stdout/stderr must always be HTML-escaped before rendering to prevent XSS.
+   - User Gemini API keys must remain strictly in client-side `localStorage` and never transmitted to any third party other than Google's Gemini endpoint.
+4. **Execution Engine (Judge0 CE)**:
+   - Handle compilation errors, runtime exceptions (SIGSEGV, NZEC, etc.), and timeouts gracefully.
+   - Support live sandbox rendering for `html` mode via `srcdoc` iframe.
+5. **Continuous Verification (Ralph Loop)**:
+   - After making any code changes, run `npm test` or `node scripts/verify_project.js` to ensure 100% test passing rate.
+   - For multi-file changes or deep refactors, run `node scripts/ralph_loop.js`.
