@@ -20,7 +20,7 @@
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23ffd43f'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='60' font-weight='900' fill='%23120f22' font-family='sans-serif'>G</text></svg>">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=2.0">
+    <link rel="stylesheet" href="css/style.css?v=4.0">
 
     <!-- Monaco Editor AMD Loader with multi-CDN fallback -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"
@@ -31,7 +31,633 @@
     <!-- Interactive Background Particle & Aurora Canvas (Codédex Starfield) -->
     <canvas id="bgCanvas" class="bg-canvas"></canvas>
 
-    <div class="app-container">
+    
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- VIEW 1: ONECOMPILER-STYLE HOMEPAGE                              -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="homeView" class="home-view">
+        <!-- Top Navbar -->
+        <nav class="home-navbar">
+            <div class="home-nav-container">
+                <div class="home-nav-left">
+                    <a href="#home" class="home-brand">
+                        <div class="brand-icon-hex">⚡</div>
+                        <span class="brand-name">CompilerG</span>
+                        <span class="brand-badge-pro">PRO</span>
+                    </a>
+                    <div class="home-nav-links">
+                        <a href="#challenges" id="navChallengesBtn" class="home-nav-link">Challenges</a>
+                        <a href="#tutorials" id="navTutorialsBtn" class="home-nav-link">Tutorials</a>
+                        <a href="#docs" id="navDocsBtn" class="home-nav-link">Documentation</a>
+                        <a href="#articles" id="navArticlesBtn" class="home-nav-link">Features</a>
+                    </div>
+                </div>
+                <div class="home-nav-right">
+                    <button id="navSignInBtn" class="home-btn-ghost">Sign In</button>
+                    <button id="navSignUpBtn" class="home-btn-secondary">Sign Up</button>
+                    <button id="navOpenEditorBtn" class="home-btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+                        <span>Open Editor</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="home-hero">
+            <div class="home-hero-container">
+                <div class="hero-pill-badge">
+                    <span class="badge-dot"></span>
+                    <span>CompilerG v3.0 Turbo Engine Online</span>
+                </div>
+                <h1 class="home-hero-title">
+                    Code online with <span class="gradient-text">CompilerG.</span>
+                </h1>
+                <p class="home-hero-subtitle">
+                    CompilerG helps over 10.8 million developers worldwide write, run, and share code online with lightning-fast execution.
+                </p>
+
+                <!-- Search Box -->
+                <div class="home-search-wrapper">
+                    <div class="home-search-box">
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" id="homeSearchInput" placeholder="Search language (e.g. Python, C++, Java, Rust, HTML)..." autocomplete="off">
+                        <button id="clearSearchBtn" class="search-clear-btn" style="display: none;">✕</button>
+                    </div>
+
+                    <!-- Category Filter Pills -->
+                    <div class="filter-pills-row">
+                        <button class="filter-pill active" data-cat="all">All</button>
+                        <button class="filter-pill" data-cat="popular">Popular</button>
+                        <button class="filter-pill" data-cat="programming">Programming</button>
+                        <button class="filter-pill" data-cat="web">Web</button>
+                        <button class="filter-pill" data-cat="database">Database</button>
+                    </div>
+                </div>
+
+                <!-- Language Cards Grid -->
+                <div id="homeLangGrid" class="home-lang-grid">
+                    <!-- HTML / CSS / JS -->
+                    <div class="lang-card" data-lang="html" data-cat="popular web" data-keywords="html css javascript web frontend frontend">
+                        <div class="lang-card-icon icon-html">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 3l1.8 16.2L12 21l6.2-1.8L20 3H4z"/><path d="M8 8h8l-.5 5H9l.3 3 2.7.8 2.7-.8.2-2"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">HTML / CSS / JS</div>
+                            <div class="lang-card-desc">Live Web Sandbox</div>
+                        </div>
+                        <span class="lang-card-badge">LIVE</span>
+                    </div>
+
+                    <!-- Python -->
+                    <div class="lang-card" data-lang="python" data-cat="popular programming" data-keywords="python py py3 dsa data science ai ml">
+                        <div class="lang-card-icon icon-python">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 2c-4 0-5 2-5 3v2h5v1H5c-2 0-3 1.5-3 5s1 5 3 5h2v-2c0-2 1.5-3 3-3h5c1.5 0 2-1 2-2V5c0-1.5-1.5-3-5-3zm-2 2a1 1 0 110 2 1 1 0 010-2zm2 18c4 0 5-2 5-3v-2h-5v-1h7c2 0 3-1.5 3-5s-1-5-3-5h-2v2c0 2-1.5 3-3 3h-5c-1.5 0-2 1-2 2v4c0 1.5 1.5 3 5 3zm2-2a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Python 3</div>
+                            <div class="lang-card-desc">v3.12 Turbo</div>
+                        </div>
+                        <span class="lang-card-badge fast">LOCAL</span>
+                    </div>
+
+                    <!-- C++ -->
+                    <div class="lang-card" data-lang="cpp" data-cat="popular programming" data-keywords="c++ cpp cplusplus gcc competitive programming dsa">
+                        <div class="lang-card-icon icon-cpp">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12h6m-3-3v6m6-3h3m-1.5-1.5v3"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">C++</div>
+                            <div class="lang-card-desc">MinGW GCC 14</div>
+                        </div>
+                        <span class="lang-card-badge fast">LOCAL</span>
+                    </div>
+
+                    <!-- Java -->
+                    <div class="lang-card" data-lang="java" data-cat="popular programming" data-keywords="java jdk oop dsa enterprise spring">
+                        <div class="lang-card-icon icon-java">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M4 19h16v1H4v-1zm14-9c0-3.3-2.7-6-6-6s-6 2.7-6 6v3h12v-3zm-2 0H8c0-2.2 1.8-4 4-4s4 1.8 4 4zM6 14h12v2H6v-2zm14-1c.6 0 1 .4 1 1s-.4 1-1 1h-1v-2h1z"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Java</div>
+                            <div class="lang-card-desc">JDK 21 Turbo</div>
+                        </div>
+                        <span class="lang-card-badge fast">LOCAL</span>
+                    </div>
+
+                    <!-- C -->
+                    <div class="lang-card" data-lang="c" data-cat="popular programming" data-keywords="c gcc clang systems low level">
+                        <div class="lang-card-icon icon-c">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 8a6 6 0 100 8"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">C</div>
+                            <div class="lang-card-desc">MinGW GCC</div>
+                        </div>
+                        <span class="lang-card-badge fast">LOCAL</span>
+                    </div>
+
+                    <!-- JavaScript -->
+                    <div class="lang-card" data-lang="javascript" data-cat="popular web programming" data-keywords="javascript js node nodejs web script">
+                        <div class="lang-card-icon icon-js">
+                            <span class="text-icon">JS</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">JavaScript</div>
+                            <div class="lang-card-desc">Node.js 22</div>
+                        </div>
+                        <span class="lang-card-badge fast">LOCAL</span>
+                    </div>
+
+                    <!-- TypeScript -->
+                    <div class="lang-card" data-lang="typescript" data-cat="popular web programming" data-keywords="typescript ts web typed script">
+                        <div class="lang-card-icon icon-ts">
+                            <span class="text-icon">TS</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">TypeScript</div>
+                            <div class="lang-card-desc">v5.6 Latest</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- C# -->
+                    <div class="lang-card" data-lang="csharp" data-cat="programming" data-keywords="c# csharp dotnet mono unity">
+                        <div class="lang-card-icon icon-cs">
+                            <span class="text-icon">C#</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">C#</div>
+                            <div class="lang-card-desc">Mono .NET</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- Rust -->
+                    <div class="lang-card" data-lang="rust" data-cat="popular programming" data-keywords="rust rustc cargo memory safe systems">
+                        <div class="lang-card-icon icon-rust">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v8m-4-4h8"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Rust</div>
+                            <div class="lang-card-desc">v1.85 Engine</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- Go -->
+                    <div class="lang-card" data-lang="go" data-cat="popular programming" data-keywords="go golang gopher backend concurrency">
+                        <div class="lang-card-icon icon-go">
+                            <span class="text-icon">GO</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Go</div>
+                            <div class="lang-card-desc">v1.23 Engine</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- Kotlin -->
+                    <div class="lang-card" data-lang="kotlin" data-cat="programming" data-keywords="kotlin kt android jvm jetbrains">
+                        <div class="lang-card-icon icon-kt">
+                            <span class="text-icon">KT</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Kotlin</div>
+                            <div class="lang-card-desc">v2.1 Android/JVM</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- Swift -->
+                    <div class="lang-card" data-lang="swift" data-cat="programming" data-keywords="swift apple ios macos">
+                        <div class="lang-card-icon icon-swift">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.5 4.5c-2.3 2.8-5 5.5-8.5 7.5 4-1.5 7.5-4 9.5-6.5-1.5 4-4.5 7.5-8.5 10 3-1 6-3 8-5.5-1.5 5-5.5 9-10.5 11.5 2-2 3.5-4.5 4.5-7.5-3.5 2.5-7.5 4-12 4.5 4-3 7-7 9-11.5-2.5 1.5-5 2-7.5 1.5 3-2.5 6-5.5 8.5-9 1-1.2 2-2.3 2.5-2.5-.5.5-1.5 1.5-2.5 2.5z"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Swift</div>
+                            <div class="lang-card-desc">v5.2 Apple iOS</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- PHP -->
+                    <div class="lang-card" data-lang="php" data-cat="web programming" data-keywords="php web backend server laravel">
+                        <div class="lang-card-icon icon-php">
+                            <span class="text-icon">PHP</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">PHP</div>
+                            <div class="lang-card-desc">v8.3 Engine</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- Ruby -->
+                    <div class="lang-card" data-lang="ruby" data-cat="programming" data-keywords="ruby rails gem web script">
+                        <div class="lang-card-icon icon-ruby">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 18 3 22 9 12 21 2 9"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Ruby</div>
+                            <div class="lang-card-desc">v2.7 Engine</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- Bash -->
+                    <div class="lang-card" data-lang="bash" data-cat="programming" data-keywords="bash sh shell terminal linux script">
+                        <div class="lang-card-icon icon-bash">
+                            <span class="text-icon">&gt;_</span>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">Bash Shell</div>
+                            <div class="lang-card-desc">GNU Bash</div>
+                        </div>
+                        <span class="lang-card-badge">TURBO</span>
+                    </div>
+
+                    <!-- SQL / SQLite -->
+                    <div class="lang-card" data-lang="sql" data-cat="database" data-keywords="sql sqlite database query table relational">
+                        <div class="lang-card-icon icon-sql">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">SQL Database</div>
+                            <div class="lang-card-desc">SQLite Query Engine</div>
+                        </div>
+                        <span class="lang-card-badge db">DB</span>
+                    </div>
+
+                    <!-- PostgreSQL -->
+                    <div class="lang-card" data-lang="postgres" data-cat="database" data-keywords="postgres postgresql sql database relational">
+                        <div class="lang-card-icon icon-postgres">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M8 12c2 3 6 3 8 0"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">PostgreSQL</div>
+                            <div class="lang-card-desc">Relational Engine</div>
+                        </div>
+                        <span class="lang-card-badge db">DB</span>
+                    </div>
+
+                    <!-- MongoDB -->
+                    <div class="lang-card" data-lang="mongo" data-cat="database" data-keywords="mongodb mongo nosql json document database">
+                        <div class="lang-card-icon icon-mongo">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8 6 6 12 12 22c6-10 4-16 0-20z"/></svg>
+                        </div>
+                        <div class="lang-card-info">
+                            <div class="lang-card-name">MongoDB</div>
+                            <div class="lang-card-desc">NoSQL Query</div>
+                        </div>
+                        <span class="lang-card-badge db">DB</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof / Top Companies & Universities -->
+        <section class="home-trust-section">
+            <div class="home-trust-container">
+                <h3 class="trust-heading">Users from world's top companies and schools</h3>
+                <div class="trust-logos-grid">
+                    <div class="trust-logo-item"><span class="company-logo">Microsoft</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">Meta</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">NVIDIA</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">stripe</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">Spotify</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">SAMSUNG</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">amazon</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">Google</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">IBM</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">Walmart</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">intel</span></div>
+                    <div class="trust-logo-item"><span class="company-logo">PayPal</span></div>
+                    <div class="trust-logo-item"><span class="school-logo">Harvard</span></div>
+                    <div class="trust-logo-item"><span class="school-logo">Princeton</span></div>
+                    <div class="trust-logo-item"><span class="school-logo">MIT</span></div>
+                    <div class="trust-logo-item"><span class="school-logo">Yale</span></div>
+                    <div class="trust-logo-item"><span class="school-logo">Stanford</span></div>
+                    <div class="trust-logo-item"><span class="school-logo">Berkeley</span></div>
+                </div>
+                <div class="trust-counter-badge">
+                    ⚡ <span>Over <strong>10,000,000+</strong> code executions processed worldwide.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- APIs, Editor embedding & more -->
+        <section class="home-features-section">
+            <div class="home-features-container">
+                <h2 class="features-section-title">APIs, Editor embedding & more</h2>
+                <div class="features-trio-grid">
+                    <div class="feature-trio-card" id="featureChallengesCard">
+                        <div class="feature-trio-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <h3>Interactive Coding Challenges</h3>
+                        <p>Solve DSA and algorithmic problems with multi-input test cases, automated pass/fail badges, and real-time complexity feedback.</p>
+                        <a href="#challenges" class="feature-card-link">Explore Challenges →</a>
+                    </div>
+                    <div class="feature-trio-card" id="featureTurboCard">
+                        <div class="feature-trio-icon purple">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        </div>
+                        <h3>Sub-Second Turbo Execution</h3>
+                        <p>Powered by local MinGW GCC/G++, Java 21, and Turbo Cloud execution engines for lightning-fast sub-second compiling without queues.</p>
+                        <a href="#editor" class="feature-card-link">Launch Turbo Engine →</a>
+                    </div>
+                    <div class="feature-trio-card" id="featureWorkflowsCard">
+                        <div class="feature-trio-icon cyan">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        </div>
+                        <h3>Modern Developer Workflows</h3>
+                        <p>Multi-file project tabs, instant URL code sharing, AI Big-O complexity analyzer, and curated obsidian themes.</p>
+                        <a href="#docs" class="feature-card-link">Read Documentation →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Partner & Tech Ecosystem -->
+        <section class="home-partners-section">
+            <div class="home-partners-container">
+                <div class="partners-logos-row">
+                    <span class="partner-item">Bluesky</span>
+                    <span class="partner-item">CodeCombat</span>
+                    <span class="partner-item">GitKraken</span>
+                    <span class="partner-item">Webflow</span>
+                    <span class="partner-item">Vercel</span>
+                    <span class="partner-item">Supabase</span>
+                    <span class="partner-item">Neon</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Workspace Showcase ("State-of-the-art coding workspace in your browser") -->
+        <section class="home-showcase-section">
+            <div class="home-showcase-container">
+                <div class="showcase-header">
+                    <h2 class="showcase-title">
+                        State-of-the-art coding workspace<br>
+                        <span class="gradient-text-teal">in your browser.</span>
+                    </h2>
+                    <p class="showcase-desc">
+                        CompilerG delivers a desktop-grade IDE experience directly in the web. Zero configuration, instant compilation, parallel test runners, and intelligent developer tools.
+                    </p>
+                    <div class="showcase-cta-row">
+                        <button id="showcaseOpenEditorBtn" class="home-btn-primary">
+                            <span>Open Workspace</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+                        </button>
+                        <button id="showcaseTestCasesBtn" class="home-btn-secondary">
+                            <span>Explore Test Cases</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Mockup Window -->
+                <div class="interactive-mockup-window">
+                    <div class="mockup-header-bar">
+                        <div class="mockup-window-controls">
+                            <span class="w-dot dot-red"></span>
+                            <span class="w-dot dot-yellow"></span>
+                            <span class="w-dot dot-green"></span>
+                        </div>
+                        <div class="mockup-file-tabs">
+                            <div class="m-tab active"><span class="m-tab-icon">🐍</span> solution.py</div>
+                            <div class="m-tab"><span class="m-tab-icon">🧪</span> test_cases.py</div>
+                        </div>
+                        <div class="mockup-run-box">
+                            <button id="mockupRunDemoBtn" class="mockup-run-btn">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                <span>Run Live Demo</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mockup-window-body">
+                        <div class="mockup-code-pane">
+                            <pre class="mockup-code-content"><code><span class="c-kw">def</span> <span class="c-fn">two_sum</span>(nums: list[int], target: int) -> list[int]:
+    <span class="c-doc">"""Returns indices of the two numbers such that they add up to target."""</span>
+    seen = {}
+    <span class="c-kw">for</span> i, num <span class="c-kw">in</span> enumerate(nums):
+        complement = target - num
+        <span class="c-kw">if</span> complement <span class="c-kw">in</span> seen:
+            <span class="c-kw">return</span> [seen[complement], i]
+        seen[num] = i
+    <span class="c-kw">return</span> []
+
+<span class="c-comment"># Turbo Engine Demonstration</span>
+print(<span class="c-str">"Test 1:"</span>, two_sum([2, 7, 11, 15], 9))
+print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
+                        </div>
+                        <div class="mockup-output-pane">
+                            <div class="mockup-terminal-top">
+                                <span>TERMINAL OUTPUT</span>
+                                <span id="mockupStatus" class="mockup-status-badge">ACCEPTED</span>
+                            </div>
+                            <div id="mockupTerminalBody" class="mockup-terminal-body">
+                                <span class="term-dim">$ compilerg run solution.py --turbo</span>
+                                <span class="term-out">Test 1: [0, 1]</span>
+                                <span class="term-out">Test 2: [1, 2]</span>
+                                <span class="term-success">✓ Process completed with exit code 0 (24ms)</span>
+                                <span class="term-info">⚡ Engine: Local Turbo Python | Memory: 14 KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6 Feature Tiles -->
+                <div class="showcase-features-grid">
+                    <div class="showcase-feat-tile" id="tileSubSecond">
+                        <div class="feat-tile-icon">⚡</div>
+                        <div class="feat-tile-text">
+                            <h4>Sub-second execution</h4>
+                            <p>Direct local MinGW and JDK runner executes complex DSA code in milliseconds.</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feat-tile" id="tileMultiPage">
+                        <div class="feat-tile-icon">📁</div>
+                        <div class="feat-tile-text">
+                            <h4>Multi-page tabs</h4>
+                            <p>Build multi-file projects with instant tab switching and automatic file bundling.</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feat-tile" id="tileTestCases">
+                        <div class="feat-tile-icon">🧪</div>
+                        <div class="feat-tile-text">
+                            <h4>Parallel test cases</h4>
+                            <p>Validate your algorithm against multiple inputs simultaneously with pass/fail badges.</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feat-tile" id="tileBigO">
+                        <div class="feat-tile-icon">🧠</div>
+                        <div class="feat-tile-text">
+                            <h4>AI Complexity (Big-O)</h4>
+                            <p>Automatic detection of time complexity O(N), O(log N), O(N²) and memory usage.</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feat-tile" id="tileShare">
+                        <div class="feat-tile-icon">🔗</div>
+                        <div class="feat-tile-text">
+                            <h4>Share via Instant URL</h4>
+                            <p>One-click link generation with your entire workspace encoded in the URL.</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feat-tile" id="tileZen">
+                        <div class="feat-tile-icon">🌙</div>
+                        <div class="feat-tile-text">
+                            <h4>Zen Mode & Themes</h4>
+                            <p>Distraction-free fullscreen coding with Obsidian and high-contrast dark themes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comprehensive Footer -->
+        <footer class="home-footer">
+            <div class="home-footer-container">
+                <div class="footer-columns-grid">
+                    <!-- Column 1 -->
+                    <div class="footer-col">
+                        <div class="footer-brand">
+                            <span class="footer-logo-icon">⚡</span>
+                            <span class="footer-logo-text">CompilerG</span>
+                        </div>
+                        <p class="footer-desc">
+                            High-speed multi-language online compiler, Monaco editor, and developer IDE powered by local and cloud turbo engines.
+                        </p>
+                        <div class="footer-social-links">
+                            <a href="https://github.com/arpitb496-cpu/ComilerG" target="_blank" class="footer-social-btn" title="GitHub Repository">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Popular Languages -->
+                    <div class="footer-col">
+                        <h4>Popular Compilers</h4>
+                        <ul class="footer-links-list">
+                            <li><a href="#editor" class="footer-lang-link" data-lang="python">Python 3 Online Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="cpp">C++ (GCC) Online Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="java">Java (JDK 21) Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="c">C Online Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="javascript">JavaScript (Node.js) Runner</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="html">HTML/CSS/JS Live Preview</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="rust">Rust Online Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="go">Go Online Runner</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3: Tools & Features -->
+                    <div class="footer-col">
+                        <h4>Developer Tools</h4>
+                        <ul class="footer-links-list">
+                            <li><a href="#challenges" id="footerChallengesLink">Test Cases Runner</a></li>
+                            <li><a href="#snippets" id="footerSnippetsLink">DSA Snippets Library</a></li>
+                            <li><a href="#bigo" id="footerBigOLink">Big-O Complexity Analyzer</a></li>
+                            <li><a href="#share" id="footerShareLink">Instant URL Share</a></li>
+                            <li><a href="#editor" id="footerZenLink">Zen Mode & Multi-file</a></li>
+                            <li><a href="#editor" id="footerWebLink">Live Web Sandbox</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 4: Platform -->
+                    <div class="footer-col">
+                        <h4>Platform & Legal</h4>
+                        <ul class="footer-links-list">
+                            <li><a href="#docs" id="footerDocsLink">API Documentation</a></li>
+                            <li><a href="#tutorials" id="footerTutorialsLink">Tutorials & Guides</a></li>
+                            <li><a href="#signin" id="footerSignInLink">Sign In / Register</a></li>
+                            <li><a href="https://github.com/arpitb496-cpu/ComilerG" target="_blank">Open Source (GitHub)</a></li>
+                            <li><a href="#privacy" id="footerPrivacyLink">Privacy Policy</a></li>
+                            <li><a href="#terms" id="footerTermsLink">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom-bar">
+                    <p>Copyright © 2026 CompilerG. Built for developers worldwide. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- AUTH MODAL (Sign In / Sign Up)                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-window" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 id="authModalTitle">Welcome to CompilerG</h3>
+                <button class="btn-icon modal-close-btn" data-close="authModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-tabs-row">
+                    <button id="authTabSignIn" class="auth-tab-btn active">Sign In</button>
+                    <button id="authTabSignUp" class="auth-tab-btn">Create Account</button>
+                </div>
+                <form id="authForm" class="auth-form" onsubmit="return false;">
+                    <div class="auth-field">
+                        <label>Email Address</label>
+                        <input type="email" id="authEmail" class="setting-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="auth-field">
+                        <label>Password</label>
+                        <input type="password" id="authPassword" class="setting-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" id="authSubmitBtn" class="home-btn-primary" style="width: 100%; justify-content: center; margin-top: 6px;">
+                        <span id="authSubmitLabel">Sign In</span>
+                    </button>
+                </form>
+                <div class="auth-divider"><span>OR CONTINUE WITH</span></div>
+                <div class="auth-social-row">
+                    <button id="authDemoGoogle" class="auth-social-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+                        <span>Google</span>
+                    </button>
+                    <button id="authDemoGithub" class="auth-social-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <span>GitHub</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- TUTORIALS & CHEATSHEETS MODAL                                      -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="tutorialsModal" class="modal-overlay">
+        <div class="modal-window" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3>📚 CompilerG Tutorials & Cheatsheets</h3>
+                <button class="btn-icon modal-close-btn" data-close="tutorialsModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="tut-lang-tabs">
+                    <button class="tut-tab-btn active" data-tut="py">Python</button>
+                    <button class="tut-tab-btn" data-tut="cpp">C++</button>
+                    <button class="tut-tab-btn" data-tut="java">Java</button>
+                    <button class="tut-tab-btn" data-tut="js">JavaScript</button>
+                    <button class="tut-tab-btn" data-tut="c">C</button>
+                </div>
+                <div id="tutContent" class="tut-content-box">
+                    <!-- Dynamic tutorial text -->
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px;">
+                    <button id="tutOpenInEditorBtn" class="home-btn-primary" style="padding: 6px 16px; font-size: 0.82rem;">
+                        <span>Open in Editor →</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editorView" class="app-container" style="display: none;">
         <!-- Top Navbar -->
         <!-- Top Navbar (Balanced 3-Zone Layout) -->
         <header class="header-navbar">
@@ -40,6 +666,10 @@
                     <div class="brand-icon">⚡</div>
                     <span class="brand-title">CompilerG</span>
                 </a>
+                <button id="editorHomeBtn" class="btn-home-nav" title="Back to Homepage">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Home</span>
+                </button>
 
                 <!-- Language Dropdown Pill -->
                 <div class="languages-nav" id="languagesNav">
@@ -673,14 +1303,14 @@
     </div>
 
     <!-- Application Scripts -->
-    <script src="js/languages.js?v=3.0"></script>
-    <script src="js/boilerplates.js?v=3.0"></script>
-    <script src="js/particles.js?v=3.0"></script>
-    <script src="js/snippets.js?v=3.0"></script>
-    <script src="js/ai_debugger.js?v=3.0"></script>
-    <script src="js/executor.js?v=3.0"></script>
-    <script src="js/editor.js?v=3.0"></script>
-    <script src="js/app.js?v=3.0"></script>
+    <script src="js/languages.js?v=4.0"></script>
+    <script src="js/boilerplates.js?v=4.0"></script>
+    <script src="js/particles.js?v=4.0"></script>
+    <script src="js/snippets.js?v=4.0"></script>
+    <script src="js/ai_debugger.js?v=4.0"></script>
+    <script src="js/executor.js?v=4.0"></script>
+    <script src="js/editor.js?v=4.0"></script>
+    <script src="js/app.js?v=4.0"></script>
 </body>
 
 </html>

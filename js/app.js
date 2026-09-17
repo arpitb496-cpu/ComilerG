@@ -1322,5 +1322,527 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
-});
 
+    // ==========================================================================
+    // ONECOMPILER HOMEPAGE CONTROLLER & VIEW ROUTER
+    // ==========================================================================
+    const homeView = document.getElementById('homeView');
+    const editorView = document.getElementById('editorView');
+    const editorHomeBtn = document.getElementById('editorHomeBtn');
+    const brandLogo = document.getElementById('brandLogo');
+
+    function showHomeView() {
+        if (homeView) homeView.style.display = 'block';
+        if (editorView) editorView.style.display = 'none';
+        window.location.hash = 'home';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showEditorView(targetLang) {
+        if (homeView) homeView.style.display = 'none';
+        if (editorView) editorView.style.display = 'flex';
+        if (targetLang && window.LANGUAGES[targetLang]) {
+            switchLanguage(targetLang);
+        }
+        window.location.hash = 'editor';
+        setTimeout(() => {
+            if (editorManager) editorManager.layout();
+        }, 60);
+    }
+
+    // Connect Home navigation in Editor
+    if (editorHomeBtn) {
+        editorHomeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showHomeView();
+        });
+    }
+    if (brandLogo) {
+        brandLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            showHomeView();
+        });
+    }
+
+    // 1. Language Cards Click
+    document.querySelectorAll('.lang-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const lang = card.dataset.lang;
+            const langName = card.querySelector('.lang-card-name')?.textContent || lang;
+            showEditorView(lang);
+            showToast(`Opened ${langName} in CompilerG Editor`, 'success');
+        });
+    });
+
+    // 2. Search Bar Filter
+    const homeSearchInput = document.getElementById('homeSearchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const langCards = document.querySelectorAll('.lang-card');
+
+    function filterLanguageCards() {
+        const query = (homeSearchInput?.value || '').trim().toLowerCase();
+        const activePill = document.querySelector('.filter-pill.active');
+        const activeCat = activePill?.dataset.cat || 'all';
+
+        if (clearSearchBtn) {
+            clearSearchBtn.style.display = query ? 'block' : 'none';
+        }
+
+        langCards.forEach(card => {
+            const lang = card.dataset.lang || '';
+            const cats = (card.dataset.cat || '').split(' ');
+            const keywords = (card.dataset.keywords || '').toLowerCase();
+            const name = (card.querySelector('.lang-card-name')?.textContent || '').toLowerCase();
+
+            const matchesCategory = activeCat === 'all' || cats.includes(activeCat);
+            const matchesQuery = !query || name.includes(query) || keywords.includes(query) || lang.includes(query);
+
+            if (matchesCategory && matchesQuery) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    if (homeSearchInput) {
+        homeSearchInput.addEventListener('input', filterLanguageCards);
+    }
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            homeSearchInput.value = '';
+            filterLanguageCards();
+            homeSearchInput.focus();
+        });
+    }
+
+    // 3. Category Pills Filter
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            filterLanguageCards();
+        });
+    });
+
+    // 4. Navbar Buttons
+    const navOpenEditorBtn = document.getElementById('navOpenEditorBtn');
+    const navChallengesBtn = document.getElementById('navChallengesBtn');
+    const navTutorialsBtn = document.getElementById('navTutorialsBtn');
+    const navDocsBtn = document.getElementById('navDocsBtn');
+    const navArticlesBtn = document.getElementById('navArticlesBtn');
+    const navSignInBtn = document.getElementById('navSignInBtn');
+    const navSignUpBtn = document.getElementById('navSignUpBtn');
+
+    if (navOpenEditorBtn) navOpenEditorBtn.addEventListener('click', () => showEditorView());
+    if (navChallengesBtn) navChallengesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView();
+        switchTab('testcases');
+        showToast('Switched to Test Cases Runner', 'info');
+    });
+    if (navDocsBtn) navDocsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const featSection = document.querySelector('.home-features-section');
+        if (featSection) featSection.scrollIntoView({ behavior: 'smooth' });
+    });
+    if (navArticlesBtn) navArticlesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const showcaseSection = document.querySelector('.home-showcase-section');
+        if (showcaseSection) showcaseSection.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // 5. Features Trio Cards
+    const featureChallengesCard = document.getElementById('featureChallengesCard');
+    const featureTurboCard = document.getElementById('featureTurboCard');
+    const featureWorkflowsCard = document.getElementById('featureWorkflowsCard');
+
+    if (featureChallengesCard) featureChallengesCard.addEventListener('click', () => {
+        showEditorView();
+        switchTab('testcases');
+        showToast('Explore Coding Challenges & Test Cases', 'info');
+    });
+    if (featureTurboCard) featureTurboCard.addEventListener('click', () => {
+        showEditorView();
+        showToast('Turbo Engine Active: Local MinGW G++ & Java 21', 'success');
+    });
+    if (featureWorkflowsCard) featureWorkflowsCard.addEventListener('click', () => {
+        showEditorView();
+        const snipBtn = document.getElementById('snippetsBtn');
+        if (snipBtn) snipBtn.click();
+    });
+
+    // 6. Showcase CTA Buttons
+    const showcaseOpenEditorBtn = document.getElementById('showcaseOpenEditorBtn');
+    const showcaseTestCasesBtn = document.getElementById('showcaseTestCasesBtn');
+
+    if (showcaseOpenEditorBtn) showcaseOpenEditorBtn.addEventListener('click', () => showEditorView());
+    if (showcaseTestCasesBtn) showcaseTestCasesBtn.addEventListener('click', () => {
+        showEditorView();
+        switchTab('testcases');
+        showToast('Multi-Input Test Cases Runner', 'info');
+    });
+
+    // 7. Interactive Mockup "Run Live Demo"
+    const mockupRunDemoBtn = document.getElementById('mockupRunDemoBtn');
+    const mockupStatus = document.getElementById('mockupStatus');
+    const mockupTerminalBody = document.getElementById('mockupTerminalBody');
+
+    if (mockupRunDemoBtn) {
+        mockupRunDemoBtn.addEventListener('click', () => {
+            if (mockupStatus) {
+                mockupStatus.textContent = 'RUNNING';
+                mockupStatus.style.background = 'rgba(234, 179, 8, 0.2)';
+                mockupStatus.style.color = '#facc15';
+            }
+            if (mockupTerminalBody) {
+                mockupTerminalBody.innerHTML = '<span class="term-dim">$ compilerg run solution.py --turbo</span><span style="color:#94a3b8;">Compiling and running with Local Turbo Engine...</span>';
+            }
+
+            setTimeout(() => {
+                if (mockupStatus) {
+                    mockupStatus.textContent = 'ACCEPTED';
+                    mockupStatus.style.background = 'rgba(34, 197, 94, 0.15)';
+                    mockupStatus.style.color = '#4ade80';
+                }
+                if (mockupTerminalBody) {
+                    mockupTerminalBody.innerHTML = `
+                        <span class="term-dim">$ compilerg run solution.py --turbo</span>
+                        <span class="term-out">Test 1: [0, 1]</span>
+                        <span class="term-out">Test 2: [1, 2]</span>
+                        <span class="term-success">✓ Process completed with exit code 0 (18ms)</span>
+                        <span class="term-info">⚡ Engine: Local Turbo Python | Memory: 14 KB</span>
+                    `;
+                }
+                showToast('Demo executed in 18ms with Turbo Engine!', 'success');
+            }, 400);
+        });
+    }
+
+    // 8. Showcase 6 Feature Tiles
+    const tileSubSecond = document.getElementById('tileSubSecond');
+    const tileMultiPage = document.getElementById('tileMultiPage');
+    const tileTestCases = document.getElementById('tileTestCases');
+    const tileBigO = document.getElementById('tileBigO');
+    const tileShare = document.getElementById('tileShare');
+    const tileZen = document.getElementById('tileZen');
+
+    if (tileSubSecond) tileSubSecond.addEventListener('click', () => {
+        showEditorView();
+        showToast('Sub-second Local MinGW & Java 21 engine ready', 'success');
+    });
+    if (tileMultiPage) tileMultiPage.addEventListener('click', () => {
+        showEditorView();
+        showToast('Multi-page tabs active in toolbar', 'info');
+    });
+    if (tileTestCases) tileTestCases.addEventListener('click', () => {
+        showEditorView();
+        switchTab('testcases');
+    });
+    if (tileBigO) tileBigO.addEventListener('click', () => {
+        showEditorView();
+        const bigOBtn = document.getElementById('analyzeBigOBtn');
+        if (bigOBtn) bigOBtn.click();
+    });
+    if (tileShare) tileShare.addEventListener('click', () => {
+        showEditorView();
+        const shareBtn = document.getElementById('shareCodeBtn');
+        if (shareBtn) shareBtn.click();
+    });
+    if (tileZen) tileZen.addEventListener('click', () => {
+        showEditorView();
+        toggleZenMode(true);
+    });
+
+    // 9. Footer Links
+    document.querySelectorAll('.footer-lang-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const lang = link.dataset.lang;
+            showEditorView(lang);
+        });
+    });
+
+    const footerChallengesLink = document.getElementById('footerChallengesLink');
+    if (footerChallengesLink) footerChallengesLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView();
+        switchTab('testcases');
+    });
+
+    const footerSnippetsLink = document.getElementById('footerSnippetsLink');
+    if (footerSnippetsLink) footerSnippetsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView();
+        const snipBtn = document.getElementById('snippetsBtn');
+        if (snipBtn) snipBtn.click();
+    });
+
+    const footerBigOLink = document.getElementById('footerBigOLink');
+    if (footerBigOLink) footerBigOLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView();
+        const bigOBtn = document.getElementById('analyzeBigOBtn');
+        if (bigOBtn) bigOBtn.click();
+    });
+
+    const footerShareLink = document.getElementById('footerShareLink');
+    if (footerShareLink) footerShareLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView();
+        const shareBtn = document.getElementById('shareCodeBtn');
+        if (shareBtn) shareBtn.click();
+    });
+
+    const footerZenLink = document.getElementById('footerZenLink');
+    if (footerZenLink) footerZenLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView();
+        toggleZenMode(true);
+    });
+
+    const footerWebLink = document.getElementById('footerWebLink');
+    if (footerWebLink) footerWebLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showEditorView('html');
+    });
+
+    const footerDocsLink = document.getElementById('footerDocsLink');
+    if (footerDocsLink) footerDocsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openTutorialsModal();
+    });
+
+    const footerTutorialsLink = document.getElementById('footerTutorialsLink');
+    if (footerTutorialsLink) footerTutorialsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openTutorialsModal();
+    });
+
+    const footerSignInLink = document.getElementById('footerSignInLink');
+    if (footerSignInLink) footerSignInLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openAuthModal('signin');
+    });
+
+    const footerPrivacyLink = document.getElementById('footerPrivacyLink');
+    if (footerPrivacyLink) footerPrivacyLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showToast('Privacy: CompilerG does not store your private code permanently.', 'info');
+    });
+
+    const footerTermsLink = document.getElementById('footerTermsLink');
+    if (footerTermsLink) footerTermsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showToast('Terms: CompilerG is free open-source software for developers.', 'info');
+    });
+
+    // 10. Auth Modal (Sign In / Sign Up)
+    const authModal = document.getElementById('authModal');
+    const authModalTitle = document.getElementById('authModalTitle');
+    const authTabSignIn = document.getElementById('authTabSignIn');
+    const authTabSignUp = document.getElementById('authTabSignUp');
+    const authSubmitLabel = document.getElementById('authSubmitLabel');
+    const authForm = document.getElementById('authForm');
+    const authEmail = document.getElementById('authEmail');
+    const authDemoGoogle = document.getElementById('authDemoGoogle');
+    const authDemoGithub = document.getElementById('authDemoGithub');
+
+    function openAuthModal(mode = 'signin') {
+        if (!authModal) return;
+        authModal.classList.add('open');
+        if (mode === 'signup') {
+            authTabSignUp.classList.add('active');
+            authTabSignIn.classList.remove('active');
+            if (authModalTitle) authModalTitle.textContent = 'Create your CompilerG Account';
+            if (authSubmitLabel) authSubmitLabel.textContent = 'Create Account';
+        } else {
+            authTabSignIn.classList.add('active');
+            authTabSignUp.classList.remove('active');
+            if (authModalTitle) authModalTitle.textContent = 'Welcome back to CompilerG';
+            if (authSubmitLabel) authSubmitLabel.textContent = 'Sign In';
+        }
+    }
+
+    if (navSignInBtn) navSignInBtn.addEventListener('click', () => openAuthModal('signin'));
+    if (navSignUpBtn) navSignUpBtn.addEventListener('click', () => openAuthModal('signup'));
+
+    if (authTabSignIn) authTabSignIn.addEventListener('click', () => openAuthModal('signin'));
+    if (authTabSignUp) authTabSignUp.addEventListener('click', () => openAuthModal('signup'));
+
+    if (authForm) authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = authEmail?.value || 'Developer';
+        authModal.classList.remove('open');
+        showToast(`Welcome, ${email}! Signed in successfully.`, 'success');
+    });
+
+    if (authDemoGoogle) authDemoGoogle.addEventListener('click', () => {
+        authModal.classList.remove('open');
+        showToast('Signed in with Google demo account!', 'success');
+    });
+
+    if (authDemoGithub) authDemoGithub.addEventListener('click', () => {
+        authModal.classList.remove('open');
+        showToast('Signed in with GitHub demo account!', 'success');
+    });
+
+    // 11. Tutorials Modal
+    const tutorialsModal = document.getElementById('tutorialsModal');
+    const tutContent = document.getElementById('tutContent');
+    const tutOpenInEditorBtn = document.getElementById('tutOpenInEditorBtn');
+    let currentTutLang = 'py';
+
+    const TUTORIAL_DATA = {
+        py: `# Python 3 Cheatsheet & Essentials
+# 1. Variables & Types
+name: str = "CompilerG"
+count: int = 100
+pi: float = 3.14159
+
+# 2. Lists & Comprehensions
+squares = [x**2 for x in range(10)]
+
+# 3. Functions & Type Hints
+def solve(nums: list[int]) -> int:
+    return sum(nums)
+
+# 4. Fast I/O for DSA
+import sys
+input = sys.stdin.readline
+print("Python 3 Turbo Engine Ready!")`,
+        cpp: `// C++ (MinGW GCC 14) Cheatsheet
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <map>
+using namespace std;
+
+// Fast I/O for Competitive Programming
+void fast_io() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+}
+
+int main() {
+    fast_io();
+    vector<int> v = {5, 2, 8, 1, 9};
+    sort(v.begin(), v.end());
+    cout << "Sorted C++ Vector: ";
+    for (int x : v) cout << x << " ";
+    cout << endl;
+    return 0;
+}`,
+        java: `// Java (JDK 21) Cheatsheet
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // Fast Collection operations
+        List<String> list = new ArrayList<>(Arrays.asList("CompilerG", "Turbo", "Engine"));
+        System.out.println("Java 21 List: " + list);
+        
+        // HashMap
+        Map<String, Integer> map = new HashMap<>();
+        map.put("ExecutionMs", 50);
+        System.out.println("Map: " + map);
+    }
+}`,
+        js: `// JavaScript (Node.js 22) Cheatsheet
+// 1. Modern ESNext Array Methods
+const nums = [1, 2, 3, 4, 5];
+const doubled = nums.map(n => n * 2);
+
+// 2. Destructuring & Spread
+const [first, ...rest] = nums;
+
+// 3. Async/Await
+async function fetchData() {
+    return { status: "Turbo Accepted", time: "12ms" };
+}
+
+fetchData().then(console.log);`,
+        c: `// C (MinGW GCC) Cheatsheet
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n = 5;
+    int *arr = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) arr[i] = (i + 1) * 10;
+    
+    printf("C Dynamic Array: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    
+    free(arr);
+    return 0;
+}`
+    };
+
+    function openTutorialsModal() {
+        if (!tutorialsModal) return;
+        tutorialsModal.classList.add('open');
+        renderTutContent('py');
+    }
+
+    function renderTutContent(lang) {
+        currentTutLang = lang;
+        document.querySelectorAll('.tut-tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tut === lang);
+        });
+        if (tutContent) {
+            tutContent.textContent = TUTORIAL_DATA[lang] || TUTORIAL_DATA.py;
+        }
+    }
+
+    if (navTutorialsBtn) navTutorialsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openTutorialsModal();
+    });
+
+    document.querySelectorAll('.tut-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            renderTutContent(btn.dataset.tut);
+        });
+    });
+
+    if (tutOpenInEditorBtn) {
+        tutOpenInEditorBtn.addEventListener('click', () => {
+            tutorialsModal.classList.remove('open');
+            const target = currentTutLang === 'py' ? 'python' : currentTutLang;
+            showEditorView(target);
+            editorManager.setCode(TUTORIAL_DATA[currentTutLang]);
+            showToast(`Loaded ${currentTutLang.toUpperCase()} cheatsheet in Editor`, 'success');
+        });
+    }
+
+    // Modal Close buttons
+    document.querySelectorAll('.modal-close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.dataset.close;
+            const targetModal = document.getElementById(targetId);
+            if (targetModal) targetModal.classList.remove('open');
+        });
+    });
+
+    // 12. Hash Routing
+    function handleRouting() {
+        const hash = window.location.hash || '';
+        if (hash.startsWith('#code=')) {
+            showEditorView();
+            loadSharedCode();
+        } else if (hash === '#editor' || hash.startsWith('#editor')) {
+            showEditorView();
+        } else if (hash === '#challenges') {
+            showEditorView();
+            switchTab('testcases');
+        } else {
+            showHomeView();
+        }
+    }
+
+    window.addEventListener('hashchange', handleRouting);
+    handleRouting();
+
+});
