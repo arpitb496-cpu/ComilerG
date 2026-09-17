@@ -587,6 +587,42 @@ class EditorManager {
             this.editor.layout();
         }
     }
+
+    insertAtCursor(text) {
+        if (this.editor) {
+            const selection = this.editor.getSelection();
+            const range = new this.monaco.Range(
+                selection.startLineNumber, selection.startColumn,
+                selection.endLineNumber, selection.endColumn
+            );
+            this.editor.executeEdits('snippet-insert', [{
+                range: range,
+                text: text,
+                forceMoveMarkers: true
+            }]);
+            this.editor.focus();
+        } else if (this.fallbackTextarea) {
+            const ta = this.fallbackTextarea;
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+            ta.value = ta.value.substring(0, start) + text + ta.value.substring(end);
+            ta.selectionStart = ta.selectionEnd = start + text.length;
+            this.currentCode = ta.value;
+            this.onContentChangeCallbacks.forEach(cb => cb(this.currentCode));
+            ta.focus();
+        }
+    }
+
+    setWordWrap(enabled) {
+        if (this.editor) {
+            this.editor.updateOptions({ wordWrap: enabled ? 'on' : 'off' });
+        }
+        if (this.fallbackTextarea) {
+            this.fallbackTextarea.style.whiteSpace = enabled ? 'pre-wrap' : 'pre';
+            this.fallbackTextarea.style.overflowWrap = enabled ? 'break-word' : 'normal';
+        }
+    }
 }
 
 window.EditorManager = EditorManager;
+

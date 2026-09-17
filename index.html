@@ -89,6 +89,14 @@
                     <span>AI Fix</span>
                 </button>
 
+                <!-- Share Code Button -->
+                <button id="shareCodeBtn" class="btn-icon" title="Share Code via Link">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                    </svg>
+                </button>
+
                 <!-- Icon Actions -->
                 <button id="resetCodeBtn" class="btn-icon" title="Reset Code to Starter Template">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -248,9 +256,18 @@
                         </button>
                     </div>
                     <div class="pane-actions">
+                        <!-- Snippets Dropdown -->
+                        <div class="snippets-dropdown-container" id="snippetsDropdownContainer">
+                            <button id="snippetsBtn" class="btn-subtle" title="DSA & Algorithm Snippets">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/>
+                                </svg>
+                                <span>Snippets</span>
+                            </button>
+                            <div id="snippetsDropdownMenu" class="snippets-dropdown"></div>
+                        </div>
                         <button id="formatCodeBtn" class="btn-subtle" title="Format Code">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="21" y1="10" x2="7" y2="10" />
                                 <line x1="21" y1="6" x2="3" y2="6" />
                                 <line x1="21" y1="14" x2="3" y2="14" />
@@ -259,12 +276,23 @@
                             <span>Format</span>
                         </button>
                         <button id="copyCodeBtn" class="btn-subtle" title="Copy Code">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                             </svg>
                             <span>Copy</span>
+                        </button>
+                        <button id="wordWrapBtn" class="btn-subtle" title="Toggle Word Wrap (Alt+Z)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M3 12h15a3 3 0 1 1 0 6h-4"/><polyline points="13 16 10 19 13 22"/>
+                            </svg>
+                            <span>Wrap</span>
+                        </button>
+                        <button id="zenModeBtn" class="btn-subtle" title="Zen Mode (Fullscreen Editor)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                            </svg>
+                            <span>Zen</span>
                         </button>
                     </div>
                 </div>
@@ -307,6 +335,12 @@
                             </svg>
                             <span>Live Preview</span>
                         </button>
+                        <button id="testCasesTabBtn" class="tab-btn" data-tab="testcases">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                            <span>Test Cases</span>
+                        </button>
                     </div>
 
                     <!-- Execution Metrics -->
@@ -330,6 +364,12 @@
                             </svg>
                             <span id="execMemory">0 KB</span>
                         </div>
+                        <button id="complexityBtn" class="btn-subtle" title="Analyze Time & Space Complexity (Big-O)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                            <span>Big-O</span>
+                        </button>
                         <button id="clearConsoleBtn" class="btn-subtle" title="Clear Console">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
@@ -397,6 +437,22 @@
                     <div id="previewPanel" class="tab-panel">
                         <iframe id="webPreviewFrame" class="web-preview-frame" sandbox="allow-scripts allow-modals"
                             src="about:blank"></iframe>
+                    </div>
+
+                    <!-- Panel 4: Test Cases -->
+                    <div id="testcasesPanel" class="tab-panel">
+                        <div class="test-cases-container">
+                            <div class="test-cases-header">
+                                <span class="test-cases-title">Test Cases</span>
+                                <div class="test-cases-actions">
+                                    <button id="addTestCaseBtn" class="btn-subtle">+ Add Case</button>
+                                    <button id="runAllTestsBtn" class="btn-run" style="padding: 5px 14px; font-size: 0.8rem;">▶ Run All</button>
+                                </div>
+                            </div>
+                            <div id="testCasesList" class="test-cases-list">
+                                <!-- Test case items rendered dynamically -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -558,6 +614,14 @@
                             <td>Clear Output</td>
                             <td><kbd>Ctrl</kbd> + <kbd>K</kbd></td>
                         </tr>
+                        <tr>
+                            <td>Toggle Word Wrap</td>
+                            <td><kbd>Alt</kbd> + <kbd>Z</kbd></td>
+                        </tr>
+                        <tr>
+                            <td>Zen Mode</td>
+                            <td><kbd>F11</kbd></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -565,16 +629,58 @@
 
         <!-- Toast Notifications Container -->
         <div id="toastContainer" class="toast-container"></div>
+
+        <!-- Share Modal -->
+        <div id="shareModal" class="modal-overlay">
+            <div class="modal-window" style="max-width: 480px;">
+                <div class="modal-header">
+                    <h3>🔗 Share Your Code</h3>
+                    <button class="btn-icon modal-close-btn" data-close="shareModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">Anyone with this link can view your code in CompilerG:</p>
+                    <div class="share-link-box">
+                        <input type="text" id="shareLinkInput" class="setting-input" readonly style="width: 100%; font-family: var(--font-code); font-size: 0.78rem;">
+                        <button id="copyShareLinkBtn" class="btn-run" style="padding: 6px 16px; font-size: 0.82rem; flex-shrink: 0;">Copy</button>
+                    </div>
+                    <p id="shareStatus" style="color: var(--success); font-size: 0.8rem; margin-top: 8px;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complexity Analysis Modal -->
+        <div id="complexityModal" class="modal-overlay">
+            <div class="modal-window" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3>⚡ Complexity Analysis (Big-O)</h3>
+                    <button class="btn-icon modal-close-btn" data-close="complexityModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="complexity-card">
+                        <div class="complexity-row">
+                            <span class="complexity-label">⏱ Time Complexity</span>
+                            <span id="timeComplexity" class="complexity-value">—</span>
+                        </div>
+                        <div class="complexity-row">
+                            <span class="complexity-label">💾 Space Complexity</span>
+                            <span id="spaceComplexity" class="complexity-value">—</span>
+                        </div>
+                    </div>
+                    <div id="complexityExplanation" class="complexity-explanation"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Application Scripts -->
-    <script src="js/languages.js?v=2.0"></script>
-    <script src="js/boilerplates.js?v=2.0"></script>
-    <script src="js/particles.js?v=2.0"></script>
-    <script src="js/ai_debugger.js?v=2.0"></script>
-    <script src="js/executor.js?v=2.0"></script>
-    <script src="js/editor.js?v=2.0"></script>
-    <script src="js/app.js?v=2.0"></script>
+    <script src="js/languages.js?v=3.0"></script>
+    <script src="js/boilerplates.js?v=3.0"></script>
+    <script src="js/particles.js?v=3.0"></script>
+    <script src="js/snippets.js?v=3.0"></script>
+    <script src="js/ai_debugger.js?v=3.0"></script>
+    <script src="js/executor.js?v=3.0"></script>
+    <script src="js/editor.js?v=3.0"></script>
+    <script src="js/app.js?v=3.0"></script>
 </body>
 
 </html>

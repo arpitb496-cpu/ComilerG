@@ -927,6 +927,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (settingsModal) settingsModal.classList.remove('open');
                 if (shortcutsModal) shortcutsModal.classList.remove('open');
                 if (newFileModal) newFileModal.classList.remove('open');
+                const shareModal = document.getElementById('shareModal');
+                const complexityModal = document.getElementById('complexityModal');
+                if (shareModal) shareModal.classList.remove('open');
+                if (complexityModal) complexityModal.classList.remove('open');
             }
         });
     });
@@ -950,7 +954,330 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             if (clearConsoleBtn) clearConsoleBtn.click();
         }
+        // Alt+Z = Word Wrap Toggle
+        if (e.altKey && e.key === 'z') {
+            e.preventDefault();
+            toggleWordWrap();
+        }
+        // F11 = Zen Mode
+        if (e.key === 'F11') {
+            e.preventDefault();
+            toggleZenMode();
+        }
+        // Escape = Exit Zen Mode
+        if (e.key === 'Escape' && document.querySelector('.app-container')?.classList.contains('zen-mode')) {
+            toggleZenMode(false);
+        }
     });
+
+    // ==========================================================================
+    // FEATURE 1: Multi-Input Test Cases Runner
+    // ==========================================================================
+    const addTestCaseBtn = document.getElementById('addTestCaseBtn');
+    const runAllTestsBtn = document.getElementById('runAllTestsBtn');
+    const testCasesList = document.getElementById('testCasesList');
+    const testCasesTabBtn = document.getElementById('testCasesTabBtn');
+    let testCases = [];
+
+    function createTestCaseItem(index) {
+        return {
+            id: 'tc-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+            input: '',
+            expected: '',
+            output: null,
+            status: null // null, 'running', 'pass', 'fail'
+        };
+    }
+
+    function renderTestCases() {
+        if (!testCasesList) return;
+        if (testCases.length === 0) {
+            testCases.push(createTestCaseItem(0));
+            testCases.push(createTestCaseItem(1));
+        }
+        testCasesList.innerHTML = '';
+        testCases.forEach((tc, i) => {
+            const item = document.createElement('div');
+            item.className = 'test-case-item';
+            item.innerHTML = `
+                <div class="test-case-header">
+                    <span class="test-case-label">Case ${i + 1}</span>
+                    ${tc.status ? `<span class="test-case-badge ${tc.status}">${tc.status === 'pass' ? '✓ PASS' : tc.status === 'fail' ? '✗ FAIL' : '⏳ Running'}</span>` : ''}
+                </div>
+                <div class="test-case-fields">
+                    <div class="test-case-field">
+                        <label>Input (STDIN)</label>
+                        <textarea data-tc-id="${tc.id}" data-field="input" placeholder="Enter input...">${tc.input}</textarea>
+                    </div>
+                    <div class="test-case-field">
+                        <label>Expected Output</label>
+                        <textarea data-tc-id="${tc.id}" data-field="expected" placeholder="Expected output (optional)">${tc.expected}</textarea>
+                    </div>
+                </div>
+                ${tc.output !== null ? `<div class="test-case-output"><strong>Actual Output:</strong>\n${tc.output}</div>` : ''}
+                <div class="test-case-actions">
+                    <button data-tc-remove="${tc.id}">Remove</button>
+                </div>
+            `;
+            testCasesList.appendChild(item);
+        });
+
+        // Wire up events
+        testCasesList.querySelectorAll('textarea[data-tc-id]').forEach(ta => {
+            ta.addEventListener('input', (e) => {
+                const tc = testCases.find(t => t.id === e.target.dataset.tcId);
+                if (tc) tc[e.target.dataset.field] = e.target.value;
+            });
+        });
+        testCasesList.querySelectorAll('button[data-tc-remove]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                testCases = testCases.filter(t => t.id !== btn.dataset.tcRemove);
+                renderTestCases();
+            });
+        });
+    }
+
+    if (addTestCaseBtn) {
+        addTestCaseBtn.addEventListener('click', () => {
+            testCases.push(createTestCaseItem(testCases.length));
+            renderTestCases();
+        });
+    }
+
+    if (testCasesTabBtn) {
+        testCasesTabBtn.addEventListener('click', () => {
+            switchTab('testcases');
+            if (testCases.length === 0) renderTestCases();
+        });
+    }
+
+    if (runAllTestsBtn) {
+        runAllTestsBtn.addEventListener('click', async () => {
+            if (state.isExecuting) return;
+            saveCurrentFiles();
+            const code = editorManager.getCode();
+            const langConfig = window.LANGUAGES[state.currentLanguage];
+            const filesPayload = state.files.map(f => ({
+                name: f.name,
+                content: f.id === state.activeFileId ? code : f.content
+            }));
+
+            // Mark all as running
+            testCases.forEach(tc => { tc.status = 'running'; tc.output = null; });
+            renderTestCases();
+
+            for (const tc of testCases) {
+                try {
+                    const result = await executor.execute({
+                        languageKey: state.currentLanguage,
+                        code,
+                        stdin: tc.input,
+                        files: filesPayload
+                    });
+                    const actualOutput = (result.stdout || '').trim();
+                    tc.output = actualOutput;
+                    if (tc.expected.trim() === '') {
+                        tc.status = result.isSuccess ? 'pass' : 'fail';
+                    } else {
+                        tc.status = actualOutput === tc.expected.trim() ? 'pass' : 'fail';
+                    }
+                } catch (err) {
+                    tc.output = 'Error: ' + err.message;
+                    tc.status = 'fail';
+                }
+                renderTestCases();
+            }
+            const passed = testCases.filter(t => t.status === 'pass').length;
+            showToast(`Tests: ${passed}/${testCases.length} passed`, passed === testCases.length ? 'success' : 'error');
+        });
+    }
+
+    // Render initial test cases when panel is first opened
+    renderTestCases();
+
+    // ==========================================================================
+    // FEATURE 2: DSA & Algorithm Snippets Library
+    // ==========================================================================
+    const snippetsBtn = document.getElementById('snippetsBtn');
+    const snippetsDropdownMenu = document.getElementById('snippetsDropdownMenu');
+    const snippetsDropdownContainer = document.getElementById('snippetsDropdownContainer');
+
+    function populateSnippets() {
+        if (!snippetsDropdownMenu || !window.SNIPPETS) return;
+        const snippets = window.SNIPPETS.getForLanguage(state.currentLanguage);
+        snippetsDropdownMenu.innerHTML = '';
+        snippets.forEach(s => {
+            const item = document.createElement('div');
+            item.className = 'snippet-item';
+            item.innerHTML = `
+                <span class="snippet-icon">${s.icon}</span>
+                <span class="snippet-name">${s.name}</span>
+                <span class="snippet-badge">Insert</span>
+            `;
+            item.addEventListener('click', () => {
+                editorManager.insertAtCursor(s.code);
+                snippetsDropdownMenu.classList.remove('open');
+                showToast(`Inserted ${s.name} snippet`, 'success');
+            });
+            snippetsDropdownMenu.appendChild(item);
+        });
+    }
+
+    if (snippetsBtn) {
+        snippetsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            populateSnippets();
+            snippetsDropdownMenu.classList.toggle('open');
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (snippetsDropdownContainer && !snippetsDropdownContainer.contains(e.target)) {
+            if (snippetsDropdownMenu) snippetsDropdownMenu.classList.remove('open');
+        }
+    });
+
+    // ==========================================================================
+    // FEATURE 3: Share Code via Instant URL
+    // ==========================================================================
+    const shareCodeBtn = document.getElementById('shareCodeBtn');
+    const shareModal = document.getElementById('shareModal');
+    const shareLinkInput = document.getElementById('shareLinkInput');
+    const copyShareLinkBtn = document.getElementById('copyShareLinkBtn');
+    const shareStatus = document.getElementById('shareStatus');
+
+    function encodeShare() {
+        const code = editorManager.getCode();
+        const lang = state.currentLanguage;
+        const payload = JSON.stringify({ l: lang, c: code });
+        const compressed = btoa(unescape(encodeURIComponent(payload)));
+        return compressed;
+    }
+
+    function decodeShare(hash) {
+        try {
+            const decoded = decodeURIComponent(escape(atob(hash)));
+            return JSON.parse(decoded);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    if (shareCodeBtn) {
+        shareCodeBtn.addEventListener('click', () => {
+            const encoded = encodeShare();
+            const url = window.location.origin + window.location.pathname + '#share=' + encoded;
+            if (shareLinkInput) shareLinkInput.value = url;
+            if (shareModal) shareModal.classList.add('open');
+            if (shareStatus) shareStatus.textContent = '';
+        });
+    }
+
+    if (copyShareLinkBtn) {
+        copyShareLinkBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(shareLinkInput.value);
+                if (shareStatus) shareStatus.textContent = '✓ Link copied to clipboard!';
+                showToast('Share link copied!', 'success');
+            } catch (e) {
+                if (shareStatus) shareStatus.textContent = 'Failed to copy. Select and copy manually.';
+            }
+        });
+    }
+
+    // Load shared code from URL on page load
+    function loadSharedCode() {
+        const hash = window.location.hash;
+        if (hash.startsWith('#share=')) {
+            const encoded = hash.substring(7);
+            const shared = decodeShare(encoded);
+            if (shared && shared.c) {
+                if (shared.l && window.LANGUAGES[shared.l]) {
+                    switchLanguage(shared.l);
+                }
+                editorManager.setCode(shared.c);
+                saveCurrentFiles();
+                showToast('Shared code loaded!', 'success');
+                // Clean URL
+                history.replaceState(null, '', window.location.pathname);
+            }
+        }
+    }
+
+    // ==========================================================================
+    // FEATURE 4: AI Complexity Analyzer (Big-O)
+    // ==========================================================================
+    const complexityBtn = document.getElementById('complexityBtn');
+    const complexityModal = document.getElementById('complexityModal');
+    const timeComplexityEl = document.getElementById('timeComplexity');
+    const spaceComplexityEl = document.getElementById('spaceComplexity');
+    const complexityExplanation = document.getElementById('complexityExplanation');
+
+    if (complexityBtn) {
+        complexityBtn.addEventListener('click', () => {
+            const code = editorManager.getCode();
+            const result = aiDebugger.analyzeComplexity({
+                language: state.currentLanguage,
+                code
+            });
+            if (timeComplexityEl) timeComplexityEl.textContent = result.time;
+            if (spaceComplexityEl) spaceComplexityEl.textContent = result.space;
+            if (complexityExplanation) complexityExplanation.textContent = result.explanation;
+            if (complexityModal) complexityModal.classList.add('open');
+        });
+    }
+
+    // ==========================================================================
+    // FEATURE 5: Zen Mode & Word Wrap Toggle
+    // ==========================================================================
+    const zenModeBtn = document.getElementById('zenModeBtn');
+    const wordWrapBtn = document.getElementById('wordWrapBtn');
+    let isZenMode = false;
+    let isWordWrap = false;
+
+    function toggleZenMode(force) {
+        const appContainer = document.querySelector('.app-container');
+        if (!appContainer) return;
+
+        isZenMode = force !== undefined ? force : !isZenMode;
+
+        if (isZenMode) {
+            appContainer.classList.add('zen-mode');
+            // Add exit bar
+            let exitBar = document.querySelector('.zen-exit-bar');
+            if (!exitBar) {
+                exitBar = document.createElement('div');
+                exitBar.className = 'zen-exit-bar';
+                exitBar.innerHTML = '<span>Zen Mode — Press <kbd>Esc</kbd> or <kbd>F11</kbd> to exit</span><button id="exitZenBtn">Exit Zen</button>';
+                document.body.appendChild(exitBar);
+                exitBar.querySelector('#exitZenBtn').addEventListener('click', () => toggleZenMode(false));
+            }
+            exitBar.style.display = 'flex';
+            showToast('Zen Mode enabled — distraction-free coding 🧘', 'info');
+        } else {
+            appContainer.classList.remove('zen-mode');
+            const exitBar = document.querySelector('.zen-exit-bar');
+            if (exitBar) exitBar.style.display = 'none';
+        }
+        setTimeout(() => editorManager.layout(), 100);
+    }
+
+    function toggleWordWrap() {
+        isWordWrap = !isWordWrap;
+        editorManager.setWordWrap(isWordWrap);
+        if (wordWrapBtn) {
+            wordWrapBtn.classList.toggle('active-toggle', isWordWrap);
+        }
+        showToast(isWordWrap ? 'Word Wrap: ON' : 'Word Wrap: OFF', 'info');
+    }
+
+    if (zenModeBtn) {
+        zenModeBtn.addEventListener('click', () => toggleZenMode());
+    }
+
+    if (wordWrapBtn) {
+        wordWrapBtn.addEventListener('click', () => toggleWordWrap());
+    }
 
     // --- Initialize Editor & Multi-File System ---
     const initialLangConfig = window.LANGUAGES[state.currentLanguage] || window.LANGUAGES.python;
@@ -963,6 +1290,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Synchronously mounts fallback editor & launches Monaco in background
     editorManager.initSync(monacoContainer, initialMonacoLang, initialFile.content);
 
+    // Load shared code after editor is ready
+    setTimeout(loadSharedCode, 500);
+
     function escapeHtml(str) {
         return str
             .replace(/&/g, '&amp;')
@@ -972,3 +1302,4 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/'/g, '&#039;');
     }
 });
+

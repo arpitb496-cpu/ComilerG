@@ -2260,3 +2260,352 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-secondary);
 }
+
+/* ==========================================================================
+   Feature: Zen Mode (Fullscreen Editor)
+   ========================================================================== */
+.zen-mode .header-navbar,
+.zen-mode .terminal-pane,
+.zen-mode .split-resizer {
+    display: none !important;
+}
+
+.zen-mode .workspace-container {
+    height: 100vh !important;
+}
+
+.zen-mode .editor-pane {
+    flex: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.zen-exit-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.zen-exit-bar:hover,
+.zen-mode:hover .zen-exit-bar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.zen-exit-bar span {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+}
+
+.zen-exit-bar button {
+    padding: 3px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--danger);
+    color: white;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-subtle.active-toggle {
+    color: var(--text-accent);
+    background: rgba(56, 189, 248, 0.12);
+    border-color: var(--border-highlight);
+}
+
+/* ==========================================================================
+   Feature: Snippets Dropdown
+   ========================================================================== */
+.snippets-dropdown-container {
+    position: relative;
+}
+
+.snippets-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 280px;
+    max-height: 380px;
+    overflow-y: auto;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    padding: 6px;
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    z-index: 1000;
+    animation: fadeInScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.snippets-dropdown.open {
+    display: flex;
+}
+
+.snippet-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.snippet-item:hover {
+    background: var(--bg-surface-elevated);
+    border-color: var(--border-color);
+}
+
+.snippet-item .snippet-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.snippet-item .snippet-name {
+    flex: 1;
+}
+
+.snippet-item .snippet-badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: var(--radius-full);
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--text-accent);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+/* ==========================================================================
+   Feature: Test Cases Runner
+   ========================================================================== */
+.test-cases-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.test-cases-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+.test-cases-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.test-cases-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.test-cases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.test-case-item {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px;
+}
+
+.test-case-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.test-case-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.test-case-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+}
+
+.test-case-badge.pass {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.test-case-badge.fail {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.test-case-badge.running {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.test-case-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.test-case-field label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.test-case-field textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-editor);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: var(--font-code);
+    font-size: 0.78rem;
+    resize: vertical;
+    outline: none;
+}
+
+.test-case-field textarea:focus {
+    border-color: var(--border-highlight);
+}
+
+.test-case-output {
+    margin-top: 8px;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-editor);
+    border: 1px solid var(--border-color);
+    font-family: var(--font-code);
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.test-case-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+
+.test-case-actions button {
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.test-case-actions button:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* ==========================================================================
+   Feature: Share Modal
+   ========================================================================== */
+.share-link-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.share-link-box input {
+    flex: 1;
+}
+
+/* ==========================================================================
+   Feature: Complexity Analysis Modal
+   ========================================================================== */
+.complexity-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-surface-elevated);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 14px;
+}
+
+.complexity-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.complexity-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.complexity-value {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-accent);
+    font-family: var(--font-code);
+    background: rgba(56, 189, 248, 0.08);
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.complexity-explanation {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 10px;
+    background: var(--bg-editor);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    white-space: pre-wrap;
+}

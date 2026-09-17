@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+node_modules/
+.planning/
+.clinerules
+.coderabbit.yaml
+.roomodes
+*.log
+.DS_Store
+Thumbs.db

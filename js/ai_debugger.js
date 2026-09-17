@@ -420,6 +420,107 @@ Provide:
             return { title: 'AI Code Explanation', explanation: `Analysis error: ${err.message}` };
         }
     }
+
+    /**
+     * Analyze Time & Space Complexity (Big-O) using heuristic detection
+     * @param {Object} params { language, code }
+     * @returns {Object} { time, space, explanation }
+     */
+    analyzeComplexity({ language, code }) {
+        const lines = code.split('\n');
+        const cleanCode = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/#.*$/gm, '');
+
+        // Detect loop patterns
+        const forLoops = (cleanCode.match(/\b(for|while)\b/gi) || []).length;
+        const nestedLoopPattern = /\b(for|while)\b[^{}]*\{[^{}]*\b(for|while)\b/gi;
+        const nestedLoops = (cleanCode.match(nestedLoopPattern) || []).length;
+        const tripleNested = /\b(for|while)\b[^{}]*\{[^{}]*\b(for|while)\b[^{}]*\{[^{}]*\b(for|while)\b/gi;
+        const tripleNestCount = (cleanCode.match(tripleNested) || []).length;
+
+        // Detect recursion
+        const funcNames = [];
+        const funcPatterns = [
+            /def\s+(\w+)\s*\(/g,
+            /function\s+(\w+)\s*\(/g,
+            /(\w+)\s*\([^)]*\)\s*\{/g,
+            /void\s+(\w+)\s*\(/g,
+            /int\s+(\w+)\s*\(/g,
+            /static\s+\w+\s+(\w+)\s*\(/g,
+        ];
+        for (const pat of funcPatterns) {
+            let m;
+            while ((m = pat.exec(cleanCode)) !== null) {
+                if (m[1] && !['if', 'for', 'while', 'switch', 'main', 'return', 'else', 'print', 'console'].includes(m[1])) {
+                    funcNames.push(m[1]);
+                }
+            }
+        }
+        const hasRecursion = funcNames.some(name => {
+            const bodyMatch = cleanCode.match(new RegExp(`\\b${name}\\b[^{]*\\{([\\s\\S]*?)\\}`, 'm'));
+            return bodyMatch && bodyMatch[1] && bodyMatch[1].includes(name + '(');
+        });
+
+        // Detect sort calls
+        const hasSortCall = /\.(sort|sorted)\(|Arrays\.sort|std::sort|qsort|Collections\.sort/i.test(cleanCode);
+
+        // Detect data structures for space
+        const hasArray = /\[\s*\]|vector|ArrayList|List|Array|new\s+int\[/i.test(cleanCode);
+        const hasMap = /dict|HashMap|Map\(|{}|set\(|HashSet|TreeMap|unordered_map/i.test(cleanCode);
+        const hasMatrix = /\[\s*\[|\[\]\[\]|vector<vector|int\s+\w+\s*\[.*\]\s*\[/i.test(cleanCode);
+
+        // Determine time complexity
+        let time, space, explanation = '';
+
+        if (tripleNestCount > 0) {
+            time = 'O(N³)';
+            explanation = '⚠️ Triple nested loops detected → cubic time complexity.\nThis will be very slow for large inputs (N > 500).\n\n💡 Suggestion: Consider dynamic programming, memoization, or algorithmic optimization to reduce complexity.';
+        } else if (nestedLoops > 0 && hasSortCall) {
+            time = 'O(N² log N)';
+            explanation = '⚠️ Nested loops + sorting detected.\nThe sort adds O(N log N) and nested loops add O(N²).\n\n💡 Suggestion: Check if the inner loop can be replaced with binary search or a hash map lookup.';
+        } else if (nestedLoops > 0) {
+            time = 'O(N²)';
+            explanation = '⚠️ Nested loops detected → quadratic time complexity.\nFor large inputs (N > 10,000), this may be slow.\n\n💡 Suggestion: Consider using hash maps, two pointers, or sorting-based approaches.';
+        } else if (hasRecursion && forLoops > 0) {
+            time = 'O(N log N)';
+            explanation = '🔄 Recursion with loops detected (divide-and-conquer pattern).\nThis is typical of merge sort, quicksort, or tree traversals with work at each level.';
+        } else if (hasRecursion) {
+            time = 'O(2^N)';
+            explanation = '🔄 Recursion detected without memoization → exponential time.\nEach recursive call potentially branches into multiple sub-calls.\n\n💡 Suggestion: Add memoization (cache) or convert to iterative DP.';
+        } else if (hasSortCall && forLoops <= 1) {
+            time = 'O(N log N)';
+            explanation = '✅ Sorting-dominated complexity.\nThe sort() call is O(N log N) and dominates the single-pass loop.';
+        } else if (forLoops === 1) {
+            time = 'O(N)';
+            explanation = '✅ Single loop detected → linear time complexity.\nThis is efficient and scales well for large inputs.';
+        } else if (forLoops === 0) {
+            time = 'O(1)';
+            explanation = '✅ No loops or recursion detected → constant time.\nThis code runs in fixed time regardless of input size.';
+        } else {
+            time = 'O(N)';
+            explanation = `Multiple sequential loops detected (${forLoops} loops).\nSequential (non-nested) loops are O(N) + O(N) = O(N).`;
+        }
+
+        // Determine space complexity
+        if (hasMatrix) {
+            space = 'O(N²)';
+            explanation += '\n\n💾 Space: 2D array/matrix detected → quadratic auxiliary space.';
+        } else if (hasMap && hasArray) {
+            space = 'O(N)';
+            explanation += '\n\n💾 Space: Array + HashMap/Set detected → linear auxiliary space.';
+        } else if (hasArray || hasMap) {
+            space = 'O(N)';
+            explanation += '\n\n💾 Space: Dynamic data structure detected → linear auxiliary space.';
+        } else if (hasRecursion) {
+            space = 'O(N)';
+            explanation += '\n\n💾 Space: Recursion stack → O(depth) ≈ O(N) space.';
+        } else {
+            space = 'O(1)';
+            explanation += '\n\n💾 Space: No significant extra memory allocation detected.';
+        }
+
+        return { time, space, explanation };
+    }
 }
 
 window.AIDebugger = AIDebugger;
+
