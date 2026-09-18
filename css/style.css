@@ -369,15 +369,27 @@
     padding: 0;
 }
 
-html,
+html {
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
 body {
-    height: 100%;
+    min-height: 100vh;
     width: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     font-family: var(--font-ui);
     background-color: var(--bg-main);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
+}
+
+body.in-editor-mode {
+    height: 100vh;
+    overflow: hidden;
 }
 
 /* App Container Layout */
@@ -1644,7 +1656,7 @@ body {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    z-index: 300;
+    z-index: 100000;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -3702,19 +3714,191 @@ body {
 }
 
 /* Responsive Media Queries */
-@media (max-width: 900px) {
-    .home-nav-links { display: none; }
-    .features-trio-grid { grid-template-columns: 1fr; }
-    .showcase-features-grid { grid-template-columns: 1fr; }
-    .trust-logos-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem 1rem; }
-    .mockup-window-body { grid-template-columns: 1fr; }
-    .footer-columns-grid { grid-template-columns: 1fr 1fr; }
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .home-nav-container {
+        padding: 0.75rem 1.25rem;
+    }
+    .home-nav-left {
+        gap: 1.2rem;
+    }
+    .home-nav-links {
+        gap: 1rem;
+    }
+    .trust-logos-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem 1rem;
+    }
+    .showcase-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .footer-columns-grid {
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 850px) {
+    .home-nav-links {
+        display: none !important;
+    }
+    .features-trio-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .showcase-features-grid {
+        grid-template-columns: 1fr;
+    }
+    .trust-logos-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem 0.75rem;
+    }
+    .mockup-window-body {
+        grid-template-columns: 1fr;
+    }
+    .mockup-code-pane {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .footer-columns-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+    .partners-logos-row {
+        gap: 2rem;
+    }
 }
 
 @media (max-width: 600px) {
-    .home-lang-grid { grid-template-columns: 1fr 1fr; }
-    .footer-columns-grid { grid-template-columns: 1fr; }
-    .trust-logos-grid { grid-template-columns: repeat(2, 1fr); }
-    .home-hero { padding: 3rem 1rem 2rem; }
-    .home-hero-title { font-size: 2.2rem; }
+    .home-hero {
+        padding: 3rem 1rem 2rem;
+    }
+    .home-hero-title {
+        font-size: clamp(1.9rem, 7.5vw, 2.5rem);
+        letter-spacing: -0.8px;
+    }
+    .home-hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.8rem;
+    }
+    .home-search-wrapper {
+        margin-bottom: 2rem;
+    }
+    .home-search-box {
+        padding: 0 12px;
+    }
+    #homeSearchInput {
+        padding: 12px 0;
+        font-size: 0.88rem;
+    }
+    .filter-pills-row {
+        gap: 6px;
+    }
+    .filter-pill {
+        padding: 5px 12px;
+        font-size: 0.78rem;
+    }
+    .home-lang-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .lang-card {
+        padding: 10px 11px;
+        gap: 8px;
+    }
+    .lang-card-icon {
+        width: 32px;
+        height: 32px;
+    }
+    .lang-card-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+    .lang-card-name {
+        font-size: 0.82rem;
+    }
+    .lang-card-desc {
+        font-size: 0.68rem;
+    }
+    .trust-logos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem 0.5rem;
+    }
+    .company-logo {
+        font-size: 0.95rem;
+    }
+    .school-logo {
+        font-size: 0.85rem;
+    }
+    .showcase-cta-row {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    .showcase-cta-row button {
+        width: 100%;
+        justify-content: center;
+    }
+    .footer-columns-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-nav-container {
+        padding: 0.6rem 0.75rem;
+    }
+    .brand-icon-hex {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+    .brand-name {
+        font-size: 1.05rem;
+    }
+    .brand-badge-pro {
+        display: none;
+    }
+    .home-btn-secondary {
+        display: none; /* Hide Sign Up to prevent horizontal squishing */
+    }
+    .home-btn-ghost {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    .home-btn-primary {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        gap: 5px;
+    }
+    .home-btn-primary svg {
+        width: 12px;
+        height: 12px;
+    }
+    .mockup-header-bar {
+        padding: 8px 10px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .mockup-file-tabs {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+    }
+    .mockup-code-pane {
+        padding: 0.85rem;
+        font-size: 0.72rem;
+    }
+    .mockup-output-pane {
+        padding: 0.85rem;
+        font-size: 0.72rem;
+    }
+    .modal-window {
+        width: 95% !important;
+        margin: 10px;
+    }
 }

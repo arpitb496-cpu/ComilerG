@@ -1331,23 +1331,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const editorHomeBtn = document.getElementById('editorHomeBtn');
     const brandLogo = document.getElementById('brandLogo');
 
-    function showHomeView() {
-        if (homeView) homeView.style.display = 'block';
-        if (editorView) editorView.style.display = 'none';
-        window.location.hash = 'home';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    let isRouting = false;
+
+    function showHomeView(scrollSmooth = false) {
+        if (isRouting) return;
+        isRouting = true;
+        try {
+            if (homeView) homeView.style.display = 'block';
+            if (editorView) editorView.style.display = 'none';
+            document.body.classList.remove('in-editor-mode');
+            if (window.location.hash !== '#home' && window.location.hash !== '') {
+                history.replaceState(null, '', '#home');
+            }
+            if (scrollSmooth) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } finally {
+            isRouting = false;
+        }
     }
 
     function showEditorView(targetLang) {
-        if (homeView) homeView.style.display = 'none';
-        if (editorView) editorView.style.display = 'flex';
-        if (targetLang && window.LANGUAGES[targetLang]) {
-            switchLanguage(targetLang);
+        if (isRouting) return;
+        isRouting = true;
+        try {
+            if (homeView) homeView.style.display = 'none';
+            if (editorView) editorView.style.display = 'flex';
+            document.body.classList.add('in-editor-mode');
+            if (targetLang && window.LANGUAGES[targetLang]) {
+                switchLanguage(targetLang);
+            }
+            if (window.location.hash !== '#editor') {
+                history.replaceState(null, '', '#editor');
+            }
+            setTimeout(() => {
+                if (editorManager) editorManager.layout();
+            }, 60);
+        } finally {
+            isRouting = false;
         }
-        window.location.hash = 'editor';
-        setTimeout(() => {
-            if (editorManager) editorManager.layout();
-        }, 60);
     }
 
     // Connect Home navigation in Editor
@@ -1828,8 +1850,9 @@ int main() {
 
     // 12. Hash Routing
     function handleRouting() {
+        if (isRouting) return;
         const hash = window.location.hash || '';
-        if (hash.startsWith('#code=')) {
+        if (hash.startsWith('#code=') || hash.startsWith('#share=')) {
             showEditorView();
             loadSharedCode();
         } else if (hash === '#editor' || hash.startsWith('#editor')) {
@@ -1837,9 +1860,25 @@ int main() {
         } else if (hash === '#challenges') {
             showEditorView();
             switchTab('testcases');
+        } else if (hash === '#tutorials') {
+            openTutorialsModal();
+        } else if (hash === '#docs') {
+            const featSection = document.querySelector('.home-features-section');
+            if (featSection) featSection.scrollIntoView({ behavior: 'smooth' });
+        } else if (hash === '#articles' || hash === '#features') {
+            const showcaseSection = document.querySelector('.home-showcase-section');
+            if (showcaseSection) showcaseSection.scrollIntoView({ behavior: 'smooth' });
         } else {
             showHomeView();
         }
+    }
+
+    const homeBrandLink = document.querySelector('.home-brand');
+    if (homeBrandLink) {
+        homeBrandLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
 
     window.addEventListener('hashchange', handleRouting);

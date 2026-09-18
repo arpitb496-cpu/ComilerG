@@ -153,6 +153,36 @@ const LANGUAGES = {
         filename: 'main.swift',
         icon: '🦅',
         category: 'mobile'
+    },
+    sql: {
+        id: 'sql',
+        name: 'SQL (SQLite 3)',
+        judge0Id: 82, // SQL (SQLite 3.27.2)
+        monacoLang: 'sql',
+        extension: '.sql',
+        filename: 'query.sql',
+        icon: '🗄️',
+        category: 'database'
+    },
+    postgres: {
+        id: 'postgres',
+        name: 'PostgreSQL',
+        judge0Id: 82,
+        monacoLang: 'sql',
+        extension: '.sql',
+        filename: 'postgres.sql',
+        icon: '🐘',
+        category: 'database'
+    },
+    mongo: {
+        id: 'mongo',
+        name: 'MongoDB (MQL)',
+        judge0Id: null,
+        monacoLang: 'javascript',
+        extension: '.js',
+        filename: 'query.js',
+        icon: '🍃',
+        category: 'database'
     }
 };
 

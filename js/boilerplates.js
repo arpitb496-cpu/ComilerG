@@ -382,6 +382,62 @@ if let input = readLine(), !input.trimmingCharacters(in: .whitespacesAndNewlines
 let numbers = [5, 10, 15, 20]
 let total = numbers.reduce(0, +)
 print("Total sum: \(total)")
+`,
+
+    sql: `-- Online SQL Compiler (SQLite 3) - CompilerG
+CREATE TABLE developers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    language TEXT NOT NULL,
+    score INTEGER DEFAULT 100
+);
+
+INSERT INTO developers (name, language, score) VALUES 
+('Alex Turing', 'Python', 98),
+('Grace Hopper', 'C++', 100),
+('Linus Torvalds', 'C', 99),
+('Ada Lovelace', 'Java', 95);
+
+SELECT name, language, score 
+FROM developers 
+WHERE score >= 95 
+ORDER BY score DESC;
+`,
+
+    postgres: `-- Online PostgreSQL Sandbox - CompilerG
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    price NUMERIC(10, 2),
+    category VARCHAR(50)
+);
+
+INSERT INTO products (title, price, category) VALUES
+('Turbo IDE Pro', 49.99, 'Software'),
+('Mechanical Keyboard', 129.50, 'Hardware'),
+('4K Coding Monitor', 349.00, 'Hardware');
+
+SELECT category, count(*) as count, AVG(price) as avg_price
+FROM products
+GROUP BY category;
+`,
+
+    mongo: `// Online MongoDB (MQL) Runner - CompilerG
+// Simulated MongoDB JavaScript query collection
+const db = {
+    users: [
+        { name: "Dev_Alice", role: "Fullstack", stars: 120 },
+        { name: "Dev_Bob", role: "Backend", stars: 85 },
+        { name: "Dev_Carol", role: "AI Engineer", stars: 140 }
+    ]
+};
+
+console.log("=== CompilerG MongoDB Query Results ===");
+const topDevs = db.users
+    .filter(u => u.stars >= 100)
+    .sort((a, b) => b.stars - a.stars);
+
+console.log(JSON.stringify(topDevs, null, 2));
 `
 };
 
