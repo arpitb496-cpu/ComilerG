@@ -1881,6 +1881,13 @@ int main() {
         });
     }
 
+    const creatorEmailLink = document.getElementById('creatorEmailLink');
+    if (creatorEmailLink) {
+        creatorEmailLink.addEventListener('click', () => {
+            showToast('Opening Gmail composer for arpitb496@gmail.com...', 'info');
+        });
+    }
+
     window.addEventListener('hashchange', handleRouting);
     handleRouting();
 
