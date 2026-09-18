@@ -1692,22 +1692,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (authTabSignIn) authTabSignIn.addEventListener('click', () => openAuthModal('signin'));
     if (authTabSignUp) authTabSignUp.addEventListener('click', () => openAuthModal('signup'));
 
-    if (authForm) authForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = authEmail?.value || 'Developer';
-        authModal.classList.remove('open');
-        showToast(`Welcome, ${email}! Signed in successfully.`, 'success');
-    });
-
-    if (authDemoGoogle) authDemoGoogle.addEventListener('click', () => {
-        authModal.classList.remove('open');
-        showToast('Signed in with Google demo account!', 'success');
-    });
-
-    if (authDemoGithub) authDemoGithub.addEventListener('click', () => {
-        authModal.classList.remove('open');
-        showToast('Signed in with GitHub demo account!', 'success');
-    });
+    // Auth form, Google, and GitHub sign-in are now handled by js/firebase-auth.js
+    // (Real Firebase Authentication with Google & GitHub OAuth)
 
     // 11. Tutorials Modal
     const tutorialsModal = document.getElementById('tutorialsModal');
