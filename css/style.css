@@ -3061,29 +3061,32 @@ body.in-editor-mode {
 
 /* Trust Section */
 .home-trust-section {
-    padding: 4rem 1.5rem;
+    padding: 4.8rem 1.5rem 3.8rem;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(10, 14, 22, 0.65);
 }
 
+.home-trust-container {
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
 .trust-heading {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 2.2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-bottom: 3.2rem;
+    letter-spacing: 0.2px;
 }
 
 .trust-logos-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 2rem 1.5rem;
-    max-width: 1000px;
-    margin: 0 auto;
+    gap: 3.2rem 1.5rem;
     align-items: center;
+    justify-items: center;
 }
 
 .trust-logo-item {
@@ -3091,15 +3094,18 @@ body.in-editor-mode {
     align-items: center;
     justify-content: center;
     gap: 9px;
-    opacity: 0.7;
-    transition: opacity 0.2s, transform 0.2s;
+    color: #f1f5f9;
+    opacity: 0.88;
+    transition: opacity 0.2s, transform 0.2s, color 0.2s;
     user-select: none;
     cursor: default;
+    height: 32px;
 }
 
 .trust-logo-item:hover {
     opacity: 1;
     transform: scale(1.06);
+    color: #ffffff;
 }
 
 .trust-logo-item svg {
@@ -3107,36 +3113,108 @@ body.in-editor-mode {
     transition: transform 0.2s;
 }
 
-.trust-logo-item:hover svg {
-    transform: scale(1.12);
+.trust-brand-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: inherit;
+    white-space: nowrap;
 }
 
-.company-logo {
-    font-size: 1.05rem;
+.font-segoe {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.font-meta {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #e2e8f0;
+    letter-spacing: -0.4px;
+}
+
+.font-nvidia {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
     letter-spacing: 0.5px;
 }
 
-.school-logo {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #cbd5e1;
-    font-style: italic;
-    font-family: serif;
+.font-perplexity {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: -0.3px;
 }
 
-.trust-counter-badge {
-    margin-top: 2.8rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.85rem;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 8px 20px;
-    border-radius: 9999px;
+.font-samsung {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.font-walmart {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.walmart-spark {
+    margin-left: -5px;
+}
+
+.font-paypal {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1.28rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: -0.5px;
+}
+
+.stacked-uni {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    line-height: 1.08;
+}
+
+.uni-top {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.uni-sub {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.7px;
+    opacity: 0.85;
+}
+
+.font-yale {
+    font-family: 'Times New Roman', Times, 'Georgia', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.font-stanford {
+    font-family: 'Times New Roman', Times, 'Georgia', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.trust-subtext {
+    margin-top: 3.2rem;
+    font-size: 0.88rem;
+    color: #64748b;
+    font-weight: 500;
+    letter-spacing: 0.2px;
 }
 
 /* Features Section */
@@ -3937,14 +4015,11 @@ body.in-editor-mode {
         font-size: 0.68rem;
     }
     .trust-logos-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.25rem 0.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem 1rem;
     }
-    .company-logo {
-        font-size: 0.95rem;
-    }
-    .school-logo {
-        font-size: 0.85rem;
+    .trust-brand-text {
+        font-size: 0.98rem;
     }
     .showcase-cta-row {
         flex-direction: column;
@@ -4018,5 +4093,12 @@ body.in-editor-mode {
         border-radius: 14px;
         padding: 8px 14px;
         gap: 8px;
+    }
+    .trust-logos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.8rem 0.8rem;
+    }
+    .trust-brand-text {
+        font-size: 0.92rem;
     }
 }
