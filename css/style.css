@@ -3069,152 +3069,60 @@ body.in-editor-mode {
 }
 
 .home-trust-container {
-    max-width: 1050px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
 .trust-heading {
-    font-size: 0.95rem;
+    font-size: 1.15rem;
     font-weight: 500;
     color: #94a3b8;
-    margin-bottom: 3.2rem;
-    letter-spacing: 0.2px;
+    margin-bottom: 2.8rem;
+    letter-spacing: -0.2px;
 }
 
 .trust-logos-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 3.2rem 1.5rem;
+    gap: 1.5rem 1.2rem;
     align-items: center;
     justify-items: center;
 }
 
-.trust-logo-item {
-    display: inline-flex;
+.trust-logo-box {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    color: #f1f5f9;
-    opacity: 0.88;
-    transition: opacity 0.2s, transform 0.2s, color 0.2s;
-    user-select: none;
-    cursor: default;
-    height: 32px;
+    padding: 0.8rem 0.6rem;
+    width: 100%;
+    height: 64px;
+    transition: transform 0.2s ease;
 }
 
-.trust-logo-item:hover {
+.trust-logo-img {
+    max-width: 135px;
+    max-height: 38px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.82;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    user-select: none;
+    pointer-events: auto;
+}
+
+.trust-logo-box:hover .trust-logo-img {
     opacity: 1;
     transform: scale(1.06);
-    color: #ffffff;
-}
-
-.trust-logo-item svg {
-    flex-shrink: 0;
-    transition: transform 0.2s;
-}
-
-.trust-brand-text {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: inherit;
-    white-space: nowrap;
-}
-
-.font-segoe {
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-    font-size: 1.15rem;
-    font-weight: 600;
-}
-
-.font-meta {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.4px;
-}
-
-.font-nvidia {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.05rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-}
-
-.font-perplexity {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: -0.3px;
-}
-
-.font-samsung {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.font-walmart {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-}
-
-.walmart-spark {
-    margin-left: -5px;
-}
-
-.font-paypal {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 1.28rem;
-    font-weight: 800;
-    font-style: italic;
-    letter-spacing: -0.5px;
-}
-
-.stacked-uni {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    line-height: 1.08;
-}
-
-.uni-top {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-}
-
-.uni-sub {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    font-size: 0.58rem;
-    font-weight: 500;
-    letter-spacing: 0.7px;
-    opacity: 0.85;
-}
-
-.font-yale {
-    font-family: 'Times New Roman', Times, 'Georgia', serif;
-    font-size: 1.55rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.font-stanford {
-    font-family: 'Times New Roman', Times, 'Georgia', serif;
-    font-size: 1.35rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
 }
 
 .trust-subtext {
-    margin-top: 3.2rem;
-    font-size: 0.88rem;
+    margin-top: 2.8rem;
+    font-size: 1.05rem;
     color: #64748b;
     font-weight: 500;
-    letter-spacing: 0.2px;
+    letter-spacing: -0.2px;
 }
 
 /* Features Section */
@@ -4016,10 +3924,15 @@ body.in-editor-mode {
     }
     .trust-logos-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 2rem 1rem;
+        gap: 1.2rem 0.8rem;
     }
-    .trust-brand-text {
-        font-size: 0.98rem;
+    .trust-logo-box {
+        height: 52px;
+        padding: 0.5rem;
+    }
+    .trust-logo-img {
+        max-height: 30px;
+        max-width: 110px;
     }
     .showcase-cta-row {
         flex-direction: column;
@@ -4096,9 +4009,14 @@ body.in-editor-mode {
     }
     .trust-logos-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.8rem 0.8rem;
+        gap: 1rem 0.6rem;
     }
-    .trust-brand-text {
-        font-size: 0.92rem;
+    .trust-logo-box {
+        height: 48px;
+        padding: 0.4rem;
+    }
+    .trust-logo-img {
+        max-height: 28px;
+        max-width: 95px;
     }
 }
