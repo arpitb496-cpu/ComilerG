@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lastErrorOutput: '',
         lastFixedCode: null,
         files: [],
-        activeFileId: null
+        activeFileId: null,
+        activeInteractiveSessionId: null,
+        interactivePollInterval: null
     };
 
     // --- Core Instances ---
@@ -663,6 +665,36 @@ document.addEventListener('DOMContentLoaded', () => {
             switchTab('output');
         }
 
+        // 1. Try Live Interactive Execution (C, C++, Python, Java, JS)
+        const isInteractiveCandidate = ['c', 'cpp', 'python', 'python3', 'py', 'java', 'javascript', 'js', 'node'].includes(state.currentLanguage);
+        if (isInteractiveCandidate) {
+            try {
+                const interactiveRes = await fetch('/api/run-interactive', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        language: state.currentLanguage,
+                        code,
+                        files: filesPayload
+                    })
+                });
+                const interactData = await interactiveRes.json();
+                if (interactData && interactData.supported) {
+                    if (interactData.compileError) {
+                        handleExecutionError(interactData.output || 'Compilation failed.', code);
+                        return;
+                    }
+                    if (interactData.isSuccess && interactData.sessionId) {
+                        startInteractiveConsole(interactData.sessionId, code);
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('Interactive execution init error, falling back to batch runner:', err);
+            }
+        }
+
+        // 2. Standard Batch Execution Fallback
         try {
             const result = await executor.execute({
                 languageKey: state.currentLanguage,
@@ -753,49 +785,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 state.lastErrorOutput = '';
             } else {
-                if (statusBadge) {
-                    statusBadge.textContent = result.statusDescription || 'ERROR';
-                    statusBadge.className = 'status-badge error';
-                }
-
-                let errCombined = (result.compileOutput ? result.compileOutput + '\n' : '') + (result.stderr || '');
-                if (errCombined.length > 50000) {
-                    errCombined = errCombined.slice(0, 50000) + '\n\n... [Error output truncated for performance]';
-                }
-                state.lastErrorOutput = errCombined || result.statusDescription || 'Runtime error occurred';
-
-                let outputHtml = '';
-                if (result.stdout) {
-                    let st = result.stdout;
-                    if (st.length > 50000) st = st.slice(0, 50000) + '\n... [Output truncated]';
-                    outputHtml += `<span class="stdout">${escapeHtml(st)}</span>\n`;
-                }
-                outputHtml += `<div class="stderr">${escapeHtml(state.lastErrorOutput)}</div>`;
-                if (outputScreen) outputScreen.innerHTML = outputHtml;
-
-                // Trigger Tactile Error Animations & Banner
-                if (terminalPane) terminalPane.classList.add('has-error');
-                if (aiAssistBtn) aiAssistBtn.classList.add('pulse-attention');
-                if (bannerDebugBtn) bannerDebugBtn.classList.add('pulse-attention');
-                if (aiDebugBanner) aiDebugBanner.style.display = 'flex';
-
-                const quickDiagnosis = aiDebugger.smartAnalyze({
-                    language: state.currentLanguage,
+                handleExecutionError(
+                    (result.compileOutput ? result.compileOutput + '\n' : '') + (result.stderr || '') || result.statusDescription || 'Runtime error occurred',
                     code,
-                    errorOutput: state.lastErrorOutput
-                });
-
-                if (quickDiagnosis.line) {
-                    editorManager.highlightErrorLine(quickDiagnosis.line);
-                }
-
-                if (quickDiagnosis.fixedCode && quickDiagnosis.fixedCode !== code) {
-                    state.lastFixedCode = quickDiagnosis.fixedCode;
-                    if (bannerQuickFixBtn) {
-                        bannerQuickFixBtn.style.display = 'flex';
-                        bannerQuickFixBtn.classList.add('pulse-attention');
-                    }
-                }
+                    result.stdout
+                );
             }
         } catch (err) {
             if (statusBadge) {
@@ -805,18 +799,241 @@ document.addEventListener('DOMContentLoaded', () => {
             if (terminalPane) terminalPane.classList.add('has-error');
             if (outputScreen) outputScreen.innerHTML = `<div class="stderr">Execution error: ${escapeHtml(err.message)}</div>`;
         } finally {
-            state.isExecuting = false;
-            if (runBtn) {
-                runBtn.classList.remove('loading');
-                const label = runBtn.querySelector('span');
-                if (label) label.textContent = 'Run';
+            if (!state.activeInteractiveSessionId) {
+                state.isExecuting = false;
+                resetRunButtonState();
             }
         }
+    }
+
+    // ── Live Interactive Console Implementation ──────────────────────────────
+    function startInteractiveConsole(sessionId, code) {
+        state.activeInteractiveSessionId = sessionId;
+        state.isExecuting = true;
+
+        if (runBtn) {
+            runBtn.classList.remove('loading');
+            runBtn.classList.add('is-running');
+            const label = runBtn.querySelector('span');
+            if (label) label.textContent = 'Stop ⬛';
+            runBtn.title = 'Stop Execution';
+        }
+
+        if (statusBadge) {
+            statusBadge.textContent = 'RUNNING';
+            statusBadge.className = 'status-badge running';
+        }
+
+        if (outputScreen) {
+            outputScreen.innerHTML = `
+<div class="interactive-terminal-wrap" id="interactiveTerminalWrap">
+    <span class="interactive-terminal-history" id="terminalHistory"></span>
+    <span class="interactive-terminal-active" id="terminalActiveLine">
+        <span class="interactive-terminal-prompt" id="terminalActivePrompt"></span>
+        <input type="text" class="interactive-terminal-input" id="terminalActiveInput" autocomplete="off" spellcheck="false" autofocus />
+    </span>
+</div>`;
+        }
+
+        const terminalActiveInput = document.getElementById('terminalActiveInput');
+        const terminalActivePrompt = document.getElementById('terminalActivePrompt');
+        const terminalHistory = document.getElementById('terminalHistory');
+        const terminalActiveLine = document.getElementById('terminalActiveLine');
+
+        if (terminalActiveInput) {
+            setTimeout(() => terminalActiveInput.focus(), 50);
+            terminalActiveInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const inputVal = terminalActiveInput.value;
+                    terminalActiveInput.value = '';
+
+                    if (terminalHistory && terminalActivePrompt) {
+                        terminalHistory.textContent += terminalActivePrompt.textContent + inputVal + '\n';
+                        terminalActivePrompt.textContent = '';
+                    }
+
+                    fetch('/api/session/write', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId: state.activeInteractiveSessionId,
+                            input: inputVal + '\n'
+                        })
+                    }).catch(console.error);
+
+                    if (outputScreen) outputScreen.scrollTop = outputScreen.scrollHeight;
+                }
+            });
+        }
+
+        // Clicking anywhere inside terminal pane automatically focuses input
+        if (outputScreen) {
+            outputScreen.onclick = () => {
+                const inp = document.getElementById('terminalActiveInput');
+                if (inp && state.activeInteractiveSessionId) {
+                    inp.focus();
+                }
+            };
+        }
+
+        // Auto-send STDIN tab content if user pre-filled it
+        const prefilledStdin = stdinInput ? stdinInput.value : '';
+        if (prefilledStdin && prefilledStdin.trim()) {
+            setTimeout(() => {
+                if (state.activeInteractiveSessionId) {
+                    fetch('/api/session/write', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sessionId: state.activeInteractiveSessionId,
+                            input: prefilledStdin + (prefilledStdin.endsWith('\n') ? '' : '\n')
+                        })
+                    }).catch(console.error);
+                }
+            }, 80);
+        }
+
+        clearInterval(state.interactivePollInterval);
+        state.interactivePollInterval = setInterval(async () => {
+            if (!state.activeInteractiveSessionId) {
+                clearInterval(state.interactivePollInterval);
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/session/poll?id=${state.activeInteractiveSessionId}`);
+                if (!res.ok) return;
+                const data = await res.json();
+
+                if (data.output) {
+                    if (terminalActivePrompt) {
+                        terminalActivePrompt.textContent += data.output;
+                    }
+                    if (outputScreen) outputScreen.scrollTop = outputScreen.scrollHeight;
+                    const inp = document.getElementById('terminalActiveInput');
+                    if (inp) inp.focus();
+                }
+
+                if (execTime && data.elapsedMs) {
+                    execTime.textContent = `${data.elapsedMs} ms`;
+                }
+
+                if (data.isDone) {
+                    clearInterval(state.interactivePollInterval);
+                    state.interactivePollInterval = null;
+
+                    if (terminalHistory && terminalActivePrompt && terminalActivePrompt.textContent) {
+                        terminalHistory.textContent += terminalActivePrompt.textContent;
+                        terminalActivePrompt.textContent = '';
+                    }
+                    if (terminalActiveLine) {
+                        terminalActiveLine.style.display = 'none';
+                    }
+
+                    const isSuccess = (data.exitCode === 0 || data.exitCode === null);
+                    if (statusBadge) {
+                        statusBadge.textContent = isSuccess ? 'ACCEPTED (TURBO)' : 'EXIT ' + data.exitCode;
+                        statusBadge.className = isSuccess ? 'status-badge turbo' : 'status-badge error';
+                    }
+
+                    resetRunButtonState();
+                    state.activeInteractiveSessionId = null;
+                    state.isExecuting = false;
+                }
+            } catch (err) {
+                console.error('Interactive poll error:', err);
+            }
+        }, 60);
+    }
+
+    async function stopInteractiveExecution() {
+        const sid = state.activeInteractiveSessionId;
+        clearInterval(state.interactivePollInterval);
+        state.interactivePollInterval = null;
+        state.activeInteractiveSessionId = null;
+        state.isExecuting = false;
+
+        resetRunButtonState();
+
+        const terminalActiveLine = document.getElementById('terminalActiveLine');
+        const terminalHistory = document.getElementById('terminalHistory');
+        if (terminalActiveLine) terminalActiveLine.style.display = 'none';
+        if (terminalHistory) {
+            terminalHistory.textContent += '\n[Execution stopped by user]';
+        }
+        if (statusBadge) {
+            statusBadge.textContent = 'STOPPED';
+            statusBadge.className = 'status-badge error';
+        }
+
+        if (sid) {
+            try {
+                await fetch('/api/session/stop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: sid })
+                });
+            } catch (e) {}
+        }
+        showToast('Execution stopped.', 'info');
+    }
+
+    function resetRunButtonState() {
+        if (runBtn) {
+            runBtn.classList.remove('is-running');
+            runBtn.classList.remove('loading');
+            const label = runBtn.querySelector('span');
+            if (label) label.textContent = 'Run';
+            runBtn.title = 'Execute Code (Ctrl + Enter)';
+        }
+    }
+
+    function handleExecutionError(errorText, code, stdout = '') {
+        if (statusBadge) {
+            statusBadge.textContent = 'ERROR';
+            statusBadge.className = 'status-badge error';
+        }
+        state.lastErrorOutput = errorText;
+
+        let outputHtml = '';
+        if (stdout) {
+            outputHtml += `<span class="stdout">${escapeHtml(stdout)}</span>\n`;
+        }
+        outputHtml += `<div class="stderr">${escapeHtml(errorText)}</div>`;
+        if (outputScreen) outputScreen.innerHTML = outputHtml;
+
+        if (terminalPane) terminalPane.classList.add('has-error');
+        if (aiAssistBtn) aiAssistBtn.classList.add('pulse-attention');
+        if (bannerDebugBtn) bannerDebugBtn.classList.add('pulse-attention');
+        if (aiDebugBanner) aiDebugBanner.style.display = 'flex';
+
+        const quickDiagnosis = aiDebugger.smartAnalyze({
+            language: state.currentLanguage,
+            code,
+            errorOutput: state.lastErrorOutput
+        });
+        if (quickDiagnosis.line) {
+            editorManager.highlightErrorLine(quickDiagnosis.line);
+        }
+        if (quickDiagnosis.fixedCode && quickDiagnosis.fixedCode !== code) {
+            state.lastFixedCode = quickDiagnosis.fixedCode;
+            if (bannerQuickFixBtn) {
+                bannerQuickFixBtn.style.display = 'flex';
+                bannerQuickFixBtn.classList.add('pulse-attention');
+            }
+        }
+        resetRunButtonState();
+        state.isExecuting = false;
     }
 
     if (runBtn) {
         runBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            if (state.activeInteractiveSessionId) {
+                stopInteractiveExecution();
+                return;
+            }
             if (bgCanvas) bgCanvas.burst();
             runBtn.classList.remove('pulse-suggest');
             runCode();

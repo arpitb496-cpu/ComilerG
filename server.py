@@ -17,11 +17,16 @@ import re
 import subprocess
 import tempfile
 import time
+import uuid
+import threading
+import queue
 
 DEFAULT_PORT = 3000
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 USER_DATA_DIR = os.path.join(DIRECTORY, 'user_data')
 os.makedirs(USER_DATA_DIR, exist_ok=True)
+
+INTERACTIVE_SESSIONS = {}
 
 ONECOMPILER_MAP = {
     'c': {'name': 'C', 'mode': 'c', 'ext': 'c', 'main': 'main.c'},
@@ -91,6 +96,302 @@ NODE_BIN = _find_binary([
     r'C:\Program Files\nodejs\node.exe',
     r'C:\Program Files (x86)\nodejs\node.exe',
 ])
+
+
+
+def start_interactive_session(lang, code, files):
+    # Cleanup any old sessions running for > 5 minutes
+    now = time.time()
+    for sid in list(INTERACTIVE_SESSIONS.keys()):
+        s = INTERACTIVE_SESSIONS.get(sid)
+        if s and (now - s.get('start_time', now) > 300):
+            stop_interactive_session(sid)
+
+    if lang in ('c', 'c++', 'cpp'):
+        return _spawn_c_interactive(code, files, is_cpp=(lang in ('cpp', 'c++')))
+    elif lang in ('python', 'python3', 'py'):
+        return _spawn_python_interactive(code, files)
+    elif lang == 'java' and JAVAC_BIN and JAVA_BIN:
+        return _spawn_java_interactive(code, files)
+    elif lang in ('javascript', 'js', 'node') and NODE_BIN:
+        return _spawn_node_interactive(code, files)
+    else:
+        return {'supported': False, 'reason': 'Interactive mode not available for this language/environment'}
+
+
+def _spawn_c_interactive(code, files, is_cpp=False):
+    compiler = GPP_BIN if is_cpp else GCC_BIN
+    if not compiler or not os.path.exists(compiler):
+        return {'supported': False, 'reason': 'C/C++ compiler not available'}
+
+    td = tempfile.TemporaryDirectory()
+    src_ext = 'cpp' if is_cpp else 'c'
+    src_name = f'main.{src_ext}'
+    src_path = os.path.join(td.name, src_name)
+    exe_path = os.path.join(td.name, 'main.exe')
+
+    # Unbuffered stdout so printf/cout flushes immediately to terminal without waiting for newline
+    unbuffered_header = """
+#ifndef __DISABLE_BUFFERING_INJECTED
+#define __DISABLE_BUFFERING_INJECTED
+#include <stdio.h>
+#ifdef __cplusplus
+#include <iostream>
+#endif
+__attribute__((constructor)) void __disable_buffering_init(void) {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+#ifdef __cplusplus
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+#endif
+}
+#endif
+"""
+    final_code = unbuffered_header + "\n" + code
+    with open(src_path, 'w', encoding='utf-8') as f:
+        f.write(final_code)
+
+    if files and len(files) > 1:
+        for fl in files:
+            fn = fl.get('name', '')
+            if fn and fn != src_name:
+                with open(os.path.join(td.name, fn), 'w', encoding='utf-8') as extra_f:
+                    extra_f.write(fl.get('content', ''))
+
+    env = os.environ.copy()
+    mingw_dir = os.path.dirname(compiler)
+    env['PATH'] = mingw_dir + ';' + env.get('PATH', '')
+
+    comp_args = [compiler, '-O2', '-static-libgcc', src_path, '-o', exe_path]
+    if is_cpp:
+        comp_args.insert(3, '-static-libstdc++')
+
+    try:
+        comp = subprocess.run(comp_args, capture_output=True, text=True, env=env, timeout=12)
+    except subprocess.TimeoutExpired:
+        td.cleanup()
+        return {'supported': True, 'isSuccess': False, 'compileError': True, 'output': 'Compilation timed out after 12s.'}
+
+    if comp.returncode != 0:
+        td.cleanup()
+        return {
+            'supported': True,
+            'isSuccess': False,
+            'compileError': True,
+            'output': comp.stderr or 'Compilation error.'
+        }
+
+    try:
+        proc = subprocess.Popen(
+            [exe_path],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=0,
+            env=env,
+            cwd=td.name
+        )
+    except Exception as e:
+        td.cleanup()
+        return {'supported': True, 'isSuccess': False, 'compileError': False, 'output': f'Failed to launch executable: {e}'}
+
+    return _register_session(proc, td, 'cpp' if is_cpp else 'c')
+
+
+def _spawn_python_interactive(code, files):
+    td = tempfile.TemporaryDirectory()
+    src_path = os.path.join(td.name, 'main.py')
+    with open(src_path, 'w', encoding='utf-8') as f:
+        f.write(code)
+
+    if files and len(files) > 1:
+        for fl in files:
+            fn = fl.get('name', '')
+            if fn and fn != 'main.py':
+                with open(os.path.join(td.name, fn), 'w', encoding='utf-8') as extra_f:
+                    extra_f.write(fl.get('content', ''))
+
+    env = os.environ.copy()
+    env['PYTHONUNBUFFERED'] = '1'
+
+    try:
+        proc = subprocess.Popen(
+            [sys.executable, '-u', src_path],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=0,
+            env=env,
+            cwd=td.name
+        )
+    except Exception as e:
+        td.cleanup()
+        return {'supported': True, 'isSuccess': False, 'compileError': False, 'output': f'Failed to launch Python: {e}'}
+
+    return _register_session(proc, td, 'python')
+
+
+def _spawn_java_interactive(code, files):
+    td = tempfile.TemporaryDirectory()
+    src_path = os.path.join(td.name, 'Main.java')
+    with open(src_path, 'w', encoding='utf-8') as f:
+        f.write(code)
+
+    comp = subprocess.run([JAVAC_BIN, src_path], capture_output=True, text=True, timeout=12)
+    if comp.returncode != 0:
+        td.cleanup()
+        return {'supported': True, 'isSuccess': False, 'compileError': True, 'output': comp.stderr or 'Java compilation error.'}
+
+    try:
+        proc = subprocess.Popen(
+            [JAVA_BIN, 'Main'],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=0,
+            cwd=td.name
+        )
+    except Exception as e:
+        td.cleanup()
+        return {'supported': True, 'isSuccess': False, 'compileError': False, 'output': f'Failed to launch Java: {e}'}
+
+    return _register_session(proc, td, 'java')
+
+
+def _spawn_node_interactive(code, files):
+    td = tempfile.TemporaryDirectory()
+    src_path = os.path.join(td.name, 'main.js')
+    with open(src_path, 'w', encoding='utf-8') as f:
+        f.write(code)
+
+    try:
+        proc = subprocess.Popen(
+            [NODE_BIN, src_path],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=0,
+            cwd=td.name
+        )
+    except Exception as e:
+        td.cleanup()
+        return {'supported': True, 'isSuccess': False, 'compileError': False, 'output': f'Failed to launch Node.js: {e}'}
+
+    return _register_session(proc, td, 'javascript')
+
+
+def _register_session(proc, td, lang):
+    session_id = uuid.uuid4().hex
+    q = queue.Queue()
+
+    def reader():
+        try:
+            while True:
+                ch = proc.stdout.read(1)
+                if not ch:
+                    break
+                q.put(ch)
+        except Exception:
+            pass
+
+    t = threading.Thread(target=reader, daemon=True)
+    t.start()
+
+    INTERACTIVE_SESSIONS[session_id] = {
+        'proc': proc,
+        'queue': q,
+        'temp_dir': td,
+        'thread': t,
+        'start_time': time.time(),
+        'lang': lang
+    }
+
+    return {
+        'supported': True,
+        'isSuccess': True,
+        'sessionId': session_id,
+        'status': 'running'
+    }
+
+
+def poll_interactive_session(session_id):
+    session = INTERACTIVE_SESSIONS.get(session_id)
+    if not session:
+        return {'isDone': True, 'output': '', 'exitCode': 0}
+
+    q = session['queue']
+    proc = session['proc']
+
+    parts = []
+    while not q.empty():
+        try:
+            parts.append(q.get_nowait())
+        except queue.Empty:
+            break
+
+    output = ''.join(parts)
+    is_done = False
+    exit_code = None
+
+    if proc.poll() is not None:
+        time.sleep(0.05)
+        while not q.empty():
+            try:
+                parts.append(q.get_nowait())
+            except queue.Empty:
+                break
+        output = ''.join(parts)
+        is_done = True
+        exit_code = proc.returncode
+        try:
+            session['temp_dir'].cleanup()
+        except Exception:
+            pass
+        INTERACTIVE_SESSIONS.pop(session_id, None)
+
+    elapsed_ms = round((time.time() - session['start_time']) * 1000)
+    return {
+        'output': output,
+        'isDone': is_done,
+        'exitCode': exit_code,
+        'elapsedMs': elapsed_ms
+    }
+
+
+def write_interactive_session(session_id, user_input):
+    session = INTERACTIVE_SESSIONS.get(session_id)
+    if not session:
+        return {'error': 'Session not found'}
+    proc = session['proc']
+    try:
+        proc.stdin.write(user_input)
+        proc.stdin.flush()
+        return {'success': True}
+    except Exception as e:
+        return {'error': str(e)}
+
+
+def stop_interactive_session(session_id):
+    session = INTERACTIVE_SESSIONS.get(session_id)
+    if not session:
+        return {'success': True}
+    proc = session['proc']
+    try:
+        proc.terminate()
+        proc.kill()
+    except Exception:
+        pass
+    try:
+        session['temp_dir'].cleanup()
+    except Exception:
+        pass
+    INTERACTIVE_SESSIONS.pop(session_id, None)
+    return {'success': True}
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -166,10 +467,86 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(res)
             return
 
+        elif parsed.path == '/api/session/poll':
+            qs = urllib.parse.parse_qs(parsed.query)
+            session_id = qs.get('id', [''])[0]
+            data = poll_interactive_session(session_id)
+            res = json.dumps(data).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(res)))
+            self.end_headers()
+            self.wfile.write(res)
+            return
+
         super().do_GET()
 
     def do_POST(self):
-        if self.path == '/api/run':
+        if self.path == '/api/run-interactive':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                data = json.loads(body)
+            except Exception:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'{"error": "Invalid JSON"}')
+                return
+
+            lang = data.get('language', '').lower()
+            code = data.get('code', '')
+            files = data.get('files', [])
+
+            result = start_interactive_session(lang, code, files)
+            response_bytes = json.dumps(result).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(response_bytes)))
+            self.end_headers()
+            self.wfile.write(response_bytes)
+            return
+
+        elif self.path == '/api/session/write':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                data = json.loads(body)
+            except Exception:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'{"error": "Invalid JSON"}')
+                return
+
+            session_id = data.get('sessionId') or data.get('id', '')
+            user_input = data.get('input', '')
+            result = write_interactive_session(session_id, user_input)
+            response_bytes = json.dumps(result).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(response_bytes)))
+            self.end_headers()
+            self.wfile.write(response_bytes)
+            return
+
+        elif self.path == '/api/session/stop':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                data = json.loads(body)
+            except Exception:
+                data = {}
+
+            session_id = data.get('sessionId') or data.get('id', '')
+            result = stop_interactive_session(session_id)
+            response_bytes = json.dumps(result).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(response_bytes)))
+            self.end_headers()
+            self.wfile.write(response_bytes)
+            return
+
+        elif self.path == '/api/run':
             content_length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(content_length).decode('utf-8')
             try:

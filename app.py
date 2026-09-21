@@ -13,6 +13,10 @@ import re
 import subprocess
 import tempfile
 import time
+import uuid
+import threading
+import queue
+import shutil
 import requests as http_requests
 
 app = Flask(__name__, static_folder='.', static_url_path='')
@@ -21,6 +25,8 @@ CORS(app)
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 USER_DATA_DIR = os.path.join(DIRECTORY, 'user_data')
 os.makedirs(USER_DATA_DIR, exist_ok=True)
+
+INTERACTIVE_SESSIONS = {}
 
 # ── Language Configurations ──────────────────────────────────────────────────
 ONECOMPILER_MAP = {
@@ -74,6 +80,223 @@ def serve_assets(filename):
 @app.route('/health')
 def health():
     return jsonify({'status': 'ok', 'engine': 'CompilerG Production'}), 200
+
+# ── Interactive Console Execution API ───────────────────────────────────────
+@app.route('/api/run-interactive', methods=['POST'])
+def run_interactive():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({'error': 'Invalid JSON'}), 400
+
+    lang = data.get('language', '').lower()
+    code = data.get('code', '')
+    files = data.get('files', [])
+
+    # Cleanup old sessions
+    now = time.time()
+    for sid in list(INTERACTIVE_SESSIONS.keys()):
+        s = INTERACTIVE_SESSIONS.get(sid)
+        if s and (now - s.get('start_time', now) > 300):
+            stop_app_session(sid)
+
+    gcc_bin = shutil.which('gcc')
+    gpp_bin = shutil.which('g++')
+    node_bin = shutil.which('node')
+
+    if lang in ('c', 'c++', 'cpp') and (gpp_bin if lang in ('cpp', 'c++') else gcc_bin):
+        is_cpp = lang in ('cpp', 'c++')
+        compiler = gpp_bin if is_cpp else gcc_bin
+        td = tempfile.TemporaryDirectory()
+        src_ext = 'cpp' if is_cpp else 'c'
+        src_name = f'main.{src_ext}'
+        src_path = os.path.join(td.name, src_name)
+        exe_path = os.path.join(td.name, 'main.exe' if os.name == 'nt' else 'main')
+
+        unbuffered_header = """
+#ifndef __DISABLE_BUFFERING_INJECTED
+#define __DISABLE_BUFFERING_INJECTED
+#include <stdio.h>
+#ifdef __cplusplus
+#include <iostream>
+#endif
+__attribute__((constructor)) void __disable_buffering_init(void) {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+#ifdef __cplusplus
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+#endif
+}
+#endif
+"""
+        with open(src_path, 'w', encoding='utf-8') as f:
+            f.write(unbuffered_header + '\n' + code)
+
+        if files and len(files) > 1:
+            for fl in files:
+                fn = fl.get('name', '')
+                if fn and fn != src_name:
+                    with open(os.path.join(td.name, fn), 'w', encoding='utf-8') as extra_f:
+                        extra_f.write(fl.get('content', ''))
+
+        comp_args = [compiler, '-O2', src_path, '-o', exe_path]
+        try:
+            comp = subprocess.run(comp_args, capture_output=True, text=True, timeout=12)
+        except subprocess.TimeoutExpired:
+            td.cleanup()
+            return jsonify({'supported': True, 'isSuccess': False, 'compileError': True, 'output': 'Compilation timed out after 12s.'})
+
+        if comp.returncode != 0:
+            td.cleanup()
+            return jsonify({'supported': True, 'isSuccess': False, 'compileError': True, 'output': comp.stderr or 'Compilation error.'})
+
+        try:
+            proc = subprocess.Popen([exe_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=0, cwd=td.name)
+            return jsonify(register_app_session(proc, td, lang))
+        except Exception as e:
+            td.cleanup()
+            return jsonify({'supported': True, 'isSuccess': False, 'compileError': False, 'output': str(e)})
+
+    elif lang in ('python', 'python3', 'py'):
+        td = tempfile.TemporaryDirectory()
+        src_path = os.path.join(td.name, 'main.py')
+        with open(src_path, 'w', encoding='utf-8') as f:
+            f.write(code)
+
+        if files and len(files) > 1:
+            for fl in files:
+                fn = fl.get('name', '')
+                if fn and fn != 'main.py':
+                    with open(os.path.join(td.name, fn), 'w', encoding='utf-8') as extra_f:
+                        extra_f.write(fl.get('content', ''))
+
+        env = os.environ.copy()
+        env['PYTHONUNBUFFERED'] = '1'
+        try:
+            proc = subprocess.Popen([sys.executable, '-u', src_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=0, env=env, cwd=td.name)
+            return jsonify(register_app_session(proc, td, 'python'))
+        except Exception as e:
+            td.cleanup()
+            return jsonify({'supported': True, 'isSuccess': False, 'compileError': False, 'output': str(e)})
+
+    elif lang in ('javascript', 'js', 'node') and node_bin:
+        td = tempfile.TemporaryDirectory()
+        src_path = os.path.join(td.name, 'main.js')
+        with open(src_path, 'w', encoding='utf-8') as f:
+            f.write(code)
+
+        try:
+            proc = subprocess.Popen([node_bin, src_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=0, cwd=td.name)
+            return jsonify(register_app_session(proc, td, 'javascript'))
+        except Exception as e:
+            td.cleanup()
+            return jsonify({'supported': True, 'isSuccess': False, 'compileError': False, 'output': str(e)})
+
+    return jsonify({'supported': False, 'reason': 'Interactive execution not available locally'})
+
+
+def register_app_session(proc, td, lang):
+    session_id = uuid.uuid4().hex
+    q = queue.Queue()
+
+    def reader():
+        try:
+            while True:
+                ch = proc.stdout.read(1)
+                if not ch: break
+                q.put(ch)
+        except Exception:
+            pass
+
+    t = threading.Thread(target=reader, daemon=True)
+    t.start()
+
+    INTERACTIVE_SESSIONS[session_id] = {
+        'proc': proc,
+        'queue': q,
+        'temp_dir': td,
+        'thread': t,
+        'start_time': time.time(),
+        'lang': lang
+    }
+    return {'supported': True, 'isSuccess': True, 'sessionId': session_id, 'status': 'running'}
+
+
+@app.route('/api/session/poll', methods=['GET'])
+def app_session_poll():
+    session_id = request.args.get('id', '')
+    session = INTERACTIVE_SESSIONS.get(session_id)
+    if not session:
+        return jsonify({'isDone': True, 'output': '', 'exitCode': 0})
+
+    q = session['queue']
+    proc = session['proc']
+    parts = []
+    while not q.empty():
+        try: parts.append(q.get_nowait())
+        except queue.Empty: break
+
+    output = ''.join(parts)
+    is_done = False
+    exit_code = None
+
+    if proc.poll() is not None:
+        time.sleep(0.05)
+        while not q.empty():
+            try: parts.append(q.get_nowait())
+            except queue.Empty: break
+        output = ''.join(parts)
+        is_done = True
+        exit_code = proc.returncode
+        try: session['temp_dir'].cleanup()
+        except Exception: pass
+        INTERACTIVE_SESSIONS.pop(session_id, None)
+
+    elapsed_ms = round((time.time() - session['start_time']) * 1000)
+    return jsonify({'output': output, 'isDone': is_done, 'exitCode': exit_code, 'elapsedMs': elapsed_ms})
+
+
+@app.route('/api/session/write', methods=['POST'])
+def app_session_write():
+    data = request.get_json(silent=True) or {}
+    session_id = data.get('sessionId') or data.get('id', '')
+    user_input = data.get('input', '')
+    session = INTERACTIVE_SESSIONS.get(session_id)
+    if not session:
+        return jsonify({'error': 'Session not found'}), 404
+    try:
+        proc = session['proc']
+        proc.stdin.write(user_input)
+        proc.stdin.flush()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/session/stop', methods=['POST'])
+def app_session_stop():
+    data = request.get_json(silent=True) or {}
+    session_id = data.get('sessionId') or data.get('id', '')
+    return jsonify(stop_app_session(session_id))
+
+
+def stop_app_session(session_id):
+    session = INTERACTIVE_SESSIONS.get(session_id)
+    if not session:
+        return {'success': True}
+    proc = session['proc']
+    try:
+        proc.terminate()
+        proc.kill()
+    except Exception:
+        pass
+    try:
+        session['temp_dir'].cleanup()
+    except Exception:
+        pass
+    INTERACTIVE_SESSIONS.pop(session_id, None)
+    return {'success': True}
+
 
 # ── Code Execution API ───────────────────────────────────────────────────────
 @app.route('/api/run', methods=['POST'])
