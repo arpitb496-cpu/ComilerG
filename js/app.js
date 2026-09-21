@@ -2560,10 +2560,19 @@ int main() {
                 </div>
             `;
 
+            // Clicking card or Open button opens the code
             card.addEventListener('click', (e) => {
                 if (e.target.closest('[data-action="delete"]')) return;
                 loadSnippetIntoEditor(item);
             });
+
+            const openBtn = card.querySelector('[data-action="open"]');
+            if (openBtn) {
+                openBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    loadSnippetIntoEditor(item);
+                });
+            }
 
             const delBtn = card.querySelector('[data-action="delete"]');
             if (delBtn) {
@@ -2583,26 +2592,54 @@ int main() {
 
     function loadSnippetIntoEditor(snippet) {
         if (!snippet) return;
-        
-        if (snippet.language && snippet.language !== state.currentLanguage) {
-            setLanguage(snippet.language);
-        }
+        try {
+            // 1. Sync language state and UI
+            const targetLang = snippet.language;
+            if (targetLang && window.LANGUAGES && window.LANGUAGES[targetLang]) {
+                state.currentLanguage = targetLang;
+                localStorage.setItem('compilerg_lang', targetLang);
+                updateFileLabel(window.LANGUAGES[targetLang]);
+                syncLanguageUI(targetLang);
+            }
 
-        if (snippet.files && Array.isArray(snippet.files) && snippet.files.length > 0) {
-            state.files = JSON.parse(JSON.stringify(snippet.files));
-            state.activeFileId = state.files[0].id;
+            // 2. Restore multi-files or single code
+            if (snippet.files && Array.isArray(snippet.files) && snippet.files.length > 0) {
+                state.files = JSON.parse(JSON.stringify(snippet.files));
+                state.activeFileId = state.files[0].id;
+            } else {
+                const config = (window.LANGUAGES && window.LANGUAGES[state.currentLanguage]) || { filename: 'main.py' };
+                state.files = [{
+                    id: 'main',
+                    name: config.filename || 'main',
+                    content: snippet.code || '',
+                    isMain: true
+                }];
+                state.activeFileId = 'main';
+            }
+
             renderFileTabs();
-            editorManager.setCode(state.files[0].content || snippet.code || '');
-        } else if (snippet.code) {
-            editorManager.setCode(snippet.code);
+
+            // 3. Mount code in editor
+            const activeFile = state.files.find(f => f.id === state.activeFileId) || state.files[0];
+            const monacoLang = getMonacoLangFromFilename(activeFile.name);
+            editorManager.setLanguage(monacoLang);
+            editorManager.setCode(activeFile.content || snippet.code || '');
+            editorManager.clearDecorations();
+
+            // 4. Update active snippet tracker
+            state.activeSnippetId = snippet.id;
+            saveCurrentFiles();
+
+            // 5. Ensure editor view is visible
+            showEditorView();
+
+            // 6. Close modal
+            if (myCodesModal) myCodesModal.classList.remove('open');
+            showToast(`Loaded "${snippet.title}"! 🚀`, 'success');
+        } catch (err) {
+            console.error('Failed to load snippet:', err);
+            showToast('Could not load snippet into editor', 'error');
         }
-
-        state.activeSnippetId = snippet.id;
-        saveCurrentFiles();
-        showEditorView();
-
-        if (myCodesModal) myCodesModal.classList.remove('open');
-        showToast(`Loaded "${snippet.title}"! 🚀`, 'success');
     }
 
     function openMyCodesModal() {
