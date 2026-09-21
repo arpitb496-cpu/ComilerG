@@ -27,6 +27,47 @@ googleProvider.addScope('email');
 const githubProvider = new firebase.auth.GithubAuthProvider();
 githubProvider.addScope('user:email');
 
+// ── Generates crisp inline SVG avatar with initials ─────────────────────────
+function getInitialsAvatar(name) {
+    const clean = (name || 'User').trim();
+    const parts = clean.split(/\s+/).filter(Boolean);
+    const initials = parts.length >= 2 
+        ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+        : (clean.slice(0, 2).toUpperCase() || 'U');
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+        <defs>
+            <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffd43f"/>
+                <stop offset="100%" stop-color="#ff9800"/>
+            </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="32" fill="url(#avatarGrad)"/>
+        <text x="50%" y="53%" dominant-baseline="central" text-anchor="middle" fill="#120f22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="24">${initials}</text>
+    </svg>`;
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+function applyAvatarToImage(imgEl, user, displayName) {
+    if (!imgEl) return;
+    const fallbackSvg = getInitialsAvatar(displayName);
+    imgEl.referrerPolicy = 'no-referrer';
+    imgEl.setAttribute('referrerpolicy', 'no-referrer');
+    imgEl.crossOrigin = 'anonymous';
+    imgEl.onerror = function() {
+        this.onerror = null;
+        this.src = fallbackSvg;
+    };
+    if (user && user.photoURL) {
+        // Request higher resolution for crisp display
+        const photo = user.photoURL.replace(/=s\d+(-c)?$/, '=s128-c');
+        imgEl.src = photo;
+    } else {
+        imgEl.src = fallbackSvg;
+    }
+    imgEl.style.display = 'block';
+}
+
 // ── UI Elements ─────────────────────────────────────────────────────────────
 function getAuthElements() {
     return {
@@ -36,6 +77,9 @@ function getAuthElements() {
         navUserAvatar: document.getElementById('navUserAvatar'),
         navUserName: document.getElementById('navUserName'),
         navLogoutBtn: document.getElementById('navLogoutBtn'),
+        editorUserArea: document.getElementById('editorUserArea'),
+        editorUserAvatar: document.getElementById('editorUserAvatar'),
+        editorUserName: document.getElementById('editorUserName'),
         authModal: document.getElementById('authModal'),
         authForm: document.getElementById('authForm'),
         authEmail: document.getElementById('authEmail'),
@@ -121,40 +165,49 @@ function updateNavbarUI(user) {
         // User is signed in — hide sign-in/up buttons, show user area
         if (els.navSignInBtn) els.navSignInBtn.style.display = 'none';
         if (els.navSignUpBtn) els.navSignUpBtn.style.display = 'none';
+        
+        const displayName = user.displayName || user.email?.split('@')[0] || 'User';
+
+        // 1. Home Navbar User Area
         if (els.navUserArea) {
             els.navUserArea.style.display = 'flex';
-            const displayName = user.displayName || user.email?.split('@')[0] || 'User';
-            const photoURL = user.photoURL || '';
-
             if (els.navUserAvatar) {
-                if (photoURL) {
-                    els.navUserAvatar.src = photoURL;
-                    els.navUserAvatar.style.display = 'block';
-                } else {
-                    // Generate initial avatar
-                    els.navUserAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=ffd43f&color=120f22&bold=true&size=32`;
-                    els.navUserAvatar.style.display = 'block';
-                }
+                applyAvatarToImage(els.navUserAvatar, user, displayName);
             }
             if (els.navUserName) {
                 els.navUserName.textContent = displayName;
             }
         }
+
+        // 2. Editor Navbar User Area
+        if (els.editorUserArea) {
+            els.editorUserArea.style.display = 'flex';
+            if (els.editorUserAvatar) {
+                applyAvatarToImage(els.editorUserAvatar, user, displayName);
+            }
+            if (els.editorUserName) {
+                els.editorUserName.textContent = displayName;
+            }
+        }
     } else {
-        // No user — show sign-in/up buttons, hide user area
+        // No user — show sign-in/up buttons, hide user areas
         if (els.navSignInBtn) els.navSignInBtn.style.display = '';
         if (els.navSignUpBtn) els.navSignUpBtn.style.display = '';
         if (els.navUserArea) els.navUserArea.style.display = 'none';
+        if (els.editorUserArea) els.editorUserArea.style.display = 'none';
     }
 }
 
 // ── Auth State Listener ─────────────────────────────────────────────────────
 auth.onAuthStateChanged((user) => {
+    window.currentUser = user || null;
     updateNavbarUI(user);
     if (user) {
         console.log('[CompilerG Auth] Signed in as:', user.displayName || user.email);
+        window.dispatchEvent(new CustomEvent('compilerg:user-change', { detail: { user } }));
     } else {
         console.log('[CompilerG Auth] Signed out');
+        window.dispatchEvent(new CustomEvent('compilerg:user-change', { detail: { user: null } }));
     }
 });
 

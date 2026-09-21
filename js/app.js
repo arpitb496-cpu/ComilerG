@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const newFileModal = document.getElementById('newFileModal');
     const newFileNameInput = document.getElementById('newFileNameInput');
     const confirmAddFileBtn = document.getElementById('confirmAddFileBtn');
+    const editorSaveBadge = document.getElementById('editorSaveBadge');
+    const editorSaveLabel = document.getElementById('editorSaveLabel');
 
     const resetCodeBtn = document.getElementById('resetCodeBtn');
     const downloadCodeBtn = document.getElementById('downloadCodeBtn');
@@ -172,12 +174,37 @@ document.addEventListener('DOMContentLoaded', () => {
         return langMap[ext] || 'plaintext';
     }
 
-    // --- Multi-File Persistence & Management ---
+    // --- Multi-File Persistence & User Auto-Save Management ---
+    function updateAutoSaveStatus(status) {
+        if (!editorSaveBadge) return;
+        const iconEl = editorSaveBadge.querySelector('.save-status-icon');
+        if (status === 'saving') {
+            editorSaveBadge.classList.add('saving');
+            if (editorSaveLabel) editorSaveLabel.textContent = 'Saving...';
+            if (iconEl) iconEl.textContent = '⏳';
+        } else {
+            editorSaveBadge.classList.remove('saving');
+            if (editorSaveLabel) {
+                editorSaveLabel.textContent = window.currentUser ? 'Cloud Saved' : 'Auto-Saved';
+            }
+            if (iconEl) iconEl.textContent = '☁️';
+        }
+    }
+
     function loadFilesForLanguage(langKey) {
         const config = window.LANGUAGES[langKey] || window.LANGUAGES.python;
-        const savedFilesJson = localStorage.getItem(`compilerg_files_${langKey}`);
-        let files = [];
+        let savedFilesJson = null;
 
+        // 1. Check user-specific storage if signed in
+        if (window.currentUser && window.currentUser.uid) {
+            savedFilesJson = localStorage.getItem(`compilerg_u_${window.currentUser.uid}_files_${langKey}`);
+        }
+        // 2. Fallback to general storage
+        if (!savedFilesJson) {
+            savedFilesJson = localStorage.getItem(`compilerg_files_${langKey}`);
+        }
+
+        let files = [];
         if (savedFilesJson) {
             try {
                 files = JSON.parse(savedFilesJson);
@@ -187,7 +214,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (!files || files.length === 0) {
-            const legacyCode = localStorage.getItem(`compilerg_code_${langKey}`) || window.BOILERPLATES[langKey] || '';
+            let userCode = null;
+            if (window.currentUser && window.currentUser.uid) {
+                userCode = localStorage.getItem(`compilerg_u_${window.currentUser.uid}_code_${langKey}`);
+            }
+            const legacyCode = userCode || localStorage.getItem(`compilerg_code_${langKey}`) || window.BOILERPLATES[langKey] || '';
             files = [
                 {
                     id: 'file-' + Date.now(),
@@ -201,15 +232,17 @@ document.addEventListener('DOMContentLoaded', () => {
         state.files = files;
         state.activeFileId = files[0].id;
         renderFileTabs();
+        updateAutoSaveStatus('saved');
         return files[0];
     }
 
     let saveDebounceTimer = null;
     function debouncedSaveCurrentFiles() {
+        updateAutoSaveStatus('saving');
         clearTimeout(saveDebounceTimer);
         saveDebounceTimer = setTimeout(() => {
             saveCurrentFiles();
-        }, 400);
+        }, 350);
     }
 
     function saveCurrentFiles() {
@@ -220,13 +253,51 @@ document.addEventListener('DOMContentLoaded', () => {
             // Also update legacy single-file storage for main file
             if (activeFile.isMain || activeFile.name === window.LANGUAGES[state.currentLanguage]?.filename) {
                 localStorage.setItem(`compilerg_code_${state.currentLanguage}`, activeFile.content);
+                if (window.currentUser && window.currentUser.uid) {
+                    localStorage.setItem(`compilerg_u_${window.currentUser.uid}_code_${state.currentLanguage}`, activeFile.content);
+                }
             }
         }
+
         try {
-            localStorage.setItem(`compilerg_files_${state.currentLanguage}`, JSON.stringify(state.files));
+            const filesJson = JSON.stringify(state.files);
+            localStorage.setItem(`compilerg_files_${state.currentLanguage}`, filesJson);
+
+            // User-scoped persistent storage
+            if (window.currentUser && window.currentUser.uid) {
+                const uid = window.currentUser.uid;
+                localStorage.setItem(`compilerg_u_${uid}_files_${state.currentLanguage}`, filesJson);
+
+                // Track list of user languages with custom code
+                let userLangs = [];
+                try {
+                    userLangs = JSON.parse(localStorage.getItem(`compilerg_u_${uid}_langs`) || '[]');
+                } catch (e) { userLangs = []; }
+                if (!userLangs.includes(state.currentLanguage)) {
+                    userLangs.push(state.currentLanguage);
+                    localStorage.setItem(`compilerg_u_${uid}_langs`, JSON.stringify(userLangs));
+                }
+
+                // Cloud sync to server backend (non-blocking)
+                fetch('/api/user/save-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uid: uid,
+                        email: window.currentUser.email || '',
+                        language: state.currentLanguage,
+                        files: state.files,
+                        code: activeFile ? activeFile.content : ''
+                    })
+                }).catch(() => { /* silent fail if offline */ });
+            }
         } catch (e) {
-            // In case localStorage is full with very large projects
+            // In case localStorage is full
         }
+
+        setTimeout(() => {
+            updateAutoSaveStatus('saved');
+        }, 200);
     }
 
     function renderFileTabs() {
@@ -1694,6 +1765,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Auth form, Google, and GitHub sign-in are now handled by js/firebase-auth.js
     // (Real Firebase Authentication with Google & GitHub OAuth)
+
+    // ── User Auth & Cloud Auto-Save Sync Listener ────────────────────────────
+    window.addEventListener('compilerg:user-change', async (e) => {
+        const user = e.detail?.user;
+        if (user) {
+            // 1. Save whatever is currently in the editor to this user
+            saveCurrentFiles();
+
+            // 2. Fetch all saved codes from server backend (if running)
+            try {
+                const resp = await fetch(`/api/user/get-all-codes?uid=${encodeURIComponent(user.uid)}`);
+                if (resp.ok) {
+                    const res = await resp.json();
+                    if (res.found && res.codes) {
+                        for (const [lang, item] of Object.entries(res.codes)) {
+                            if (item.files) {
+                                localStorage.setItem(`compilerg_u_${user.uid}_files_${lang}`, JSON.stringify(item.files));
+                            }
+                            if (item.code) {
+                                localStorage.setItem(`compilerg_u_${user.uid}_code_${lang}`, item.code);
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                // Offline or static host — localStorage handles it seamlessly
+            }
+
+            // 3. Reload files for current active language so user's saved code appears
+            const activeFile = loadFilesForLanguage(state.currentLanguage);
+            if (activeFile) {
+                editorManager.setLanguage(getMonacoLangFromFilename(activeFile.name));
+                editorManager.setCode(activeFile.content || '');
+            }
+
+            updateAutoSaveStatus('saved');
+            showToast(`Cloud auto-save enabled for ${user.displayName || 'your account'}! ☁️`, 'success');
+        } else {
+            updateAutoSaveStatus('saved');
+        }
+    });
 
     // 11. Tutorials Modal
     const tutorialsModal = document.getElementById('tutorialsModal');

@@ -12,12 +12,16 @@ import sys
 import webbrowser
 import json
 import urllib.request
+import urllib.parse
+import re
 import subprocess
 import tempfile
 import time
 
 DEFAULT_PORT = 3000
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+USER_DATA_DIR = os.path.join(DIRECTORY, 'user_data')
+os.makedirs(USER_DATA_DIR, exist_ok=True)
 
 ONECOMPILER_MAP = {
     'c': {'name': 'C', 'mode': 'c', 'ext': 'c', 'main': 'main.c'},
@@ -109,6 +113,61 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_response(204)
         self.end_headers()
 
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == '/api/user/get-code':
+            qs = urllib.parse.parse_qs(parsed.query)
+            uid = qs.get('uid', [''])[0]
+            lang = qs.get('language', [''])[0].lower()
+            safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+            safe_lang = re.sub(r'[^a-zA-Z0-9_-]', '_', lang)
+            file_path = os.path.join(USER_DATA_DIR, safe_uid, f"{safe_lang}.json")
+            if os.path.exists(file_path):
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    res = json.dumps({"found": True, "data": data}).encode('utf-8')
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json; charset=utf-8')
+                    self.send_header('Content-Length', str(len(res)))
+                    self.end_headers()
+                    self.wfile.write(res)
+                    return
+                except Exception:
+                    pass
+            res = json.dumps({"found": False}).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(res)))
+            self.end_headers()
+            self.wfile.write(res)
+            return
+
+        elif parsed.path == '/api/user/get-all-codes':
+            qs = urllib.parse.parse_qs(parsed.query)
+            uid = qs.get('uid', [''])[0]
+            safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+            user_dir = os.path.join(USER_DATA_DIR, safe_uid)
+            all_codes = {}
+            if os.path.exists(user_dir):
+                for fname in os.listdir(user_dir):
+                    if fname.endswith('.json'):
+                        lang_name = fname[:-5]
+                        try:
+                            with open(os.path.join(user_dir, fname), 'r', encoding='utf-8') as f:
+                                all_codes[lang_name] = json.load(f)
+                        except Exception:
+                            pass
+            res = json.dumps({"found": True, "codes": all_codes}).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(res)))
+            self.end_headers()
+            self.wfile.write(res)
+            return
+
+        super().do_GET()
+
     def do_POST(self):
         if self.path == '/api/run':
             content_length = int(self.headers.get('Content-Length', 0))
@@ -133,6 +192,37 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Content-Length', str(len(response_bytes)))
             self.end_headers()
             self.wfile.write(response_bytes)
+
+        elif self.path == '/api/user/save-code':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                data = json.loads(body)
+                uid = data.get('uid', '')
+                lang = data.get('language', '').lower()
+                if not uid or not lang:
+                    self.send_response(400)
+                    self.end_headers()
+                    self.wfile.write(b'{"error": "Missing uid or language"}')
+                    return
+                safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+                safe_lang = re.sub(r'[^a-zA-Z0-9_-]', '_', lang)
+                user_dir = os.path.join(USER_DATA_DIR, safe_uid)
+                os.makedirs(user_dir, exist_ok=True)
+                file_path = os.path.join(user_dir, f"{safe_lang}.json")
+                data['saved_at'] = time.time()
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=2)
+                res = json.dumps({"success": True, "saved_at": data['saved_at']}).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(res)))
+                self.end_headers()
+                self.wfile.write(res)
+            except Exception as e:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
         else:
             self.send_response(404)
             self.end_headers()

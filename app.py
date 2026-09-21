@@ -9,6 +9,7 @@ from flask_cors import CORS
 import os
 import sys
 import json
+import re
 import subprocess
 import tempfile
 import time
@@ -18,6 +19,8 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+USER_DATA_DIR = os.path.join(DIRECTORY, 'user_data')
+os.makedirs(USER_DATA_DIR, exist_ok=True)
 
 # ── Language Configurations ──────────────────────────────────────────────────
 ONECOMPILER_MAP = {
@@ -86,6 +89,62 @@ def run_code():
 
     result = execute_code(lang, code, stdin, files)
     return jsonify(result)
+
+
+@app.route('/api/user/save-code', methods=['POST'])
+def save_user_code():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({'error': 'Invalid JSON'}), 400
+    uid = data.get('uid', '')
+    lang = data.get('language', '').lower()
+    if not uid or not lang:
+        return jsonify({'error': 'Missing uid or language'}), 400
+
+    safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+    safe_lang = re.sub(r'[^a-zA-Z0-9_-]', '_', lang)
+    user_dir = os.path.join(USER_DATA_DIR, safe_uid)
+    os.makedirs(user_dir, exist_ok=True)
+    file_path = os.path.join(user_dir, f"{safe_lang}.json")
+    data['saved_at'] = time.time()
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+    return jsonify({'success': True, 'saved_at': data['saved_at']})
+
+
+@app.route('/api/user/get-code', methods=['GET'])
+def get_user_code():
+    uid = request.args.get('uid', '')
+    lang = request.args.get('language', '').lower()
+    safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+    safe_lang = re.sub(r'[^a-zA-Z0-9_-]', '_', lang)
+    file_path = os.path.join(USER_DATA_DIR, safe_uid, f"{safe_lang}.json")
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return jsonify({'found': True, 'data': data})
+        except Exception:
+            pass
+    return jsonify({'found': False})
+
+
+@app.route('/api/user/get-all-codes', methods=['GET'])
+def get_all_user_codes():
+    uid = request.args.get('uid', '')
+    safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+    user_dir = os.path.join(USER_DATA_DIR, safe_uid)
+    all_codes = {}
+    if os.path.exists(user_dir):
+        for fname in os.listdir(user_dir):
+            if fname.endswith('.json'):
+                lang_name = fname[:-5]
+                try:
+                    with open(os.path.join(user_dir, fname), 'r', encoding='utf-8') as f:
+                        all_codes[lang_name] = json.load(f)
+                except Exception:
+                    pass
+    return jsonify({'found': True, 'codes': all_codes})
 
 
 def execute_code(lang, code, stdin, files):
