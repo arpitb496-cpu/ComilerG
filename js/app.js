@@ -477,6 +477,14 @@ document.addEventListener('DOMContentLoaded', () => {
         tabPanels.forEach(panel => {
             panel.classList.toggle('active', panel.id === `${tabName}Panel`);
         });
+        if (tabName === 'stdin' && stdinInput) {
+            stdinInput.focus();
+            const stdinTabBtn = document.getElementById('stdinTabBtn');
+            if (stdinTabBtn) {
+                stdinTabBtn.classList.remove('needs-input');
+                stdinTabBtn.title = '';
+            }
+        }
     }
 
     // --- Event Listeners ---
@@ -573,6 +581,40 @@ document.addEventListener('DOMContentLoaded', () => {
         editorManager.layout();
     });
 
+    // Detect if code uses standard input reading functions
+    function detectCodeNeedsStdin(code, lang) {
+        if (!code) return false;
+        const clean = code.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/#.*$/gm, '');
+        if (lang === 'c' || lang === 'cpp') {
+            return /\b(scanf|scanf_s|cin\s*>>|getchar|gets|fgets|read)\b/.test(clean);
+        }
+        if (lang === 'python' || lang === 'python3' || lang === 'py') {
+            return /\b(input\s*\(|sys\.stdin)/.test(clean);
+        }
+        if (lang === 'java') {
+            return /\b(Scanner|BufferedReader|System\.in)\b/.test(clean);
+        }
+        if (lang === 'javascript' || lang === 'js' || lang === 'node') {
+            return /\b(readline|prompt\s*\(|process\.stdin)/.test(clean);
+        }
+        if (lang === 'csharp' || lang === 'cs') {
+            return /\bConsole\.(ReadLine|Read)\b/.test(clean);
+        }
+        if (lang === 'go') {
+            return /\b(fmt\.Scan|fmt\.Scanln|fmt\.Scanf|bufio\.NewScanner)\b/.test(clean);
+        }
+        if (lang === 'rust') {
+            return /\b(stdin\(\)\.read_line|io::stdin)\b/.test(clean);
+        }
+        if (lang === 'php') {
+            return /\b(fgets\s*\(\s*STDIN|readline\s*\()\b/.test(clean);
+        }
+        if (lang === 'ruby') {
+            return /\b(gets|readline)\b/.test(clean);
+        }
+        return false;
+    }
+
     // 5. Code Execution (With Multi-File Bundling)
     async function runCode() {
         if (state.isExecuting) return;
@@ -648,10 +690,66 @@ document.addEventListener('DOMContentLoaded', () => {
                     statusBadge.textContent = 'ACCEPTED (TURBO)';
                     statusBadge.className = 'status-badge turbo';
                 }
+
+                const needsStdin = detectCodeNeedsStdin(code, state.currentLanguage);
+                const stdinIsEmpty = !stdin || !stdin.trim();
+                const stdinTabBtn = document.getElementById('stdinTabBtn');
+
+                let htmlOutput = stdoutText
+                    ? `<span class="stdout">${escapeHtml(stdoutText)}</span>`
+                    : '<span style="color: #64748b;">(Process completed with exit code 0)</span>';
+
+                // If code expects user input but STDIN was empty, provide inline quick STDIN input
+                if (needsStdin && stdinIsEmpty) {
+                    htmlOutput += `
+<div class="quick-stdin-card" id="quickStdinCard">
+    <div class="quick-stdin-top">
+        <span class="quick-stdin-badge">💡 Input Needed</span>
+        <span class="quick-stdin-hint">This code reads user input (<code>scanf</code> / <code>cin</code> / <code>input()</code>).</span>
+    </div>
+    <div class="quick-stdin-subtext">
+        C/C++ me input na milne par variables memory se garbage value (jaise 16) le lete hain. Apne inputs yaha enter karke <strong>Run with Input</strong> karein:
+    </div>
+    <div class="quick-stdin-row">
+        <textarea id="quickStdinBox" class="quick-stdin-box" placeholder="Enter inputs (e.g. 5&#10;6)" rows="2"></textarea>
+        <button id="quickStdinRunBtn" class="quick-stdin-run-btn" type="button" title="Set STDIN and Re-run">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>Run with Input</span>
+        </button>
+    </div>
+</div>`;
+                    if (stdinTabBtn) {
+                        stdinTabBtn.classList.add('needs-input');
+                        stdinTabBtn.title = 'Program expects input! Click to enter STDIN';
+                    }
+                } else {
+                    if (stdinTabBtn) {
+                        stdinTabBtn.classList.remove('needs-input');
+                        stdinTabBtn.title = '';
+                    }
+                }
+
                 if (outputScreen) {
-                    outputScreen.innerHTML = stdoutText
-                        ? `<span class="stdout">${escapeHtml(stdoutText)}</span>`
-                        : '<span style="color: #64748b;">(Process completed with exit code 0)</span>';
+                    outputScreen.innerHTML = htmlOutput;
+
+                    const quickStdinRunBtn = document.getElementById('quickStdinRunBtn');
+                    const quickStdinBox = document.getElementById('quickStdinBox');
+                    if (quickStdinRunBtn && quickStdinBox) {
+                        quickStdinRunBtn.addEventListener('click', () => {
+                            if (stdinInput) {
+                                stdinInput.value = quickStdinBox.value;
+                            }
+                            showToast('Input applied to STDIN! Re-testing...', 'success');
+                            runCode();
+                        });
+                        quickStdinBox.addEventListener('keydown', (e) => {
+                            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                                e.preventDefault();
+                                quickStdinRunBtn.click();
+                            }
+                        });
+                        setTimeout(() => quickStdinBox.focus(), 100);
+                    }
                 }
                 state.lastErrorOutput = '';
             } else {
