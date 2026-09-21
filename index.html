@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="codedex">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -20,7 +20,14 @@
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23ffd43f'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='60' font-weight='900' fill='%23120f22' font-family='sans-serif'>G</text></svg>">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=4.0">
+    <link rel="stylesheet" href="css/style.css?v=4.1">
+
+    <script>
+        try {
+            localStorage.setItem('compilerg_theme', 'dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } catch (e) {}
+    </script>
 
     <!-- Firebase SDK (compat v9) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -32,8 +39,11 @@
 </head>
 
 <body>
-    <!-- Interactive Background Particle & Aurora Canvas (Codédex Starfield) -->
-    <canvas id="bgCanvas" class="bg-canvas"></canvas>
+    <!-- John-T45 Interactive Background: Moving Clouds, ParticlesJS Starfield & Three.js WebGL Shooting Star Trails -->
+    <div class="clouds"></div>
+    <canvas class="background"></canvas>
+    <canvas id="canvas"></canvas>
+    <canvas id="bgCanvas" style="display: none;"></canvas>
 
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
@@ -909,15 +919,6 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                     <span>AI Fix</span>
                 </button>
 
-                <!-- OneCompiler-Style Right Save Button -->
-                <button id="openSaveModalBtn2" class="btn-top-save btn-top-save-right" title="Save your code (Ctrl + S)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                        <polyline points="17 21 17 13 7 13 7 21" />
-                        <polyline points="7 3 7 8 15 8" />
-                    </svg>
-                    <span>Save</span>
-                </button>
 
                 <!-- Share Code Button -->
                 <button id="shareCodeBtn" class="btn-icon" title="Share Code via Link">
@@ -1626,15 +1627,21 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
 
     <!-- Global Toast Notifications Container (Works in both Home & Editor) -->
     <div id="toastContainer" class="toast-container"></div>
-    <script src="js/languages.js?v=4.0"></script>
-    <script src="js/boilerplates.js?v=4.0"></script>
-    <script src="js/particles.js?v=4.0"></script>
-    <script src="js/snippets.js?v=4.0"></script>
-    <script src="js/ai_debugger.js?v=4.0"></script>
-    <script src="js/executor.js?v=4.0"></script>
-    <script src="js/editor.js?v=4.0"></script>
-    <script src="js/app.js?v=4.0"></script>
-    <script src="js/firebase-auth.js?v=4.0"></script>
+    <!-- Three.js & Particles Engine for John-T45 Interactive Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.5/dat.gui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
+    <script src="js/shootingstar.js?v=4.1"></script>
+
+    <script src="js/languages.js?v=4.1"></script>
+    <script src="js/boilerplates.js?v=4.1"></script>
+    <script src="js/particles.js?v=4.1"></script>
+    <script src="js/snippets.js?v=4.1"></script>
+    <script src="js/ai_debugger.js?v=4.1"></script>
+    <script src="js/executor.js?v=4.1"></script>
+    <script src="js/editor.js?v=4.1"></script>
+    <script src="js/app.js?v=4.1"></script>
+    <script src="js/firebase-auth.js?v=4.1"></script>
 </body>
 
 </html>

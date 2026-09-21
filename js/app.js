@@ -6,7 +6,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- State Management ---
-    const rawSavedTheme = localStorage.getItem('compilerg_theme') || 'obsidian';
+    const rawSavedTheme = localStorage.getItem('compilerg_theme') || 'dark';
     const initialTheme = rawSavedTheme.replace('compilerg-', '');
 
     const state = {
@@ -2658,12 +2658,6 @@ int main() {
         });
     }
 
-    const openSaveModalBtn2 = document.getElementById('openSaveModalBtn2');
-    if (openSaveModalBtn2) {
-        openSaveModalBtn2.addEventListener('click', () => {
-            openSaveModal();
-        });
-    }
 
     if (closeSaveCodeModal) {
         closeSaveCodeModal.addEventListener('click', () => {

@@ -5,29 +5,29 @@
 
 :root {
     /* Color Palette */
-    --bg-main: #07090e;
-    --bg-surface: #0d111a;
-    --bg-surface-elevated: #131b2a;
-    --bg-editor: #0b0f19;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-highlight: rgba(56, 189, 248, 0.3);
+    --bg-main: #050b14;
+    --bg-surface: rgba(12, 18, 30, 0.72);
+    --bg-surface-elevated: rgba(16, 23, 36, 0.88);
+    --bg-editor: #091420;
+    --border-color: rgba(148, 163, 184, 0.14);
+    --border-highlight: rgba(96, 165, 250, 0.28);
 
     /* Text Colors */
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --text-accent: #38bdf8;
+    --text-primary: #edf6ff;
+    --text-secondary: #bfd3eb;
+    --text-muted: #7f90ad;
+    --text-accent: #7dd3fc;
 
     /* Brand & State Colors */
-    --primary: #3b82f6;
-    --primary-hover: #2563eb;
-    --success: #10b981;
-    --success-glow: rgba(16, 185, 129, 0.35);
-    --danger: #ef4444;
-    --danger-glow: rgba(239, 68, 68, 0.3);
-    --warning: #f59e0b;
-    --ai-purple: #8b5cf6;
-    --ai-glow: rgba(139, 92, 246, 0.4);
+    --primary: #60a5fa;
+    --primary-hover: #3b82f6;
+    --success: #34d399;
+    --success-glow: rgba(52, 211, 153, 0.3);
+    --danger: #f87171;
+    --danger-glow: rgba(248, 113, 113, 0.28);
+    --warning: #fbbf24;
+    --ai-purple: #a78bfa;
+    --ai-glow: rgba(167, 139, 250, 0.28);
 
     /* Fonts & Radii */
     --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
@@ -349,15 +349,81 @@
     --ai-glow: rgba(108, 113, 196, 0.35);
 }
 
-/* Dynamic Moving Canvas Background */
-.bg-canvas {
+/* ==========================================================================
+   John-T45 Interactive Background System
+   1. Animated Moving Clouds Layer (clouds3.png)
+   2. Particles.js Floating Nebula Stardust (canvas.background)
+   3. Three.js WebGL Interactive Cursor Shooting Star Engine (#canvas)
+   ========================================================================== */
+
+@keyframes move-clouds-back {
+    from { background-position: 0 0; }
+    to { background-position: 10000px 0; }
+}
+@-webkit-keyframes move-clouds-back {
+    from { background-position: 0 0; }
+    to { background-position: 10000px 0; }
+}
+@-moz-keyframes move-clouds-back {
+    from { background-position: 0 0; }
+    to { background-position: 10000px 0; }
+}
+@-ms-keyframes move-clouds-back {
+    from { background-position: 0; }
+    to { background-position: 10000px 0; }
+}
+
+.clouds {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    background: transparent url('../images/clouds3.png') repeat top center;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.85;
+    -moz-animation: move-clouds-back 200s linear infinite;
+    -ms-animation: move-clouds-back 200s linear infinite;
+    -o-animation: move-clouds-back 200s linear infinite;
+    -webkit-animation: move-clouds-back 200s linear infinite;
+    animation: move-clouds-back 200s linear infinite;
+}
+
+canvas.background {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
+    display: block;
+    z-index: 2;
     pointer-events: none;
-    z-index: 0;
+}
+
+.bg-canvas {
+    display: none !important;
+}
+
+/* Hide dat.GUI control box */
+.dg, .dg.ac, .dg.main {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
 }
 
 /* Reset & Base Styles */
@@ -382,9 +448,22 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     font-family: var(--font-ui);
-    background-color: var(--bg-main);
+    background-color: #000000;
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
+}
+
+.home-view {
+    position: relative;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.home-navbar {
+    background: rgba(7, 12, 22, 0.8);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    box-shadow: 0 6px 25px rgba(2, 6, 23, 0.22);
 }
 
 body.in-editor-mode {
@@ -395,7 +474,7 @@ body.in-editor-mode {
 /* App Container Layout */
 .app-container {
     position: relative;
-    z-index: 1;
+    z-index: 10;
     display: flex;
     flex-direction: column;
     height: 100vh;
