@@ -37,8 +37,10 @@ function initParticleStarfield() {
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initParticleStarfield);
+    window.addEventListener('load', initParticleStarfield);
 } else {
     initParticleStarfield();
+    window.addEventListener('load', initParticleStarfield);
 }
 
 /**

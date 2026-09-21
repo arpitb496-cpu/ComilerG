@@ -1662,7 +1662,9 @@ function () {
       zFar: $Focm$var$MAX_CAMERA_Z,
       cameraPosition: [0, 0, $Focm$var$CAMERA_Z],
       aspect: window.innerWidth / window.innerHeight,
-      canvas: canvas
+      canvas: canvas,
+      alpha: true,
+      clearColor: 0x000000
     });
     this.setSize();
     root.addResizeCallback(function () {
@@ -1671,6 +1673,7 @@ function () {
 
     this.text = new $m6Ky$export$default();
     this.shootingStar = new $a87C$export$default();
+    this.shootingStar.start();
 
     $Focm$var$data['play'].value = function () {
       _this.textStart();
@@ -1753,25 +1756,36 @@ function () {
   return WebGL;
 }();
 
-var canvasTarget = document.getElementById('canvas');
-if (canvasTarget) {
-  var $Focm$var$webGL = new $Focm$var$WebGL({
-    canvas: canvasTarget
-  });
-  window.shootingStarWebGL = $Focm$var$webGL;
-  window.triggerShootingStar = function(x, y) {
+function initShootingStarEngine() {
+  var canvasTarget = document.getElementById('canvas');
+  if (canvasTarget && !window.shootingStarWebGL) {
     try {
-      if ($Focm$var$webGL && $Focm$var$webGL.shootingStar) {
-        $Focm$var$webGL.shootingStar.draw({
-          clientX: (x !== undefined ? x : (Math.random() - 0.5) * (window.innerWidth || 800)),
-          clientY: (y !== undefined ? y : (Math.random() - 0.5) * (window.innerHeight || 600))
-        });
-      }
-    } catch (e) {}
-  };
-  setTimeout(function () {
-    $Focm$var$webGL.start();
-  }, $Focm$var$DELAY);
+      var $Focm$var$webGL = new $Focm$var$WebGL({
+        canvas: canvasTarget
+      });
+      window.shootingStarWebGL = $Focm$var$webGL;
+      window.triggerShootingStar = function(x, y) {
+        try {
+          if ($Focm$var$webGL && $Focm$var$webGL.shootingStar) {
+            $Focm$var$webGL.shootingStar.draw({
+              clientX: (x !== undefined ? x : (Math.random() - 0.5) * (window.innerWidth || 800)),
+              clientY: (y !== undefined ? y : (Math.random() - 0.5) * (window.innerHeight || 600))
+            });
+          }
+        } catch (e) {}
+      };
+      setTimeout(function () {
+        $Focm$var$webGL.start();
+      }, $Focm$var$DELAY);
+    } catch (e) {
+      console.warn('ShootingStar WebGL init error:', e);
+    }
+  }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initShootingStarEngine);
+} else {
+  initShootingStarEngine();
 }
 return {
   "Focm": {}
