@@ -2621,6 +2621,13 @@ int main() {
         });
     }
 
+    const openSaveModalBtn2 = document.getElementById('openSaveModalBtn2');
+    if (openSaveModalBtn2) {
+        openSaveModalBtn2.addEventListener('click', () => {
+            openSaveModal();
+        });
+    }
+
     if (closeSaveCodeModal) {
         closeSaveCodeModal.addEventListener('click', () => {
             if (saveCodeModal) saveCodeModal.classList.remove('open');
