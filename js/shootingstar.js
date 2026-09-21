@@ -210,18 +210,9 @@ function () {
   $pTw7$var$_createClass(THREERoot, [{
     key: "setSize",
     value: function setSize() {
-      if (this.aspect) {
-        if (this.container.clientWidth / this.container.clientHeight > this.aspect) {
-          this.width = this.container.clientHeight * this.aspect;
-          this.height = this.container.clientHeight;
-        } else {
-          this.width = this.container.clientWidth;
-          this.height = this.container.clientWidth / this.aspect;
-        }
-      } else {
-        this.width = this.container.clientWidth;
-        this.height = this.container.clientHeight;
-      }
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.aspect = this.width / this.height;
     }
   }, {
     key: "createOrbitControls",
@@ -347,15 +338,9 @@ function () {
   }, {
     key: "resize",
     value: function resize() {
-      this.container.style.width = '';
-      this.container.style.height = '';
-
-      if (this.aspect) {
-        this.aspect = this.container.clientWidth / this.container.clientHeight;
-      }
-
       this.setSize();
-      this.camera.aspect = this.width / this.height;
+      this.camera.aspect = this.aspect;
+      this.camera.fov = Math.atan(this.height / 2 / 5000) * (180 / Math.PI) * 2;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(this.width, this.height);
       this.resizeCallbacks.forEach(function (callback) {
@@ -486,8 +471,24 @@ function () {
   function Controller(options) {
     $IDtB$var$_classCallCheck(this, Controller);
     var closed = options.closed;
-    this.gui = new dat.GUI(options);
-    this.gui.closed = closed;
+    var dummyGui = {
+      add: function() { return { min: function() { return this; }, max: function() { return this; }, step: function() { return this; }, onChange: function() { return this; }, listen: function() { return this; } }; },
+      addColor: function() { return { onChange: function() { return this; }, listen: function() { return this; } }; },
+      addFolder: function() { return dummyGui; },
+      open: function() {},
+      close: function() {},
+      closed: true
+    };
+    try {
+      if (typeof dat !== 'undefined' && dat.GUI) {
+        this.gui = new dat.GUI(options);
+        this.gui.closed = closed;
+      } else {
+        this.gui = dummyGui;
+      }
+    } catch (e) {
+      this.gui = dummyGui;
+    }
   }
   /**
    * addData
@@ -545,31 +546,36 @@ function () {
 
         var controller;
 
-        if (isColor) {
-          controller = folder.addColor(datData, key);
-        } else {
-          var guiRange = [];
+        try {
+          if (isColor && folder && typeof folder.addColor === 'function') {
+            controller = folder.addColor(datData, key);
+          } else if (folder && typeof folder.add === 'function') {
+            var guiRange = [];
 
-          if (range) {
-            guiRange = range;
-          } else if (key === 'frame') {
-            guiRange = [0, 1];
-          } else if (typeof value === 'number') {
-            if (value < 1 && value >= 0) {
+            if (range) {
+              guiRange = range;
+            } else if (key === 'frame') {
               guiRange = [0, 1];
-            } else {
-              var diff = Math.pow(10, String(Math.floor(value)).length - 1) * 2;
-              guiRange = [value - diff, value + diff];
+            } else if (typeof value === 'number') {
+              if (value < 1 && value >= 0) {
+                guiRange = [0, 1];
+              } else {
+                var diff = Math.pow(10, String(Math.floor(value)).length - 1) * 2;
+                guiRange = [value - diff, value + diff];
+              }
             }
+
+            controller = folder.add.apply(folder, [datData, key].concat($IDtB$var$_toConsumableArray(guiRange)));
           }
 
-          controller = folder.add.apply(folder, [datData, key].concat($IDtB$var$_toConsumableArray(guiRange)));
-        }
+          if (controller) {
+            onChange && typeof controller.onChange === 'function' && controller.onChange(function (val) {
+              onChange(val);
+            });
+            listen && typeof controller.listen === 'function' && controller.listen();
+          }
+        } catch (guiErr) {}
 
-        onChange && controller.onChange(function (value) {
-          onChange(value);
-        });
-        listen && controller.listen();
         callback(key, {
           type: type,
           value: value
@@ -593,9 +599,14 @@ function () {
   }, {
     key: "addFolder",
     value: function addFolder(name, isClosed) {
-      var folder = this.gui.addFolder(name);
-      !isClosed && folder.open();
-      return folder;
+      try {
+        if (this.gui && typeof this.gui.addFolder === 'function') {
+          var folder = this.gui.addFolder(name);
+          if (folder && !isClosed && typeof folder.open === 'function') folder.open();
+          return folder || this.gui;
+        }
+      } catch (e) {}
+      return this.gui;
     }
   }]);
   return Controller;
@@ -1335,8 +1346,7 @@ function () {
   $a87C$var$_createClass(ShootingStar, [{
     key: "setSize",
     value: function setSize() {
-      this.rate = Math.min($mrfc$export$default.ratio > $mrfc$export$default.initialRatio ? $mrfc$export$default.clientHeight / $mrfc$export$default.initialClientHeight : $mrfc$export$default.clientWidth / $mrfc$export$default.initialClientWidth, 1);
-      this.rate *= 1 / ($mrfc$export$default.clientHeight / $mrfc$export$default.initialClientHeight);
+      this.rate = 1;
     }
   }, {
     key: "update",
@@ -1358,8 +1368,7 @@ function () {
       this.enableSaveCoordinate && this.lineCoordinateList.push({
         clientX: clientX,
         clientY: clientY
-      }); // const x = clientX + store.clientHalfWidth
-      // const y = store.clientHeight - (clientY + store.clientHalfHeight)
+      });
 
       var x = clientX * this.rate + $mrfc$export$default.clientHalfWidth;
       var y = $mrfc$export$default.clientHeight - (clientY * this.rate + $mrfc$export$default.clientHalfHeight);
@@ -1388,37 +1397,32 @@ function () {
     key: "start",
     value: function start() {
       var _this3 = this;
-
+      if (this.isStarted) return;
+      this.isStarted = true;
       this.oldPosition = null;
-      window.addEventListener('pointerdown',function (e) {
-        // console.log('HEYEYYEYE')
-        var clientX = e.clientX,
-            clientY = e.clientY;
 
+      var onMove = function(clientX, clientY) {
+        if (clientX === undefined || clientY === undefined) return;
         _this3.draw({
           clientX: clientX - $mrfc$export$default.clientHalfWidth,
           clientY: clientY - $mrfc$export$default.clientHalfHeight
         });
-      } )
+      };
+
+      window.addEventListener('pointerdown', function (e) {
+        onMove(e.clientX, e.clientY);
+      }, { passive: true });
       window.addEventListener('pointermove', function (e) {
-        var clientX = e.clientX,
-            clientY = e.clientY;
-
-        _this3.draw({
-          clientX: clientX - $mrfc$export$default.clientHalfWidth,
-          clientY: clientY - $mrfc$export$default.clientHalfHeight
-        });
-      });
+        onMove(e.clientX, e.clientY);
+      }, { passive: true });
+      window.addEventListener('mousemove', function (e) {
+        onMove(e.clientX, e.clientY);
+      }, { passive: true });
       window.addEventListener('touchmove', function (e) {
-        var _e$touches$ = e.touches[0],
-            clientX = _e$touches$.clientX,
-            clientY = _e$touches$.clientY;
-        // console.log(e.touches[0])
-        _this3.draw({
-          clientX: clientX - $mrfc$export$default.clientHalfWidth,
-          clientY: clientY - $mrfc$export$default.clientHalfHeight
-        });
-      });
+        if (e.touches && e.touches[0]) {
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
     }
   }]);
   return ShootingStar;
@@ -1651,13 +1655,12 @@ function () {
       closed: true
     });
     $mrfc$export$default.controller = controller;
-    var initialClientWidth = $mrfc$export$default.initialClientWidth = container.clientWidth;
-    var initialClientHeight = $mrfc$export$default.initialClientHeight = container.clientHeight; // store.initialRatio = container.clientWidth / container.clientHeight
-
-    $mrfc$export$default.initialRatio = 1;
+    var initialClientWidth = $mrfc$export$default.initialClientWidth = window.innerWidth;
+    var initialClientHeight = $mrfc$export$default.initialClientHeight = window.innerHeight;
+    $mrfc$export$default.initialRatio = initialClientWidth / initialClientHeight;
     var root = this.root = $mrfc$export$default.root = new $pTw7$export$default({
-      isDev: true,
-      container: container,
+      isDev: false,
+      container: document.body,
       fov: Math.atan(initialClientHeight / 2 / $Focm$var$CAMERA_Z) * (180 / Math.PI) * 2,
       zFar: $Focm$var$MAX_CAMERA_Z,
       cameraPosition: [0, 0, $Focm$var$CAMERA_Z],
@@ -1690,8 +1693,8 @@ function () {
   $Focm$var$_createClass(WebGL, [{
     key: "setSize",
     value: function setSize() {
-      var clientWidth = $mrfc$export$default.clientWidth = this.root.canvas.clientWidth;
-      var clientHeight = $mrfc$export$default.clientHeight = this.root.canvas.clientHeight;
+      var clientWidth = $mrfc$export$default.clientWidth = window.innerWidth;
+      var clientHeight = $mrfc$export$default.clientHeight = window.innerHeight;
       $mrfc$export$default.clientHalfWidth = clientWidth / 2;
       $mrfc$export$default.clientHalfHeight = clientHeight / 2;
       $mrfc$export$default.resolution = new THREE.Vector2(clientWidth, clientHeight);
