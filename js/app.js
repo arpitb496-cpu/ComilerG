@@ -1349,8 +1349,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {
             e.preventDefault();
-            saveCurrentFiles();
-            showToast('Code saved!', 'success');
+            if (typeof handleSaveTrigger === 'function') {
+                handleSaveTrigger();
+            } else {
+                saveCurrentFiles();
+                showToast('Code saved!', 'success');
+            }
         }
         if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
             e.preventDefault();
@@ -2261,6 +2265,514 @@ int main() {
         });
     });
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // ONECOMPILER-STYLE SAVE & MY CODES SYSTEM
+    // ═══════════════════════════════════════════════════════════════════════
+    const saveCodeModal = document.getElementById('saveCodeModal');
+    const closeSaveCodeModal = document.getElementById('closeSaveCodeModal');
+    const cancelSaveCodeBtn = document.getElementById('cancelSaveCodeBtn');
+    const openSaveModalBtn = document.getElementById('openSaveModalBtn');
+    const saveCodeForm = document.getElementById('saveCodeForm');
+    const saveCodeTitle = document.getElementById('saveCodeTitle');
+    const saveCodeDesc = document.getElementById('saveCodeDesc');
+    const saveCodeTags = document.getElementById('saveCodeTags');
+    const saveCodeVisibilityGroup = document.getElementById('saveCodeVisibilityGroup');
+
+    const myCodesModal = document.getElementById('myCodesModal');
+    const closeMyCodesModal = document.getElementById('closeMyCodesModal');
+    const openMyCodesBtn = document.getElementById('openMyCodesBtn');
+    const homeNavMyCodesBtn = document.getElementById('homeNavMyCodesBtn');
+    const myCodesBadge = document.getElementById('myCodesBadge');
+    const myCodesSearchInput = document.getElementById('myCodesSearchInput');
+    const myCodesLangFilter = document.getElementById('myCodesLangFilter');
+    const myCodesNewBtn = document.getElementById('myCodesNewBtn');
+    const myCodesList = document.getElementById('myCodesList');
+    const myCodesTotalCount = document.getElementById('myCodesTotalCount');
+    const exportAllCodesJsonBtn = document.getElementById('exportAllCodesJsonBtn');
+
+    let currentSaveVisibility = 'public';
+    state.activeSnippetId = null;
+
+    function getStorageKey(uid = null) {
+        if (!uid && window.currentUser && window.currentUser.uid) {
+            uid = window.currentUser.uid;
+        }
+        return uid ? `compilerg_u_${uid}_snippets_v2` : `compilerg_guest_snippets_v2`;
+    }
+
+    function getAllSnippets() {
+        const list = [];
+        const seen = new Set();
+        
+        // 1. Current user / Guest storage
+        const currentKey = getStorageKey();
+        try {
+            const raw = localStorage.getItem(currentKey);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    parsed.forEach(item => {
+                        if (item && item.id && !seen.has(item.id)) {
+                            seen.add(item.id);
+                            list.push(item);
+                        }
+                    });
+                }
+            }
+        } catch (e) {}
+
+        // 2. Global storage for backward compatibility or guest fallback
+        try {
+            const rawGlobal = localStorage.getItem('compilerg_saved_snippets_v2');
+            if (rawGlobal) {
+                const parsedGlobal = JSON.parse(rawGlobal);
+                if (Array.isArray(parsedGlobal)) {
+                    parsedGlobal.forEach(item => {
+                        if (item && item.id && !seen.has(item.id)) {
+                            seen.add(item.id);
+                            list.push(item);
+                        }
+                    });
+                }
+            }
+        } catch (e) {}
+
+        // Sort descending by updatedAt
+        list.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+        return list;
+    }
+
+    function saveSnippetToStorage(snippet) {
+        const snippets = getAllSnippets();
+        const existingIdx = snippets.findIndex(s => s.id === snippet.id);
+        if (existingIdx >= 0) {
+            snippets[existingIdx] = snippet;
+        } else {
+            snippets.unshift(snippet);
+        }
+
+        const jsonStr = JSON.stringify(snippets);
+        const currentKey = getStorageKey();
+        try {
+            localStorage.setItem(currentKey, jsonStr);
+            localStorage.setItem('compilerg_saved_snippets_v2', jsonStr);
+        } catch (e) {}
+
+        // Cloud sync to server if running
+        if (window.currentUser && window.currentUser.uid) {
+            fetch('/api/user/save-snippet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(snippet)
+            }).catch(() => {});
+        }
+
+        updateMyCodesBadge();
+    }
+
+    function deleteSnippetFromStorage(id) {
+        let snippets = getAllSnippets();
+        snippets = snippets.filter(s => s.id !== id);
+        const jsonStr = JSON.stringify(snippets);
+        const currentKey = getStorageKey();
+        try {
+            localStorage.setItem(currentKey, jsonStr);
+            localStorage.setItem('compilerg_saved_snippets_v2', jsonStr);
+        } catch (e) {}
+
+        if (state.activeSnippetId === id) {
+            state.activeSnippetId = null;
+        }
+
+        if (window.currentUser && window.currentUser.uid) {
+            fetch('/api/user/delete-snippet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, uid: window.currentUser.uid })
+            }).catch(() => {});
+        }
+
+        updateMyCodesBadge();
+    }
+
+    function updateMyCodesBadge() {
+        const count = getAllSnippets().length;
+        if (myCodesBadge) {
+            myCodesBadge.textContent = count;
+        }
+        if (myCodesTotalCount) {
+            myCodesTotalCount.textContent = `${count} saved code${count === 1 ? '' : 's'}`;
+        }
+    }
+
+    function detectSmartTitle() {
+        const code = editorManager.getCode();
+        const lines = code.split('\n').map(l => l.trim()).filter(Boolean).slice(0, 5);
+        for (const line of lines) {
+            if (line.startsWith('//') || line.startsWith('/*') || line.startsWith('#') || line.startsWith('*')) {
+                const cleaned = line.replace(/^(\/\/|\/\*|\*|\*\/|#)+\s*/, '').trim();
+                if (cleaned.length > 2 && cleaned.length < 50 && !cleaned.toLowerCase().includes('include') && !cleaned.toLowerCase().includes('import')) {
+                    return cleaned;
+                }
+            }
+        }
+        const langObj = window.LANGUAGES ? window.LANGUAGES[state.currentLanguage] : null;
+        const langName = langObj ? langObj.name : state.currentLanguage.toUpperCase();
+        return `My ${langName} Program`;
+    }
+
+    function openSaveModal() {
+        if (!saveCodeModal) return;
+        
+        if (state.activeSnippetId) {
+            const snippets = getAllSnippets();
+            const curr = snippets.find(s => s.id === state.activeSnippetId);
+            if (curr) {
+                if (saveCodeTitle) saveCodeTitle.value = curr.title || '';
+                if (saveCodeDesc) saveCodeDesc.value = curr.description || '';
+                if (saveCodeTags) saveCodeTags.value = (curr.tags || []).join(', ');
+                currentSaveVisibility = curr.visibility || 'public';
+            }
+        } else {
+            if (saveCodeTitle) saveCodeTitle.value = detectSmartTitle();
+            if (saveCodeDesc) saveCodeDesc.value = '';
+            if (saveCodeTags) saveCodeTags.value = state.currentLanguage;
+            currentSaveVisibility = 'public';
+        }
+
+        if (saveCodeVisibilityGroup) {
+            saveCodeVisibilityGroup.querySelectorAll('.vis-pill').forEach(pill => {
+                pill.classList.toggle('active', pill.dataset.vis === currentSaveVisibility);
+            });
+        }
+
+        saveCodeModal.classList.add('open');
+        setTimeout(() => {
+            if (saveCodeTitle) {
+                saveCodeTitle.focus();
+                saveCodeTitle.select();
+            }
+        }, 100);
+    }
+
+    window.handleSaveTrigger = function() {
+        if (state.activeSnippetId) {
+            const snippets = getAllSnippets();
+            const curr = snippets.find(s => s.id === state.activeSnippetId);
+            if (curr) {
+                curr.code = editorManager.getCode();
+                curr.files = JSON.parse(JSON.stringify(state.files || []));
+                curr.updatedAt = new Date().toISOString();
+                saveSnippetToStorage(curr);
+                showToast(`✓ Updated "${curr.title}"!`, 'success');
+                updateAutoSaveStatus('saved');
+                return;
+            }
+        }
+        openSaveModal();
+    };
+
+    function formatTimeAgo(isoStr) {
+        if (!isoStr) return 'Just now';
+        const sec = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+        if (sec < 60) return 'Just now';
+        if (sec < 3600) return `${Math.floor(sec / 60)}m ago`;
+        if (sec < 86400) return `${Math.floor(sec / 3600)}h ago`;
+        if (sec < 604800) return `${Math.floor(sec / 86400)}d ago`;
+        return new Date(isoStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function renderMyCodesList() {
+        if (!myCodesList) return;
+        const snippets = getAllSnippets();
+        const search = (myCodesSearchInput?.value || '').trim().toLowerCase();
+        const langFilter = myCodesLangFilter?.value || 'all';
+
+        if (myCodesLangFilter) {
+            const currentVal = myCodesLangFilter.value;
+            const uniqueLangs = Array.from(new Set(snippets.map(s => s.language).filter(Boolean)));
+            myCodesLangFilter.innerHTML = '<option value="all">All Languages</option>';
+            uniqueLangs.sort().forEach(lang => {
+                const opt = document.createElement('option');
+                opt.value = lang;
+                const langName = window.LANGUAGES && window.LANGUAGES[lang] ? window.LANGUAGES[lang].name : lang.toUpperCase();
+                opt.textContent = langName;
+                myCodesLangFilter.appendChild(opt);
+            });
+            if (uniqueLangs.includes(currentVal)) {
+                myCodesLangFilter.value = currentVal;
+            }
+        }
+
+        const filtered = snippets.filter(s => {
+            if (langFilter !== 'all' && s.language !== langFilter) return false;
+            if (search) {
+                const inTitle = (s.title || '').toLowerCase().includes(search);
+                const inDesc = (s.description || '').toLowerCase().includes(search);
+                const inLang = (s.language || '').toLowerCase().includes(search);
+                const inTags = (s.tags || []).some(t => t.toLowerCase().includes(search));
+                if (!inTitle && !inDesc && !inLang && !inTags) return false;
+            }
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            myCodesList.innerHTML = `
+                <div class="my-codes-empty-state">
+                    <div class="my-codes-empty-icon">💾</div>
+                    <div class="my-codes-empty-title">${search || langFilter !== 'all' ? 'No matching codes found' : 'No saved codes yet'}</div>
+                    <p style="font-size: 0.85rem; color: #64748b; margin-top: 6px;">Click <strong>Save</strong> on the top bar or press <strong>Ctrl+S</strong> to save your first program!</p>
+                </div>
+            `;
+            return;
+        }
+
+        myCodesList.innerHTML = '';
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'my-code-card';
+            card.dataset.id = item.id;
+
+            const langObj = window.LANGUAGES ? window.LANGUAGES[item.language] : null;
+            const langName = langObj ? langObj.name : (item.language || '').toUpperCase();
+            const visIcon = item.visibility === 'private' ? '🔒' : (item.visibility === 'unlisted' ? '🔗' : '🌐');
+            const previewText = item.description || (item.code ? item.code.slice(0, 110).replace(/\s+/g, ' ') : 'No description provided');
+            const timeAgo = formatTimeAgo(item.updatedAt || item.createdAt);
+
+            const tagsHtml = (item.tags || []).slice(0, 3).map(t => `<span class="my-code-tag-pill">${escapeHtml(t)}</span>`).join('');
+
+            card.innerHTML = `
+                <div>
+                    <div class="my-code-card-header">
+                        <span class="my-code-lang-badge">${langObj?.icon || '⚡'} ${escapeHtml(langName)}</span>
+                        <span class="my-code-vis-icon" title="Visibility: ${item.visibility || 'public'}">${visIcon}</span>
+                    </div>
+                    <h4 class="my-code-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</h4>
+                    <p class="my-code-desc">${escapeHtml(previewText)}</p>
+                    ${tagsHtml ? `<div class="my-code-tags-row">${tagsHtml}</div>` : ''}
+                </div>
+                <div class="my-code-footer">
+                    <span class="my-code-date">${timeAgo}</span>
+                    <div class="my-code-actions">
+                        <button class="my-code-btn-open" data-action="open" data-id="${item.id}">Open</button>
+                        <button class="my-code-btn-del" data-action="delete" data-id="${item.id}" title="Delete Code">🗑</button>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('[data-action="delete"]')) return;
+                loadSnippetIntoEditor(item);
+            });
+
+            const delBtn = card.querySelector('[data-action="delete"]');
+            if (delBtn) {
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Are you sure you want to delete "${item.title}"?`)) {
+                        deleteSnippetFromStorage(item.id);
+                        renderMyCodesList();
+                        showToast(`Deleted "${item.title}"`, 'info');
+                    }
+                });
+            }
+
+            myCodesList.appendChild(card);
+        });
+    }
+
+    function loadSnippetIntoEditor(snippet) {
+        if (!snippet) return;
+        
+        if (snippet.language && snippet.language !== state.currentLanguage) {
+            setLanguage(snippet.language);
+        }
+
+        if (snippet.files && Array.isArray(snippet.files) && snippet.files.length > 0) {
+            state.files = JSON.parse(JSON.stringify(snippet.files));
+            state.activeFileId = state.files[0].id;
+            renderFileTabs();
+            editorManager.setCode(state.files[0].content || snippet.code || '');
+        } else if (snippet.code) {
+            editorManager.setCode(snippet.code);
+        }
+
+        state.activeSnippetId = snippet.id;
+        saveCurrentFiles();
+        showEditorView();
+
+        if (myCodesModal) myCodesModal.classList.remove('open');
+        showToast(`Loaded "${snippet.title}"! 🚀`, 'success');
+    }
+
+    function openMyCodesModal() {
+        if (!myCodesModal) return;
+        renderMyCodesList();
+        myCodesModal.classList.add('open');
+        setTimeout(() => {
+            if (myCodesSearchInput) myCodesSearchInput.focus();
+        }, 100);
+    }
+
+    // Modal Triggers
+    if (openSaveModalBtn) {
+        openSaveModalBtn.addEventListener('click', () => {
+            openSaveModal();
+        });
+    }
+
+    if (closeSaveCodeModal) {
+        closeSaveCodeModal.addEventListener('click', () => {
+            if (saveCodeModal) saveCodeModal.classList.remove('open');
+        });
+    }
+
+    if (cancelSaveCodeBtn) {
+        cancelSaveCodeBtn.addEventListener('click', () => {
+            if (saveCodeModal) saveCodeModal.classList.remove('open');
+        });
+    }
+
+    if (openMyCodesBtn) {
+        openMyCodesBtn.addEventListener('click', openMyCodesModal);
+    }
+
+    if (homeNavMyCodesBtn) {
+        homeNavMyCodesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openMyCodesModal();
+        });
+    }
+
+    if (closeMyCodesModal) {
+        closeMyCodesModal.addEventListener('click', () => {
+            if (myCodesModal) myCodesModal.classList.remove('open');
+        });
+    }
+
+    if (saveCodeVisibilityGroup) {
+        saveCodeVisibilityGroup.querySelectorAll('.vis-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                saveCodeVisibilityGroup.querySelectorAll('.vis-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                currentSaveVisibility = pill.dataset.vis || 'public';
+            });
+        });
+    }
+
+    if (saveCodeForm) {
+        saveCodeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = (saveCodeTitle?.value || '').trim();
+            if (!title) {
+                showToast('Please enter a title for your code.', 'warning');
+                return;
+            }
+            const desc = (saveCodeDesc?.value || '').trim();
+            const tagsRaw = (saveCodeTags?.value || '').trim();
+            const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [state.currentLanguage];
+
+            const existingSnippets = getAllSnippets();
+            const existing = state.activeSnippetId ? existingSnippets.find(s => s.id === state.activeSnippetId) : null;
+
+            const snippet = {
+                id: state.activeSnippetId || ('cg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)),
+                title: title,
+                description: desc,
+                tags: tags,
+                visibility: currentSaveVisibility,
+                language: state.currentLanguage,
+                code: editorManager.getCode(),
+                files: JSON.parse(JSON.stringify(state.files || [])),
+                createdAt: existing?.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                uid: (window.currentUser && window.currentUser.uid) ? window.currentUser.uid : 'guest',
+                userEmail: (window.currentUser && window.currentUser.email) ? window.currentUser.email : ''
+            };
+
+            saveSnippetToStorage(snippet);
+            state.activeSnippetId = snippet.id;
+            saveCurrentFiles();
+
+            if (saveCodeModal) saveCodeModal.classList.remove('open');
+            showToast(`🎉 "${title}" saved to your account!`, 'success');
+        });
+    }
+
+    if (myCodesSearchInput) {
+        myCodesSearchInput.addEventListener('input', renderMyCodesList);
+    }
+
+    if (myCodesLangFilter) {
+        myCodesLangFilter.addEventListener('change', renderMyCodesList);
+    }
+
+    if (myCodesNewBtn) {
+        myCodesNewBtn.addEventListener('click', () => {
+            if (confirm('Start a new blank code workspace?')) {
+                state.activeSnippetId = null;
+                resetCodeToStarter();
+                if (myCodesModal) myCodesModal.classList.remove('open');
+                showEditorView();
+                showToast('New code workspace created!', 'info');
+            }
+        });
+    }
+
+    if (exportAllCodesJsonBtn) {
+        exportAllCodesJsonBtn.addEventListener('click', () => {
+            const snippets = getAllSnippets();
+            if (snippets.length === 0) {
+                showToast('No saved codes to export.', 'info');
+                return;
+            }
+            const blob = new Blob([JSON.stringify(snippets, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `compilerg_my_codes_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast(`Exported ${snippets.length} saved code(s) as JSON! 📥`, 'success');
+        });
+    }
+
+    // Connect user area click to open My Codes
+    const editorUserAreaEl = document.getElementById('editorUserArea');
+    if (editorUserAreaEl) {
+        editorUserAreaEl.style.cursor = 'pointer';
+        editorUserAreaEl.title = 'Click to view My Saved Codes';
+        editorUserAreaEl.addEventListener('click', openMyCodesModal);
+    }
+
+    // Connect auth change to badge update & sync
+    window.addEventListener('compilerg:user-change', async (e) => {
+        updateMyCodesBadge();
+        const user = e.detail?.user;
+        if (user && user.uid) {
+            // Fetch saved snippets from backend if server running
+            try {
+                const res = await fetch(`/api/user/snippets?uid=${encodeURIComponent(user.uid)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.found && Array.isArray(data.snippets)) {
+                        const local = getAllSnippets();
+                        const merged = [...data.snippets];
+                        local.forEach(loc => {
+                            if (!merged.some(m => m.id === loc.id)) {
+                                merged.push(loc);
+                            }
+                        });
+                        localStorage.setItem(getStorageKey(user.uid), JSON.stringify(merged));
+                        updateMyCodesBadge();
+                    }
+                }
+            } catch (err) {}
+        }
+    });
+
+    updateMyCodesBadge();
+
     // 12. Hash Routing
     function handleRouting() {
         if (isRouting) return;
@@ -2275,6 +2787,8 @@ int main() {
             switchTab('testcases');
         } else if (hash === '#tutorials') {
             openTutorialsModal();
+        } else if (hash === '#my-codes' || hash === '#mycodes' || hash === '#saved') {
+            openMyCodesModal();
         } else if (hash === '#docs') {
             const featSection = document.querySelector('.home-features-section');
             if (featSection) featSection.scrollIntoView({ behavior: 'smooth' });

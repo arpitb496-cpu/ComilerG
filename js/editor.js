@@ -154,6 +154,17 @@ class EditorManager {
                     this.onContentChangeCallbacks.forEach(cb => cb(this.currentCode));
                 });
 
+                // Keybindings inside Monaco: Ctrl+S to save, Ctrl+Enter to run
+                this.editor.addCommand(this.monaco.KeyMod.CtrlCmd | this.monaco.KeyCode.KeyS, () => {
+                    if (typeof window.handleSaveTrigger === 'function') {
+                        window.handleSaveTrigger();
+                    }
+                });
+                this.editor.addCommand(this.monaco.KeyMod.CtrlCmd | this.monaco.KeyCode.Enter, () => {
+                    const runBtn = document.getElementById('runBtn');
+                    if (runBtn) runBtn.click();
+                });
+
                 resolve(this.editor);
             }, (err) => {
                 reject(err);

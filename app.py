@@ -370,6 +370,69 @@ def get_all_user_codes():
     return jsonify({'found': True, 'codes': all_codes})
 
 
+@app.route('/api/user/snippets', methods=['GET'])
+def get_user_snippets():
+    uid = request.args.get('uid', 'guest')
+    safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+    snippets_file = os.path.join(USER_DATA_DIR, safe_uid, 'snippets.json')
+    snippets = []
+    if os.path.exists(snippets_file):
+        try:
+            with open(snippets_file, 'r', encoding='utf-8') as f:
+                snippets = json.load(f)
+        except Exception:
+            snippets = []
+    return jsonify({'found': True, 'snippets': snippets})
+
+
+@app.route('/api/user/save-snippet', methods=['POST'])
+def save_user_snippet():
+    data = request.get_json(silent=True) or {}
+    uid = data.get('uid', 'guest')
+    safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+    user_dir = os.path.join(USER_DATA_DIR, safe_uid)
+    os.makedirs(user_dir, exist_ok=True)
+    snippets_file = os.path.join(user_dir, 'snippets.json')
+    snippets = []
+    if os.path.exists(snippets_file):
+        try:
+            with open(snippets_file, 'r', encoding='utf-8') as f:
+                snippets = json.load(f)
+        except Exception:
+            snippets = []
+    sid = data.get('id')
+    idx = next((i for i, s in enumerate(snippets) if s.get('id') == sid), None)
+    if idx is not None:
+        snippets[idx] = data
+    else:
+        snippets.insert(0, data)
+    try:
+        with open(snippets_file, 'w', encoding='utf-8') as f:
+            json.dump(snippets, f, indent=2)
+        return jsonify({'success': True, 'snippets_count': len(snippets)})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/user/delete-snippet', methods=['POST'])
+def delete_user_snippet():
+    data = request.get_json(silent=True) or {}
+    uid = data.get('uid', 'guest')
+    sid = data.get('id', '')
+    safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+    snippets_file = os.path.join(USER_DATA_DIR, safe_uid, 'snippets.json')
+    if os.path.exists(snippets_file):
+        try:
+            with open(snippets_file, 'r', encoding='utf-8') as f:
+                snippets = json.load(f)
+            snippets = [s for s in snippets if s.get('id') != sid]
+            with open(snippets_file, 'w', encoding='utf-8') as f:
+                json.dump(snippets, f, indent=2)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    return jsonify({'success': True})
+
+
 def execute_code(lang, code, stdin, files):
     t0 = time.perf_counter()
 

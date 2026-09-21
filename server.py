@@ -467,6 +467,26 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(res)
             return
 
+        elif parsed.path == '/api/user/snippets':
+            qs = urllib.parse.parse_qs(parsed.query)
+            uid = qs.get('uid', [''])[0]
+            safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+            snippets_file = os.path.join(USER_DATA_DIR, safe_uid, "snippets.json")
+            snippets = []
+            if os.path.exists(snippets_file):
+                try:
+                    with open(snippets_file, 'r', encoding='utf-8') as f:
+                        snippets = json.load(f)
+                except Exception:
+                    snippets = []
+            res = json.dumps({"found": True, "snippets": snippets}).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(res)))
+            self.end_headers()
+            self.wfile.write(res)
+            return
+
         elif parsed.path == '/api/session/poll':
             qs = urllib.parse.parse_qs(parsed.query)
             session_id = qs.get('id', [''])[0]
@@ -591,6 +611,68 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 with open(file_path, 'w', encoding='utf-8') as f:
                     json.dump(data, f, indent=2)
                 res = json.dumps({"success": True, "saved_at": data['saved_at']}).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(res)))
+                self.end_headers()
+                self.wfile.write(res)
+            except Exception as e:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+
+        elif self.path == '/api/user/save-snippet':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                data = json.loads(body)
+                uid = data.get('uid', 'guest')
+                safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+                user_dir = os.path.join(USER_DATA_DIR, safe_uid)
+                os.makedirs(user_dir, exist_ok=True)
+                snippets_file = os.path.join(user_dir, "snippets.json")
+                snippets = []
+                if os.path.exists(snippets_file):
+                    try:
+                        with open(snippets_file, 'r', encoding='utf-8') as f:
+                            snippets = json.load(f)
+                    except Exception:
+                        snippets = []
+                sid = data.get('id')
+                idx = next((i for i, s in enumerate(snippets) if s.get('id') == sid), None)
+                if idx is not None:
+                    snippets[idx] = data
+                else:
+                    snippets.insert(0, data)
+                with open(snippets_file, 'w', encoding='utf-8') as f:
+                    json.dump(snippets, f, indent=2)
+                res = json.dumps({"success": True, "snippets_count": len(snippets)}).encode('utf-8')
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(res)))
+                self.end_headers()
+                self.wfile.write(res)
+            except Exception as e:
+                self.send_response(500)
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+
+        elif self.path == '/api/user/delete-snippet':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            try:
+                data = json.loads(body)
+                uid = data.get('uid', 'guest')
+                sid = data.get('id', '')
+                safe_uid = re.sub(r'[^a-zA-Z0-9_-]', '_', uid)
+                snippets_file = os.path.join(USER_DATA_DIR, safe_uid, "snippets.json")
+                if os.path.exists(snippets_file):
+                    with open(snippets_file, 'r', encoding='utf-8') as f:
+                        snippets = json.load(f)
+                    snippets = [s for s in snippets if s.get('id') != sid]
+                    with open(snippets_file, 'w', encoding='utf-8') as f:
+                        json.dump(snippets, f, indent=2)
+                res = json.dumps({"success": True}).encode('utf-8')
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json; charset=utf-8')
                 self.send_header('Content-Length', str(len(res)))

@@ -35,7 +35,7 @@
     <!-- Interactive Background Particle & Aurora Canvas (Codédex Starfield) -->
     <canvas id="bgCanvas" class="bg-canvas"></canvas>
 
-    
+
     <!-- ═══════════════════════════════════════════════════════════════════ -->
     <!-- VIEW 1: ONECOMPILER-STYLE HOMEPAGE                              -->
     <!-- ═══════════════════════════════════════════════════════════════════ -->
@@ -60,15 +60,23 @@
                     <button id="navSignUpBtn" class="home-btn-secondary">Sign Up</button>
                     <!-- Logged-in user area (hidden by default) -->
                     <div id="navUserArea" class="nav-user-area" style="display:none;">
-                        <img id="navUserAvatar" class="nav-user-avatar" referrerpolicy="no-referrer" src="" alt="User" style="display:none;">
+                        <img id="navUserAvatar" class="nav-user-avatar" referrerpolicy="no-referrer" src="" alt="User"
+                            style="display:none;">
                         <span id="navUserName" class="nav-user-name"></span>
                         <button id="navLogoutBtn" class="home-btn-ghost nav-logout-btn" title="Sign Out">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
                             <span>Logout</span>
                         </button>
                     </div>
                     <button id="navOpenEditorBtn" class="home-btn-primary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5 3l14 9-14 9V3z" />
+                        </svg>
                         <span>Open Editor</span>
                     </button>
                 </div>
@@ -82,16 +90,20 @@
                     Code online with <span class="gradient-text">CompilerG.</span>
                 </h1>
                 <p class="home-hero-subtitle">
-                    CompilerG helps over 10.8 million developers worldwide write, run, and share code online with lightning-fast execution.
+                    CompilerG helps over 10.8 million developers worldwide write, run, and share code online with
+                    lightning-fast execution.
                 </p>
 
                 <!-- Search Box -->
                 <div class="home-search-wrapper">
                     <div class="home-search-box">
-                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
                         </svg>
-                        <input type="text" id="homeSearchInput" placeholder="Search language (e.g. Python, C++, Java, Rust, HTML)..." autocomplete="off">
+                        <input type="text" id="homeSearchInput"
+                            placeholder="Search language (e.g. Python, C++, Java, Rust, HTML)..." autocomplete="off">
                         <button id="clearSearchBtn" class="search-clear-btn" style="display: none;">✕</button>
                     </div>
 
@@ -106,9 +118,10 @@
                 </div>
 
                 <!-- Language Cards Grid -->
-                                <div id="homeLangGrid" class="home-lang-grid">
+                <div id="homeLangGrid" class="home-lang-grid">
                     <!-- HTML / CSS / JS -->
-                    <div class="lang-card" data-lang="html" data-cat="popular web" data-keywords="html css javascript web frontend frontend">
+                    <div class="lang-card" data-lang="html" data-cat="popular web"
+                        data-keywords="html css javascript web frontend frontend">
                         <div class="lang-card-icon icon-html">
                             <img src="images/logos/languages/html5.svg" alt="HTML / CSS / JS" class="lang-logo-img" />
                         </div>
@@ -120,7 +133,8 @@
                     </div>
 
                     <!-- Python -->
-                    <div class="lang-card" data-lang="python" data-cat="popular programming" data-keywords="python py py3 dsa data science ai ml">
+                    <div class="lang-card" data-lang="python" data-cat="popular programming"
+                        data-keywords="python py py3 dsa data science ai ml">
                         <div class="lang-card-icon icon-python">
                             <img src="images/logos/languages/python.svg" alt="Python 3" class="lang-logo-img" />
                         </div>
@@ -132,7 +146,8 @@
                     </div>
 
                     <!-- C++ -->
-                    <div class="lang-card" data-lang="cpp" data-cat="popular programming" data-keywords="c++ cpp cplusplus gcc competitive programming dsa">
+                    <div class="lang-card" data-lang="cpp" data-cat="popular programming"
+                        data-keywords="c++ cpp cplusplus gcc competitive programming dsa">
                         <div class="lang-card-icon icon-cpp">
                             <img src="images/logos/languages/cpp.svg" alt="C++" class="lang-logo-img" />
                         </div>
@@ -144,7 +159,8 @@
                     </div>
 
                     <!-- Java -->
-                    <div class="lang-card" data-lang="java" data-cat="popular programming" data-keywords="java jdk oop dsa enterprise spring">
+                    <div class="lang-card" data-lang="java" data-cat="popular programming"
+                        data-keywords="java jdk oop dsa enterprise spring">
                         <div class="lang-card-icon icon-java">
                             <img src="images/logos/languages/java.svg" alt="Java" class="lang-logo-img" />
                         </div>
@@ -156,7 +172,8 @@
                     </div>
 
                     <!-- C -->
-                    <div class="lang-card" data-lang="c" data-cat="popular programming" data-keywords="c gcc clang systems low level">
+                    <div class="lang-card" data-lang="c" data-cat="popular programming"
+                        data-keywords="c gcc clang systems low level">
                         <div class="lang-card-icon icon-c">
                             <img src="images/logos/languages/c.svg" alt="C" class="lang-logo-img" />
                         </div>
@@ -168,7 +185,8 @@
                     </div>
 
                     <!-- JavaScript -->
-                    <div class="lang-card" data-lang="javascript" data-cat="popular web programming" data-keywords="javascript js node nodejs web script">
+                    <div class="lang-card" data-lang="javascript" data-cat="popular web programming"
+                        data-keywords="javascript js node nodejs web script">
                         <div class="lang-card-icon icon-js">
                             <img src="images/logos/languages/javascript.svg" alt="JavaScript" class="lang-logo-img" />
                         </div>
@@ -180,7 +198,8 @@
                     </div>
 
                     <!-- TypeScript -->
-                    <div class="lang-card" data-lang="typescript" data-cat="popular web programming" data-keywords="typescript ts web typed script">
+                    <div class="lang-card" data-lang="typescript" data-cat="popular web programming"
+                        data-keywords="typescript ts web typed script">
                         <div class="lang-card-icon icon-ts">
                             <img src="images/logos/languages/typescript.svg" alt="TypeScript" class="lang-logo-img" />
                         </div>
@@ -192,7 +211,8 @@
                     </div>
 
                     <!-- C# -->
-                    <div class="lang-card" data-lang="csharp" data-cat="programming" data-keywords="c# csharp dotnet mono unity">
+                    <div class="lang-card" data-lang="csharp" data-cat="programming"
+                        data-keywords="c# csharp dotnet mono unity">
                         <div class="lang-card-icon icon-cs">
                             <img src="images/logos/languages/csharp.svg" alt="C#" class="lang-logo-img" />
                         </div>
@@ -204,7 +224,8 @@
                     </div>
 
                     <!-- Rust -->
-                    <div class="lang-card" data-lang="rust" data-cat="popular programming" data-keywords="rust rustc cargo memory safe systems">
+                    <div class="lang-card" data-lang="rust" data-cat="popular programming"
+                        data-keywords="rust rustc cargo memory safe systems">
                         <div class="lang-card-icon icon-rust">
                             <img src="images/logos/languages/rust.svg" alt="Rust" class="lang-logo-img" />
                         </div>
@@ -216,7 +237,8 @@
                     </div>
 
                     <!-- Go -->
-                    <div class="lang-card" data-lang="go" data-cat="popular programming" data-keywords="go golang gopher backend concurrency">
+                    <div class="lang-card" data-lang="go" data-cat="popular programming"
+                        data-keywords="go golang gopher backend concurrency">
                         <div class="lang-card-icon icon-go">
                             <img src="images/logos/languages/go.svg" alt="Go" class="lang-logo-img" />
                         </div>
@@ -228,7 +250,8 @@
                     </div>
 
                     <!-- Kotlin -->
-                    <div class="lang-card" data-lang="kotlin" data-cat="programming" data-keywords="kotlin kt android jvm jetbrains">
+                    <div class="lang-card" data-lang="kotlin" data-cat="programming"
+                        data-keywords="kotlin kt android jvm jetbrains">
                         <div class="lang-card-icon icon-kt">
                             <img src="images/logos/languages/kotlin.svg" alt="Kotlin" class="lang-logo-img" />
                         </div>
@@ -240,7 +263,8 @@
                     </div>
 
                     <!-- Swift -->
-                    <div class="lang-card" data-lang="swift" data-cat="programming" data-keywords="swift apple ios macos">
+                    <div class="lang-card" data-lang="swift" data-cat="programming"
+                        data-keywords="swift apple ios macos">
                         <div class="lang-card-icon icon-swift">
                             <img src="images/logos/languages/swift.svg" alt="Swift" class="lang-logo-img" />
                         </div>
@@ -252,7 +276,8 @@
                     </div>
 
                     <!-- PHP -->
-                    <div class="lang-card" data-lang="php" data-cat="web programming" data-keywords="php web backend server laravel">
+                    <div class="lang-card" data-lang="php" data-cat="web programming"
+                        data-keywords="php web backend server laravel">
                         <div class="lang-card-icon icon-php">
                             <img src="images/logos/languages/php.svg" alt="PHP" class="lang-logo-img" />
                         </div>
@@ -264,7 +289,8 @@
                     </div>
 
                     <!-- Ruby -->
-                    <div class="lang-card" data-lang="ruby" data-cat="programming" data-keywords="ruby rails gem web script">
+                    <div class="lang-card" data-lang="ruby" data-cat="programming"
+                        data-keywords="ruby rails gem web script">
                         <div class="lang-card-icon icon-ruby">
                             <img src="images/logos/languages/ruby.svg" alt="Ruby" class="lang-logo-img" />
                         </div>
@@ -276,7 +302,8 @@
                     </div>
 
                     <!-- Bash -->
-                    <div class="lang-card" data-lang="bash" data-cat="programming" data-keywords="bash sh shell terminal linux script">
+                    <div class="lang-card" data-lang="bash" data-cat="programming"
+                        data-keywords="bash sh shell terminal linux script">
                         <div class="lang-card-icon icon-bash">
                             <img src="images/logos/languages/bash.svg" alt="Bash Shell" class="lang-logo-img" />
                         </div>
@@ -288,7 +315,8 @@
                     </div>
 
                     <!-- SQL / SQLite -->
-                    <div class="lang-card" data-lang="sql" data-cat="database" data-keywords="sql sqlite database query table relational">
+                    <div class="lang-card" data-lang="sql" data-cat="database"
+                        data-keywords="sql sqlite database query table relational">
                         <div class="lang-card-icon icon-sql">
                             <img src="images/logos/languages/sqlite.svg" alt="SQL Database" class="lang-logo-img" />
                         </div>
@@ -300,7 +328,8 @@
                     </div>
 
                     <!-- PostgreSQL -->
-                    <div class="lang-card" data-lang="postgres" data-cat="database" data-keywords="postgres postgresql sql database relational">
+                    <div class="lang-card" data-lang="postgres" data-cat="database"
+                        data-keywords="postgres postgresql sql database relational">
                         <div class="lang-card-icon icon-postgres">
                             <img src="images/logos/languages/postgresql.svg" alt="PostgreSQL" class="lang-logo-img" />
                         </div>
@@ -312,7 +341,8 @@
                     </div>
 
                     <!-- MongoDB -->
-                    <div class="lang-card" data-lang="mongo" data-cat="database" data-keywords="mongodb mongo nosql json document database">
+                    <div class="lang-card" data-lang="mongo" data-cat="database"
+                        data-keywords="mongodb mongo nosql json document database">
                         <div class="lang-card-icon icon-mongo">
                             <img src="images/logos/languages/mongodb.svg" alt="MongoDB" class="lang-logo-img" />
                         </div>
@@ -331,24 +361,42 @@
             <div class="home-trust-container">
                 <h5 class="trust-heading">Users from world's top companies and schools</h5>
                 <div class="trust-logos-grid">
-                    <div class="trust-logo-box"><img src="images/logos/companies/microsoft.svg" alt="Microsoft" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/meta.svg" alt="Meta" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/nvidia.svg" alt="Nvidia" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/stripe.svg" alt="Stripe" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/perplexity.png" alt="Perplexity" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/samsung.svg" alt="Samsung" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/amazon.svg" alt="Amazon" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/google.svg" alt="Google" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/ibm.svg" alt="IBM" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/walmart.svg" alt="WalMart" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/intel.svg" alt="Intel" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/paypal.svg" alt="Paypal" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/harvard.svg" alt="Harvard" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/princeton.png" alt="Princeton" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/mit.svg" alt="MIT" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/yale.svg" alt="Yale" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/stanford.svg" alt="Stanford" class="trust-logo-img" /></div>
-                    <div class="trust-logo-box"><img src="images/logos/companies/cam.svg" alt="Cambridge" class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/microsoft.svg" alt="Microsoft"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/meta.svg" alt="Meta"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/nvidia.svg" alt="Nvidia"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/stripe.svg" alt="Stripe"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/perplexity.png" alt="Perplexity"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/samsung.svg" alt="Samsung"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/amazon.svg" alt="Amazon"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/google.svg" alt="Google"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/ibm.svg" alt="IBM"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/walmart.svg" alt="WalMart"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/intel.svg" alt="Intel"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/paypal.svg" alt="Paypal"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/harvard.svg" alt="Harvard"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/princeton.png" alt="Princeton"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/mit.svg" alt="MIT"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/yale.svg" alt="Yale"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/stanford.svg" alt="Stanford"
+                            class="trust-logo-img" /></div>
+                    <div class="trust-logo-box"><img src="images/logos/companies/cam.svg" alt="Cambridge"
+                            class="trust-logo-img" /></div>
                 </div>
                 <h6 class="trust-subtext">+ thousands of other companies and schools</h6>
             </div>
@@ -361,26 +409,41 @@
                 <div class="features-trio-grid">
                     <div class="feature-trio-card" id="featureChallengesCard">
                         <div class="feature-trio-icon blue">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
                         </div>
                         <h3>Interactive Coding Challenges</h3>
-                        <p>Solve DSA and algorithmic problems with multi-input test cases, automated pass/fail badges, and real-time complexity feedback.</p>
+                        <p>Solve DSA and algorithmic problems with multi-input test cases, automated pass/fail badges,
+                            and real-time complexity feedback.</p>
                         <a href="#challenges" class="feature-card-link">Explore Challenges →</a>
                     </div>
                     <div class="feature-trio-card" id="featureTurboCard">
                         <div class="feature-trio-icon purple">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                            </svg>
                         </div>
                         <h3>Sub-Second Turbo Execution</h3>
-                        <p>Powered by local MinGW GCC/G++, Java 21, and Turbo Cloud execution engines for lightning-fast sub-second compiling without queues.</p>
+                        <p>Powered by local MinGW GCC/G++, Java 21, and Turbo Cloud execution engines for lightning-fast
+                            sub-second compiling without queues.</p>
                         <a href="#editor" class="feature-card-link">Launch Turbo Engine →</a>
                     </div>
                     <div class="feature-trio-card" id="featureWorkflowsCard">
                         <div class="feature-trio-icon cyan">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                                <line x1="4" y1="22" x2="4" y2="15" />
+                            </svg>
                         </div>
                         <h3>Modern Developer Workflows</h3>
-                        <p>Multi-file project tabs, instant URL code sharing, AI Big-O complexity analyzer, and curated obsidian themes.</p>
+                        <p>Multi-file project tabs, instant URL code sharing, AI Big-O complexity analyzer, and curated
+                            obsidian themes.</p>
                         <a href="#docs" class="feature-card-link">Read Documentation →</a>
                     </div>
                 </div>
@@ -392,31 +455,52 @@
             <div class="home-partners-container">
                 <div class="partners-logos-row">
                     <div class="partner-item" title="Bluesky">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#0285ff"><path d="M12 10.8c-1.8-3.5-5.2-6-8.8-6.8C1.5 3.6 0 5 0 7.2c0 1.2.6 4.3 1 5.3 1.4 3.7 4.9 4.7 8.2 4.1-4.8 1.2-6.5 4.1-3.7 7 3.5 3.6 5.7.5 6.5-1.6.8 2.1 3 5.2 6.5 1.6 2.8-2.9 1.1-5.8-3.7-7 3.3.6 6.8-.4 8.2-4.1.4-1 1-4.1 1-5.3 0-2.2-1.5-3.6-3.2-3.2-3.6.8-7 3.3-8.8 6.8z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#0285ff">
+                            <path
+                                d="M12 10.8c-1.8-3.5-5.2-6-8.8-6.8C1.5 3.6 0 5 0 7.2c0 1.2.6 4.3 1 5.3 1.4 3.7 4.9 4.7 8.2 4.1-4.8 1.2-6.5 4.1-3.7 7 3.5 3.6 5.7.5 6.5-1.6.8 2.1 3 5.2 6.5 1.6 2.8-2.9 1.1-5.8-3.7-7 3.3.6 6.8-.4 8.2-4.1.4-1 1-4.1 1-5.3 0-2.2-1.5-3.6-3.2-3.2-3.6.8-7 3.3-8.8 6.8z" />
+                        </svg>
                         <span>Bluesky</span>
                     </div>
                     <div class="partner-item" title="CodeCombat">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#eab308"><path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5l-8-3zm0 4l4 4-4 4-4-4 4-4z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#eab308">
+                            <path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5l-8-3zm0 4l4 4-4 4-4-4 4-4z" />
+                        </svg>
                         <span>CodeCombat</span>
                     </div>
                     <div class="partner-item" title="GitKraken">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#179287"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/><circle cx="15" cy="10" r="1.5" fill="currentColor"/><path d="M8 15c1 1 3 1 4 0s3 0 4 0" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#179287">
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none" />
+                            <circle cx="9" cy="10" r="1.5" fill="currentColor" />
+                            <circle cx="15" cy="10" r="1.5" fill="currentColor" />
+                            <path d="M8 15c1 1 3 1 4 0s3 0 4 0" stroke="currentColor" stroke-width="1.5" fill="none" />
+                        </svg>
                         <span>GitKraken</span>
                     </div>
                     <div class="partner-item" title="Webflow">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#146ef5"><path d="M17.8 8.4c-1.3 0-2.3.8-2.8 1.9l-2.4 5.3-2.1-7.2h-3.3l2.8 9.8c.4 1.4 1.7 2.3 3.1 2.3 1.2 0 2.2-.7 2.7-1.8l2.4-5.3 2.1 7.1h3.3l-2.8-9.8c-.4-1.4-1.7-2.3-3-2.3z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#146ef5">
+                            <path
+                                d="M17.8 8.4c-1.3 0-2.3.8-2.8 1.9l-2.4 5.3-2.1-7.2h-3.3l2.8 9.8c.4 1.4 1.7 2.3 3.1 2.3 1.2 0 2.2-.7 2.7-1.8l2.4-5.3 2.1 7.1h3.3l-2.8-9.8c-.4-1.4-1.7-2.3-3-2.3z" />
+                        </svg>
                         <span>Webflow</span>
                     </div>
                     <div class="partner-item" title="Vercel">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffffff"><path d="M12 2L24 22H0L12 2z"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M12 2L24 22H0L12 2z" />
+                        </svg>
                         <span>Vercel</span>
                     </div>
                     <div class="partner-item" title="Supabase">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#3ecf8e"><path d="M13.4 2.1c-.6-.8-1.9-.4-1.9.6v8.3H3.2c-1 0-1.5 1.2-.8 1.8l9.4 10.1c.6.7 1.9.3 1.9-.7v-8.3h8.3c1 0 1.5-1.2.8-1.8L13.4 2.1z"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#3ecf8e">
+                            <path
+                                d="M13.4 2.1c-.6-.8-1.9-.4-1.9.6v8.3H3.2c-1 0-1.5 1.2-.8 1.8l9.4 10.1c.6.7 1.9.3 1.9-.7v-8.3h8.3c1 0 1.5-1.2.8-1.8L13.4 2.1z" />
+                        </svg>
                         <span>Supabase</span>
                     </div>
                     <div class="partner-item" title="Neon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#00e599"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 16V8l8 8V8" stroke="currentColor" stroke-width="2"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#00e599">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+                            <path d="M8 16V8l8 8V8" stroke="currentColor" stroke-width="2" />
+                        </svg>
                         <span>Neon</span>
                     </div>
                 </div>
@@ -432,12 +516,15 @@
                         <span class="gradient-text-teal">in your browser.</span>
                     </h2>
                     <p class="showcase-desc">
-                        CompilerG delivers a desktop-grade IDE experience directly in the web. Zero configuration, instant compilation, parallel test runners, and intelligent developer tools.
+                        CompilerG delivers a desktop-grade IDE experience directly in the web. Zero configuration,
+                        instant compilation, parallel test runners, and intelligent developer tools.
                     </p>
                     <div class="showcase-cta-row">
                         <button id="showcaseOpenEditorBtn" class="home-btn-primary">
                             <span>Open Workspace</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M5 3l14 9-14 9V3z" />
+                            </svg>
                         </button>
                         <button id="showcaseTestCasesBtn" class="home-btn-secondary">
                             <span>Explore Test Cases</span>
@@ -459,7 +546,9 @@
                         </div>
                         <div class="mockup-run-box">
                             <button id="mockupRunDemoBtn" class="mockup-run-btn">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M5 3l14 9-14 9V3z" />
+                                </svg>
                                 <span>Run Live Demo</span>
                             </button>
                         </div>
@@ -555,11 +644,16 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                             <span class="footer-logo-text">CompilerG</span>
                         </div>
                         <p class="footer-desc">
-                            High-speed multi-language online compiler, Monaco editor, and developer IDE powered by local and cloud turbo engines.
+                            High-speed multi-language online compiler, Monaco editor, and developer IDE powered by local
+                            and cloud turbo engines.
                         </p>
                         <div class="footer-social-links">
-                            <a href="https://github.com/arpitb496-cpu/ComilerG" target="_blank" class="footer-social-btn" title="GitHub Repository">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            <a href="https://github.com/arpitb496-cpu/ComilerG" target="_blank"
+                                class="footer-social-btn" title="GitHub Repository">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -568,13 +662,19 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                     <div class="footer-col">
                         <h4>Popular Compilers</h4>
                         <ul class="footer-links-list">
-                            <li><a href="#editor" class="footer-lang-link" data-lang="python">Python 3 Online Compiler</a></li>
-                            <li><a href="#editor" class="footer-lang-link" data-lang="cpp">C++ (GCC) Online Compiler</a></li>
-                            <li><a href="#editor" class="footer-lang-link" data-lang="java">Java (JDK 21) Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="python">Python 3 Online
+                                    Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="cpp">C++ (GCC) Online Compiler</a>
+                            </li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="java">Java (JDK 21) Compiler</a>
+                            </li>
                             <li><a href="#editor" class="footer-lang-link" data-lang="c">C Online Compiler</a></li>
-                            <li><a href="#editor" class="footer-lang-link" data-lang="javascript">JavaScript (Node.js) Runner</a></li>
-                            <li><a href="#editor" class="footer-lang-link" data-lang="html">HTML/CSS/JS Live Preview</a></li>
-                            <li><a href="#editor" class="footer-lang-link" data-lang="rust">Rust Online Compiler</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="javascript">JavaScript (Node.js)
+                                    Runner</a></li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="html">HTML/CSS/JS Live Preview</a>
+                            </li>
+                            <li><a href="#editor" class="footer-lang-link" data-lang="rust">Rust Online Compiler</a>
+                            </li>
                             <li><a href="#editor" class="footer-lang-link" data-lang="go">Go Online Runner</a></li>
                         </ul>
                     </div>
@@ -599,7 +699,8 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                             <li><a href="#docs" id="footerDocsLink">API Documentation</a></li>
                             <li><a href="#tutorials" id="footerTutorialsLink">Tutorials & Guides</a></li>
                             <li><a href="#signin" id="footerSignInLink">Sign In / Register</a></li>
-                            <li><a href="https://github.com/arpitb496-cpu/ComilerG" target="_blank">Open Source (GitHub)</a></li>
+                            <li><a href="https://github.com/arpitb496-cpu/ComilerG" target="_blank">Open Source
+                                    (GitHub)</a></li>
                             <li><a href="#privacy" id="footerPrivacyLink">Privacy Policy</a></li>
                             <li><a href="#terms" id="footerTermsLink">Terms of Service</a></li>
                         </ul>
@@ -609,17 +710,22 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                 <div class="footer-bottom-bar">
                     <div class="creator-badge-card">
                         <span class="creator-badge-tag">Creator &lt;/&gt;</span>
-                        <span class="creator-badge-text">Made by <strong class="creator-author">ARPIT BHARDWAJ</strong></span>
+                        <span class="creator-badge-text">Made by <strong class="creator-author">ARPIT
+                                BHARDWAJ</strong></span>
                         <span class="creator-badge-sep">•</span>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=arpitb496@gmail.com&su=Hello%20Arpit%20-%20CompilerG" target="_blank" rel="noopener noreferrer" id="creatorEmailLink" class="creator-badge-email" title="Open in Gmail">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=arpitb496@gmail.com&su=Hello%20Arpit%20-%20CompilerG"
+                            target="_blank" rel="noopener noreferrer" id="creatorEmailLink" class="creator-badge-email"
+                            title="Open in Gmail">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect width="20" height="16" x="2" y="4" rx="2"></rect>
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                             </svg>
                             <span>arpitb496@gmail.com</span>
                         </a>
                     </div>
-                    <p class="footer-copyright-text">Copyright © 2026 CompilerG. Built for developers worldwide. All rights reserved.</p>
+                    <p class="footer-copyright-text">Copyright © 2026 CompilerG. Built for developers worldwide. All
+                        rights reserved.</p>
                 </div>
             </div>
         </footer>
@@ -648,7 +754,8 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                         <label>Password</label>
                         <input type="password" id="authPassword" class="setting-input" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" id="authSubmitBtn" class="home-btn-primary" style="width: 100%; justify-content: center; margin-top: 6px;">
+                    <button type="submit" id="authSubmitBtn" class="home-btn-primary"
+                        style="width: 100%; justify-content: center; margin-top: 6px;">
                         <span id="authSubmitLabel">Sign In</span>
                     </button>
                 </form>
@@ -656,11 +763,23 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                 <div id="authError" class="auth-error-msg" style="display:none;"></div>
                 <div class="auth-social-row">
                     <button id="authDemoGoogle" class="auth-social-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24">
+                            <path fill="#EA4335"
+                                d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
+                            <path fill="#4285F4"
+                                d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z" />
+                            <path fill="#FBBC05"
+                                d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z" />
+                            <path fill="#34A853"
+                                d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z" />
+                        </svg>
                         <span>Google</span>
                     </button>
                     <button id="authDemoGithub" class="auth-social-btn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                        </svg>
                         <span>GitHub</span>
                     </button>
                 </div>
@@ -689,7 +808,8 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                     <!-- Dynamic tutorial text -->
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px;">
-                    <button id="tutOpenInEditorBtn" class="home-btn-primary" style="padding: 6px 16px; font-size: 0.82rem;">
+                    <button id="tutOpenInEditorBtn" class="home-btn-primary"
+                        style="padding: 6px 16px; font-size: 0.82rem;">
                         <span>Open in Editor →</span>
                     </button>
                 </div>
@@ -707,7 +827,11 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                     <span class="brand-title">CompilerG</span>
                 </a>
                 <button id="editorHomeBtn" class="btn-home-nav" title="Back to Homepage">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                    </svg>
                     <span>Home</span>
                 </button>
 
@@ -760,7 +884,8 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                 <!-- AI Assistant Trigger -->
                 <button id="aiAssistBtn" class="btn-ai" title="CompilerG AI Debugger & Code Mentor">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                        <path
+                            d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
                     </svg>
                     <span>AI Fix</span>
                 </button>
@@ -768,8 +893,11 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                 <!-- Share Code Button -->
                 <button id="shareCodeBtn" class="btn-icon" title="Share Code via Link">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
                     </svg>
                 </button>
 
@@ -910,8 +1038,10 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
 
                 <!-- Logged-in User Badge in Editor -->
                 <div id="editorUserArea" class="nav-user-area editor-user-area" style="display:none; padding: 3px 8px;">
-                    <img id="editorUserAvatar" class="nav-user-avatar" referrerpolicy="no-referrer" src="" alt="User" style="width: 24px; height: 24px;">
-                    <span id="editorUserName" class="nav-user-name" style="font-size: 0.78rem; max-width: 100px;"></span>
+                    <img id="editorUserAvatar" class="nav-user-avatar" referrerpolicy="no-referrer" src="" alt="User"
+                        style="width: 24px; height: 24px;">
+                    <span id="editorUserName" class="nav-user-name"
+                        style="font-size: 0.78rem; max-width: 100px;"></span>
                 </div>
             </div>
         </header>
@@ -930,7 +1060,8 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                             </div>
                         </div>
                         <button id="addFileBtn" class="btn-add-file" title="Add new file / page (+)">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
                                 <line x1="12" y1="5" x2="12" y2="19" />
                                 <line x1="5" y1="12" x2="19" y2="12" />
                             </svg>
@@ -941,15 +1072,18 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                         <!-- Snippets Dropdown -->
                         <div class="snippets-dropdown-container" id="snippetsDropdownContainer">
                             <button id="snippetsBtn" class="btn-subtle" title="DSA & Algorithm Snippets">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M16 18l6-6-6-6" />
+                                    <path d="M8 6l-6 6 6 6" />
                                 </svg>
                                 <span>Snippets</span>
                             </button>
                             <div id="snippetsDropdownMenu" class="snippets-dropdown"></div>
                         </div>
                         <button id="formatCodeBtn" class="btn-subtle" title="Format Code">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <line x1="21" y1="10" x2="7" y2="10" />
                                 <line x1="21" y1="6" x2="3" y2="6" />
                                 <line x1="21" y1="14" x2="3" y2="14" />
@@ -958,21 +1092,26 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                             <span>Format</span>
                         </button>
                         <button id="copyCodeBtn" class="btn-subtle" title="Copy Code">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                             </svg>
                             <span>Copy</span>
                         </button>
                         <button id="wordWrapBtn" class="btn-subtle" title="Toggle Word Wrap (Alt+Z)">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 6h18M3 12h15a3 3 0 1 1 0 6h-4"/><polyline points="13 16 10 19 13 22"/>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M3 6h18M3 12h15a3 3 0 1 1 0 6h-4" />
+                                <polyline points="13 16 10 19 13 22" />
                             </svg>
                             <span>Wrap</span>
                         </button>
                         <button id="zenModeBtn" class="btn-subtle" title="Zen Mode (Fullscreen Editor)">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
                             </svg>
                             <span>Zen</span>
                         </button>
@@ -1018,8 +1157,10 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                             <span>Live Preview</span>
                         </button>
                         <button id="testCasesTabBtn" class="tab-btn" data-tab="testcases">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M9 11l3 3L22 4" />
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
                             </svg>
                             <span>Test Cases</span>
                         </button>
@@ -1047,8 +1188,9 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                             <span id="execMemory">0 KB</span>
                         </div>
                         <button id="complexityBtn" class="btn-subtle" title="Analyze Time & Space Complexity (Big-O)">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                             </svg>
                             <span>Big-O</span>
                         </button>
@@ -1128,7 +1270,8 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                                 <span class="test-cases-title">Test Cases</span>
                                 <div class="test-cases-actions">
                                     <button id="addTestCaseBtn" class="btn-subtle">+ Add Case</button>
-                                    <button id="runAllTestsBtn" class="btn-run" style="padding: 5px 14px; font-size: 0.8rem;">▶ Run All</button>
+                                    <button id="runAllTestsBtn" class="btn-run"
+                                        style="padding: 5px 14px; font-size: 0.8rem;">▶ Run All</button>
                                 </div>
                             </div>
                             <div id="testCasesList" class="test-cases-list">
@@ -1192,13 +1335,18 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                 </div>
                 <div class="modal-body">
                     <div style="margin-bottom: 12px;">
-                        <label class="setting-label" for="newFileNameInput" style="display: block; margin-bottom: 6px;">File / Page Name</label>
-                        <input type="text" id="newFileNameInput" class="setting-input" style="width: 100%; font-family: var(--font-code);" placeholder="e.g. NewFile1.c, helper.h, style.css">
-                        <div class="setting-desc" style="margin-top: 6px;">Include file extension matching your code language.</div>
+                        <label class="setting-label" for="newFileNameInput"
+                            style="display: block; margin-bottom: 6px;">File / Page Name</label>
+                        <input type="text" id="newFileNameInput" class="setting-input"
+                            style="width: 100%; font-family: var(--font-code);"
+                            placeholder="e.g. NewFile1.c, helper.h, style.css">
+                        <div class="setting-desc" style="margin-top: 6px;">Include file extension matching your code
+                            language.</div>
                     </div>
                     <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px;">
                         <button class="btn-subtle" data-close="newFileModal">Cancel</button>
-                        <button id="confirmAddFileBtn" class="btn-run" style="padding: 6px 18px; font-size: 0.85rem;">Create File</button>
+                        <button id="confirmAddFileBtn" class="btn-run"
+                            style="padding: 6px 18px; font-size: 0.85rem;">Create File</button>
                     </div>
                 </div>
             </div>
@@ -1318,10 +1466,13 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                     <button class="btn-icon modal-close-btn" data-close="shareModal">✕</button>
                 </div>
                 <div class="modal-body">
-                    <p style="color: var(--text-secondary); margin-bottom: 12px;">Anyone with this link can view your code in CompilerG:</p>
+                    <p style="color: var(--text-secondary); margin-bottom: 12px;">Anyone with this link can view your
+                        code in CompilerG:</p>
                     <div class="share-link-box">
-                        <input type="text" id="shareLinkInput" class="setting-input" readonly style="width: 100%; font-family: var(--font-code); font-size: 0.78rem;">
-                        <button id="copyShareLinkBtn" class="btn-run" style="padding: 6px 16px; font-size: 0.82rem; flex-shrink: 0;">Copy</button>
+                        <input type="text" id="shareLinkInput" class="setting-input" readonly
+                            style="width: 100%; font-family: var(--font-code); font-size: 0.78rem;">
+                        <button id="copyShareLinkBtn" class="btn-run"
+                            style="padding: 6px 16px; font-size: 0.82rem; flex-shrink: 0;">Copy</button>
                     </div>
                     <p id="shareStatus" style="color: var(--success); font-size: 0.8rem; margin-top: 8px;"></p>
                 </div>
@@ -1350,8 +1501,100 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                 </div>
             </div>
         </div>
+
+        <!-- OneCompiler-Style "Save your code" Modal -->
+        <div id="saveCodeModal" class="modal-overlay">
+            <div class="modal-window save-code-modal-window">
+                <div class="modal-header">
+                    <div>
+                        <h3 class="modal-title">Save your code</h3>
+                        <p class="modal-subtitle">Title is required. Everything else is optional.</p>
+                    </div>
+                    <button class="btn-icon modal-close-btn" id="closeSaveCodeModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="saveCodeForm">
+                        <div class="form-group">
+                            <label for="saveCodeTitle" class="form-label">Title <span class="required-star">*</span></label>
+                            <input type="text" id="saveCodeTitle" class="setting-input form-control" placeholder="e.g. Hello world in C" required autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <div class="label-with-badge">
+                                <label for="saveCodeDesc" class="form-label">Description</label>
+                                <span class="optional-badge">optional</span>
+                            </div>
+                            <textarea id="saveCodeDesc" class="setting-input form-control" rows="3" placeholder="What does this code do?"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <div class="label-with-badge">
+                                <label for="saveCodeTags" class="form-label">Tags</label>
+                                <span class="optional-badge">optional</span>
+                            </div>
+                            <input type="text" id="saveCodeTags" class="setting-input form-control" placeholder="Add tags separated by comma (e.g. c, queue, dsa)..." autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Who can see this?</label>
+                            <div class="visibility-pills-row" id="saveCodeVisibilityGroup">
+                                <button type="button" class="vis-pill active" data-vis="public">
+                                    <span class="vis-icon">🌐</span>
+                                    <span>Public</span>
+                                </button>
+                                <button type="button" class="vis-pill" data-vis="unlisted">
+                                    <span class="vis-icon">🔗</span>
+                                    <span>Unlisted</span>
+                                </button>
+                                <button type="button" class="vis-pill" data-vis="private">
+                                    <span class="vis-icon">🔒</span>
+                                    <span>Private</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="save-modal-footer">
+                            <button type="button" class="btn-secondary" id="cancelSaveCodeBtn">Cancel</button>
+                            <button type="submit" class="btn-primary-blue" id="submitSaveCodeBtn">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Saved Codes Modal / Library Manager -->
+        <div id="myCodesModal" class="modal-overlay">
+            <div class="modal-window my-codes-modal-window">
+                <div class="modal-header">
+                    <div>
+                        <h3 class="modal-title">📂 My Saved Codes</h3>
+                        <p class="modal-subtitle">Browse, search, and manage all your saved programs</p>
+                    </div>
+                    <button class="btn-icon modal-close-btn" id="closeMyCodesModal">✕</button>
+                </div>
+                <div class="modal-body my-codes-modal-body">
+                    <div class="my-codes-top-toolbar">
+                        <div class="my-codes-search-box">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" id="myCodesSearchInput" class="setting-input" placeholder="Search by title, tag, or language..." autocomplete="off">
+                        </div>
+                        <select id="myCodesLangFilter" class="setting-input my-codes-lang-select">
+                            <option value="all">All Languages</option>
+                        </select>
+                        <button id="myCodesNewBtn" class="btn-primary-blue btn-sm">+ New Code</button>
+                    </div>
+                    <div id="myCodesList" class="my-codes-cards-container">
+                        <!-- Dynamic code cards will be populated here -->
+                    </div>
+                    <div class="my-codes-bottom-bar">
+                        <span id="myCodesTotalCount" class="my-codes-summary-text">0 saved codes</span>
+                        <div class="my-codes-actions-right">
+                            <button id="exportAllCodesJsonBtn" class="btn-secondary btn-xs" title="Export all snippets as JSON backup">📥 Export All (JSON)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
+
     <!-- Global Toast Notifications Container (Works in both Home & Editor) -->
     <div id="toastContainer" class="toast-container"></div>
     <script src="js/languages.js?v=4.0"></script>
