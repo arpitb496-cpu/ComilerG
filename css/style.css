@@ -351,6 +351,38 @@
     caret-color: #d97706 !important;
 }
 
+[data-theme="light"] .home-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    background: rgba(248, 250, 252, 0.9) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="light"] .home-footer .footer-brand {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .home-footer .footer-desc {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .home-footer .footer-col h4 {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .home-footer .footer-links-list a {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .home-footer .footer-links-list a:hover {
+    color: #b45309 !important;
+}
+
+[data-theme="light"] .home-footer .footer-bottom-bar {
+    border-top-color: rgba(0, 0, 0, 0.08) !important;
+    color: #64748b !important;
+}
+
 /* ==========================================================================
    John-T45 Interactive Background System
    1. Animated Moving Clouds Layer (clouds3.png)
@@ -3708,9 +3740,10 @@ body.in-editor-mode {
 
 /* Footer */
 .home-footer {
-    border-top: 1px solid rgba(245, 166, 35, 0.12);
-    background: #080604;
+    border-top: 1px solid rgba(245, 166, 35, 0.16);
+    background: transparent !important;
     padding: 4.5rem 1.5rem 2.5rem;
+    position: relative;
 }
 
 .home-footer-container {
