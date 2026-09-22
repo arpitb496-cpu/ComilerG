@@ -95,6 +95,263 @@
 }
 
 /* ==========================================================================
+   Clean Light Specific Contrast & Text Visibility Overrides
+   ========================================================================== */
+[data-theme="light"] .header-navbar {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .brand-title {
+    background: linear-gradient(90deg, #92400e 0%, #d97706 50%, #b45309 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+[data-theme="light"] .brand-badge {
+    background: rgba(217, 119, 6, 0.12) !important;
+    color: #92400e !important;
+    border: 1px solid rgba(217, 119, 6, 0.3) !important;
+}
+
+[data-theme="light"] .btn-top-save {
+    background: rgba(217, 119, 6, 0.1) !important;
+    color: #92400e !important;
+    border: 1px solid rgba(217, 119, 6, 0.35) !important;
+}
+
+[data-theme="light"] .btn-top-save:hover {
+    background: rgba(217, 119, 6, 0.2) !important;
+    color: #78350f !important;
+    border-color: #b45309 !important;
+    box-shadow: 0 0 12px rgba(217, 119, 6, 0.2) !important;
+}
+
+[data-theme="light"] .btn-top-my-codes {
+    background: rgba(0, 0, 0, 0.04) !important;
+    color: #1e293b !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="light"] .btn-top-my-codes:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #0f172a !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] .my-codes-count {
+    background: rgba(217, 119, 6, 0.18) !important;
+    color: #92400e !important;
+}
+
+[data-theme="light"] .btn-ai {
+    background: rgba(217, 119, 6, 0.08) !important;
+    color: #92400e !important;
+    border: 1px solid rgba(217, 119, 6, 0.3) !important;
+}
+
+[data-theme="light"] .btn-ai:hover {
+    background: rgba(217, 119, 6, 0.18) !important;
+    color: #78350f !important;
+    box-shadow: 0 0 12px rgba(217, 119, 6, 0.2) !important;
+}
+
+[data-theme="light"] .btn-icon {
+    color: #334155 !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="light"] .btn-icon:hover {
+    color: #0f172a !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="light"] .btn-theme-toggle {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="light"] .btn-theme-toggle:hover {
+    background: #e2e8f0 !important;
+    border-color: #94a3b8 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .editor-save-badge {
+    background: rgba(16, 185, 129, 0.12) !important;
+    color: #059669 !important;
+    border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+[data-theme="light"] .editor-user-area {
+    background: rgba(217, 119, 6, 0.08) !important;
+    border: 1px solid rgba(217, 119, 6, 0.25) !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .editor-user-area .nav-user-name {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .languages-nav {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="light"] .lang-dropdown-btn {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="light"] .lang-chip {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .lang-chip:hover {
+    color: #0f172a !important;
+    background: #f1f5f9 !important;
+}
+
+[data-theme="light"] .lang-chip.active {
+    background: #ffffff !important;
+    color: #2563eb !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="light"] .pane-toolbar,
+[data-theme="light"] .terminal-tabs {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="light"] .file-tab-item {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .file-tab-item:hover {
+    color: #0f172a !important;
+    background: #f1f5f9 !important;
+}
+
+[data-theme="light"] .file-tab-item.active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    border-bottom: 2px solid #2563eb !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .btn-add-file {
+    color: #475569 !important;
+    background: #f8fafc !important;
+    border: 1px dashed #cbd5e1 !important;
+}
+
+[data-theme="light"] .btn-add-file:hover {
+    color: #2563eb !important;
+    border-color: #2563eb !important;
+    background: rgba(37, 99, 235, 0.08) !important;
+}
+
+[data-theme="light"] .btn-subtle {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .btn-subtle:hover {
+    color: #0f172a !important;
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .tab-btn {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .tab-btn:hover {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .tab-btn.active {
+    color: #0f172a !important;
+    background: #ffffff !important;
+    border-bottom: 2px solid #2563eb !important;
+}
+
+[data-theme="light"] .split-resizer {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .terminal-welcome-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .welcome-title {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .welcome-sub {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .welcome-sub kbd {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .feature-tag {
+    background: rgba(217, 119, 6, 0.1) !important;
+    border: 1px solid rgba(217, 119, 6, 0.3) !important;
+    color: #92400e !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="light"] .quick-stdin-card {
+    background: #f8fafc !important;
+    border: 1px solid rgba(217, 119, 6, 0.35) !important;
+    border-left: 4px solid #d97706 !important;
+}
+
+[data-theme="light"] .quick-stdin-hint {
+    color: #334155 !important;
+}
+
+[data-theme="light"] .quick-stdin-hint code {
+    background: #e2e8f0 !important;
+    color: #b45309 !important;
+}
+
+[data-theme="light"] .quick-stdin-subtext {
+    color: #64748b !important;
+}
+
+[data-theme="light"] .quick-stdin-box {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="light"] .quick-stdin-box:focus {
+    border-color: #d97706 !important;
+    box-shadow: 0 0 10px rgba(217, 119, 6, 0.2) !important;
+}
+
+[data-theme="light"] .interactive-terminal-prompt {
+    color: #d97706 !important;
+}
+
+[data-theme="light"] .interactive-terminal-input {
+    color: #0f172a !important;
+    caret-color: #d97706 !important;
+}
+
+/* ==========================================================================
    John-T45 Interactive Background System
    1. Animated Moving Clouds Layer (clouds3.png)
    2. Particles.js Floating Nebula Stardust (canvas.background)
@@ -522,18 +779,14 @@ body.in-editor-mode {
 }
 
 /* ==========================================================================
-   Theme Selector Pill & Dropdown
+   One-Click Theme Toggle Button (Celestial Gold <-> Clean Light)
    ========================================================================== */
-.theme-dropdown-container {
-    position: relative;
-}
-
-.btn-theme-selector {
-    display: flex;
+.btn-theme-toggle {
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     height: 36px;
-    padding: 0 12px;
+    padding: 0 13px;
     border-radius: var(--radius-md);
     background: var(--bg-surface-elevated);
     color: var(--text-primary);
@@ -541,95 +794,30 @@ body.in-editor-mode {
     font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition-fast);
+    transition: all var(--transition-smooth);
     user-select: none;
 }
 
-.btn-theme-selector:hover {
+.btn-theme-toggle:hover {
     border-color: var(--border-highlight);
     box-shadow: 0 0 14px var(--border-highlight);
+    transform: translateY(-1px);
 }
 
-.theme-indicator-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--primary);
-    box-shadow: 0 0 8px var(--primary);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+.btn-theme-toggle:active {
+    transform: translateY(0);
 }
 
-.theme-dropdown-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    width: 240px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
-    backdrop-filter: blur(20px);
-    padding: 6px;
-    display: none;
-    flex-direction: column;
-    gap: 4px;
-    z-index: 1000;
-    animation: fadeInScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.theme-dropdown-menu.open {
-    display: flex;
-}
-
-.theme-option-item {
-    display: flex;
+.theme-toggle-icon {
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px;
-    border-radius: var(--radius-md);
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    background: transparent;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: var(--transition-fast);
 }
 
-.theme-option-item:hover {
-    background: var(--bg-surface-elevated);
-    border-color: var(--border-color);
-}
-
-.theme-option-item.active {
-    background: var(--bg-surface-elevated);
-    border-color: var(--border-highlight);
-    color: var(--text-accent);
+.theme-toggle-text {
     font-weight: 600;
-}
-
-.theme-swatches {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.theme-swatch-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: translateY(-4px) scale(0.97);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    letter-spacing: -0.01em;
 }
 
 .status-badge.turbo {

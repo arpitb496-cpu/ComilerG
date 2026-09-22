@@ -48,10 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyCodeBtn = document.getElementById('copyCodeBtn');
     const formatCodeBtn = document.getElementById('formatCodeBtn');
     const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const themeDropdownContainer = document.getElementById('themeDropdownContainer');
-    const themeDropdownMenu = document.getElementById('themeDropdownMenu');
-    const themeIndicatorDot = document.getElementById('themeIndicatorDot');
-    const themeNameLabel = document.getElementById('themeNameLabel');
+    const themeToggleIcon = document.getElementById('themeToggleIcon');
+    const themeToggleText = document.getElementById('themeToggleText');
     const themeSelectInput = document.getElementById('themeSelectInput');
     const settingsBtn = document.getElementById('settingsBtn');
     const shortcutsBtn = document.getElementById('shortcutsBtn');
@@ -1213,57 +1211,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Theme System ---
-    const themeMetadata = {
-        'dark': { label: 'Celestial Gold', icon: '✨', color: '#ffd43f' },
-        'light': { label: 'Clean Light', icon: '☀️', color: '#2563eb' }
-    };
-
+    // --- Theme System (One-Click Toggle: Celestial Gold <-> Clean Light) ---
     function applyTheme(themeKey, notify = true) {
-        const cleanKey = themeMetadata[themeKey] ? themeKey : 'dark';
+        const cleanKey = (themeKey === 'light') ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', cleanKey);
         state.theme = cleanKey;
         localStorage.setItem('compilerg_theme', cleanKey);
         editorManager.setTheme(cleanKey);
         if (bgCanvas) bgCanvas.setTheme(cleanKey);
 
-        const meta = themeMetadata[cleanKey];
-        if (themeNameLabel) themeNameLabel.textContent = meta.label;
-        if (themeIndicatorDot) {
-            themeIndicatorDot.style.background = meta.color;
-            themeIndicatorDot.style.boxShadow = `0 0 10px ${meta.color}`;
+        // Update single-click toggle button UI:
+        // When on Light mode -> button offers '✨ Gold'
+        // When on Dark/Gold mode -> button offers '☀️ Light'
+        if (themeToggleIcon && themeToggleText) {
+            if (cleanKey === 'light') {
+                themeToggleIcon.textContent = '✨';
+                themeToggleText.textContent = 'Gold';
+                if (themeToggleBtn) themeToggleBtn.title = 'Switch to Celestial Gold theme';
+            } else {
+                themeToggleIcon.textContent = '☀️';
+                themeToggleText.textContent = 'Light';
+                if (themeToggleBtn) themeToggleBtn.title = 'Switch to Clean Light theme';
+            }
         }
+
         if (themeSelectInput) themeSelectInput.value = cleanKey;
 
-        document.querySelectorAll('.theme-option-item').forEach(el => {
-            el.classList.toggle('active', el.dataset.theme === cleanKey);
-        });
-
         if (notify) {
-            showToast(`Applied ${meta.icon} ${meta.label} theme!`, 'info');
+            const label = cleanKey === 'light' ? '☀️ Clean Light' : '✨ Celestial Gold';
+            showToast(`Switched to ${label}!`, 'info');
         }
     }
 
-    if (themeToggleBtn && themeDropdownMenu) {
-        themeToggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            themeDropdownMenu.classList.toggle('open');
-        });
-
-        document.querySelectorAll('.theme-option-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const selected = item.dataset.theme;
-                if (selected) {
-                    applyTheme(selected);
-                    themeDropdownMenu.classList.remove('open');
-                }
-            });
-        });
-
-        document.addEventListener('click', (e) => {
-            if (themeDropdownContainer && !themeDropdownContainer.contains(e.target)) {
-                themeDropdownMenu.classList.remove('open');
-            }
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const nextTheme = state.theme === 'light' ? 'dark' : 'light';
+            applyTheme(nextTheme);
         });
     }
 
