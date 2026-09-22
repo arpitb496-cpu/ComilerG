@@ -1165,10 +1165,10 @@ function () {
 var $mrfc$export$default = {};
 // ASSET: shaders/shooting-star.vert
 var $puli$exports = {};
-$puli$exports = "precision highp float;\nprecision highp int;\n#define GLSLIFY 1\nattribute vec3 position;\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\n\nattribute vec4 mouse;\nattribute vec2 aFront;\nattribute float random;\n\n// uniform float uProgress;\nuniform vec2 resolution;\nuniform float pixelRatio;\nuniform float timestamp;\n\nuniform float size;\nuniform float minSize;\n// uniform float delay;\nuniform float speed;\nuniform float far;\nuniform float spread;\nuniform float maxSpread;\nuniform float maxZ;\nuniform float maxDiff;\nuniform float diffPow;\n\nvarying float vProgress;\nvarying float vRandom;\nvarying float vDiff;\nvarying float vSpreadLength;\nvarying float vPositionZ;\n\nfloat cubicOut(float t) {\n  float f = t - 1.0;\n  return f * f * f + 1.0;\n}\n\n// #pragma glslify: cubicBezier = require(../../modules/cubicBezier.glsl)\n\nconst float PI = 3.1415926;\nconst float PI2 = PI * 2.;\n\nvec2 cartesianToPolar (vec2 p) {\n  return vec2((atan(p.y, p.x) + PI) / PI2, length(p));\n}\n\nvec2 polarToCartesian (vec2 p) {\n  float r = p.x * PI2 - PI;\n  float l = p.y;\n  return vec2(cos(r) * l, sin(r) * l);\n}\n\nvoid main () {\n  // float progress = max(uProgress - random * delay, 0.);\n  float progress = clamp((timestamp - mouse.z) * speed, 0., 1.);\n  progress *= step(0., mouse.x);\n\n  float startX = mouse.x - resolution.x / 2.;\n  float startY = mouse.y - resolution.y / 2.;\n  vec3 startPosition = vec3(startX, startY, random);\n\n  float diff = clamp(mouse.w / maxDiff, 0., 1.);\n  diff = pow(diff, diffPow);\n\n  vec3 cPosition = position * 2. - 1.;\n\n  float radian = cPosition.x * PI2 - PI;\n  vec2 xySpread = vec2(cos(radian), sin(radian)) * spread * mix(1., maxSpread, diff) * cPosition.y;\n\n  vec3 endPosition = startPosition;\n  endPosition.xy += xySpread;\n  endPosition.xy -= aFront * far * random;\n  endPosition.z += cPosition.z * maxZ * (pixelRatio > 1. ? 1.2 : 1.);\n\n  float positionProgress = cubicOut(progress * random);\n  // float positionProgress = cubicBezier(.29, .16, .3, 1., progress);\n  vec3 currentPosition = mix(startPosition, endPosition, positionProgress);\n\n  vProgress = progress;\n  vRandom = random;\n  vDiff = diff;\n  vSpreadLength = cPosition.y;\n  vPositionZ = position.z;\n\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(currentPosition, 1.);\n  gl_PointSize = max(currentPosition.z * size * diff * pixelRatio, minSize * (pixelRatio > 1. ? 1.3 : 1.));\n}\n";
+$puli$exports = "precision highp float;\nprecision highp int;\n#define GLSLIFY 1\nattribute vec3 position;\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\n\nattribute vec4 mouse;\nattribute vec2 aFront;\nattribute float random;\n\n// uniform float uProgress;\nuniform vec2 resolution;\nuniform float pixelRatio;\nuniform float timestamp;\n\nuniform float size;\nuniform float minSize;\n// uniform float delay;\nuniform float speed;\nuniform float far;\nuniform float spread;\nuniform float maxSpread;\nuniform float maxZ;\nuniform float maxDiff;\nuniform float diffPow;\n\nvarying float vProgress;\nvarying float vRandom;\nvarying float vDiff;\nvarying float vSpreadLength;\nvarying float vPositionZ;\n\nfloat cubicOut(float t) {\n  float f = t - 1.0;\n  return f * f * f + 1.0;\n}\n\n// #pragma glslify: cubicBezier = require(../../modules/cubicBezier.glsl)\n\nconst float PI = 3.1415926;\nconst float PI2 = PI * 2.;\n\nvec2 cartesianToPolar (vec2 p) {\n  return vec2((atan(p.y, p.x) + PI) / PI2, length(p));\n}\n\nvec2 polarToCartesian (vec2 p) {\n  float r = p.x * PI2 - PI;\n  float l = p.y;\n  return vec2(cos(r) * l, sin(r) * l);\n}\n\nvoid main () {\n  // float progress = max(uProgress - random * delay, 0.);\n  float progress = clamp((timestamp - mouse.z) * speed, 0., 1.);\n  progress *= step(0., mouse.x);\n\n  float startX = mouse.x - resolution.x / 2.;\n  float startY = mouse.y - resolution.y / 2.;\n  vec3 startPosition = vec3(startX, startY, random);\n\n  float diff = clamp(mouse.w / maxDiff, 0.15, 1.);\n  diff = pow(diff, diffPow);\n\n  vec3 cPosition = position * 2. - 1.;\n\n  float radian = cPosition.x * PI2 - PI;\n  vec2 xySpread = vec2(cos(radian), sin(radian)) * spread * mix(1., maxSpread, diff) * cPosition.y;\n\n  vec3 endPosition = startPosition;\n  endPosition.xy += xySpread;\n  endPosition.xy -= aFront * far * random;\n  endPosition.z += cPosition.z * maxZ * (pixelRatio > 1. ? 1.2 : 1.);\n\n  float positionProgress = cubicOut(progress * random);\n  // float positionProgress = cubicBezier(.29, .16, .3, 1., progress);\n  vec3 currentPosition = mix(startPosition, endPosition, positionProgress);\n\n  vProgress = progress;\n  vRandom = random;\n  vDiff = diff;\n  vSpreadLength = cPosition.y;\n  vPositionZ = position.z;\n\n  gl_Position = projectionMatrix * modelViewMatrix * vec4(currentPosition, 1.);\n  gl_PointSize = max(currentPosition.z * size * diff * pixelRatio, minSize * (pixelRatio > 1. ? 1.3 : 1.));\n}\n";
 // ASSET: shaders/shooting-star.frag
 var $v3o$exports = {};
-$v3o$exports = "precision highp float;\nprecision highp int;\n#define GLSLIFY 1\n\n// uniform float uProgress;\nuniform float fadeSpeed;\nuniform float shortRangeFadeSpeed;\nuniform float minFlashingSpeed;\nuniform float blur;\n\nvarying float vProgress;\nvarying float vRandom;\nvarying float vDiff;\nvarying float vSpreadLength;\nvarying float vPositionZ;\n\nhighp float random(vec2 co)\n{\n    highp float a = 12.9898;\n    highp float b = 78.233;\n    highp float c = 43758.5453;\n    highp float dt= dot(co.xy ,vec2(a,b));\n    highp float sn= mod(dt,3.14);\n    return fract(sin(sn) * c);\n}\n\nfloat quadraticIn(float t) {\n  return t * t;\n}\n\n#ifndef HALF_PI\n#define HALF_PI 1.5707963267948966\n#endif\n\nfloat sineOut(float t) {\n  return sin(t * HALF_PI);\n}\n\nconst vec3 baseColor = vec3(170., 133., 88.) / 255.;\n\nvoid main(){\n\tvec2 p = gl_PointCoord * 2. - 1.;\n\tfloat len = length(p);\n\n  float cRandom = random(vec2(vProgress * mix(minFlashingSpeed, 1., vRandom)));\n  cRandom = mix(0.3, 2., cRandom);\n\n  float cBlur = blur * mix(1., 0.3, vPositionZ);\n\tfloat shape = smoothstep(1. - cBlur, 1. + cBlur, (1. - cBlur) / len);\n  shape *= mix(0.5, 1., vRandom);\n\n  if (shape == 0.) discard;\n\n  float darkness = mix(0.1, 1., vPositionZ);\n\n  float alphaProgress = vProgress * fadeSpeed * mix(2.5, 1., pow(vDiff, 0.6));\n  alphaProgress *= mix(shortRangeFadeSpeed, 1., sineOut(vSpreadLength) * quadraticIn(vDiff));\n  float alpha = 1. - min(alphaProgress, 1.);\n  alpha *= cRandom * vDiff;\n\n\tgl_FragColor = vec4(baseColor * darkness * cRandom, shape * alpha);\n}\n";
+$v3o$exports = "precision highp float;\nprecision highp int;\n#define GLSLIFY 1\n\n// uniform float uProgress;\nuniform float fadeSpeed;\nuniform float shortRangeFadeSpeed;\nuniform float minFlashingSpeed;\nuniform float blur;\n\nvarying float vProgress;\nvarying float vRandom;\nvarying float vDiff;\nvarying float vSpreadLength;\nvarying float vPositionZ;\n\nhighp float random(vec2 co)\n{\n    highp float a = 12.9898;\n    highp float b = 78.233;\n    highp float c = 43758.5453;\n    highp float dt= dot(co.xy ,vec2(a,b));\n    highp float sn= mod(dt,3.14);\n    return fract(sin(sn) * c);\n}\n\nfloat quadraticIn(float t) {\n  return t * t;\n}\n\n#ifndef HALF_PI\n#define HALF_PI 1.5707963267948966\n#endif\n\nfloat sineOut(float t) {\n  return sin(t * HALF_PI);\n}\n\nconst vec3 baseColor = vec3(255., 215., 90.) / 255.;\n\nvoid main(){\n\tvec2 p = gl_PointCoord * 2. - 1.;\n\tfloat len = length(p);\n\tif (len > 1.0) discard;\n\n  float cRandom = random(vec2(vProgress * mix(minFlashingSpeed, 1., vRandom)));\n  cRandom = mix(0.5, 1.8, cRandom);\n\n  float shape = smoothstep(1.0, 0.0, len);\n  float core = exp(-len * 3.5);\n\n  float darkness = mix(0.3, 1., vPositionZ);\n\n  float alpha = (1. - pow(vProgress, 1.4)) * shape;\n  alpha *= cRandom * mix(0.6, 1.0, vDiff);\n\n  vec3 starColor = mix(baseColor, vec3(1.0, 0.95, 0.8), core * 0.85);\n\tgl_FragColor = vec4(starColor * darkness * (1.0 + core * 0.6), alpha);\n}\n";
 
 function $a87C$var$_classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -1203,20 +1203,20 @@ var $a87C$var$data = {
 };
 var $a87C$var$uniformData = {
   size: {
-    value: 0.05,
+    value: 0.12,
     range: [0, 1]
   },
   minSize: {
-    value: 1,
-    range: [0, 5]
+    value: 2.8,
+    range: [0, 10]
   },
   speed: {
-    value: 0.012,
+    value: 0.0012,
     range: [0, 0.05]
   },
   fadeSpeed: {
-    value: 1.1,
-    range: [1, 2]
+    value: 0.9,
+    range: [0.1, 2]
   },
   shortRangeFadeSpeed: {
     value: 1.3,
@@ -1409,16 +1409,20 @@ function () {
         });
       };
 
-      window.addEventListener('pointerdown', function (e) {
-        onMove(e.clientX, e.clientY);
-      }, { passive: true });
-      window.addEventListener('pointermove', function (e) {
-        onMove(e.clientX, e.clientY);
-      }, { passive: true });
-      window.addEventListener('mousemove', function (e) {
-        onMove(e.clientX, e.clientY);
-      }, { passive: true });
+      ['pointermove', 'mousemove', 'pointerdown'].forEach(function (evt) {
+        window.addEventListener(evt, function (e) {
+          onMove(e.clientX, e.clientY);
+        }, { passive: true });
+        document.addEventListener(evt, function (e) {
+          onMove(e.clientX, e.clientY);
+        }, { passive: true });
+      });
       window.addEventListener('touchmove', function (e) {
+        if (e.touches && e.touches[0]) {
+          onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+      document.addEventListener('touchmove', function (e) {
         if (e.touches && e.touches[0]) {
           onMove(e.touches[0].clientX, e.touches[0].clientY);
         }
@@ -1662,7 +1666,8 @@ function () {
       isDev: false,
       container: document.body,
       fov: Math.atan(initialClientHeight / 2 / $Focm$var$CAMERA_Z) * (180 / Math.PI) * 2,
-      zFar: $Focm$var$MAX_CAMERA_Z,
+      zNear: 0.1,
+      zFar: 10000,
       cameraPosition: [0, 0, $Focm$var$CAMERA_Z],
       aspect: window.innerWidth / window.innerHeight,
       canvas: canvas,

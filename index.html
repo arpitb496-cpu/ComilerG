@@ -1628,10 +1628,23 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
     <!-- Global Toast Notifications Container (Works in both Home & Editor) -->
     <div id="toastContainer" class="toast-container"></div>
     <!-- Three.js & Particles Engine for John-T45 Interactive Background -->
+    <script>
+        // Prevent Monaco's AMD loader from intercepting Three.js or other UMD libraries
+        if (typeof window.define === 'function' && window.define.amd) {
+            window.__monaco_define = window.define;
+            window.define = undefined;
+        }
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.5/dat.gui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
-    <script src="js/shootingstar.js?v=5.5"></script>
+    <script>
+        // Restore Monaco's AMD loader
+        if (window.__monaco_define) {
+            window.define = window.__monaco_define;
+        }
+    </script>
+    <script src="js/shootingstar.js?v=5.7"></script>
 
     <script src="js/languages.js?v=4.1"></script>
     <script src="js/boilerplates.js?v=4.1"></script>
