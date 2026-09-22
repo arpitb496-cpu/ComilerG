@@ -20,7 +20,7 @@
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23ffd43f'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='60' font-weight='900' fill='%23120f22' font-family='sans-serif'>G</text></svg>">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=5.8">
+    <link rel="stylesheet" href="css/style.css?v=5.9">
 
     <script>
         try {
@@ -39,10 +39,8 @@
 </head>
 
 <body>
-    <!-- John-T45 Interactive Background: Moving Clouds, ParticlesJS Starfield & Three.js WebGL Shooting Star Trails -->
+    <!-- John-T45 Cosmic Background: Animated Clouds Layer -->
     <div class="clouds"></div>
-    <canvas class="background"></canvas>
-    <canvas id="canvas"></canvas>
     <canvas id="bgCanvas" style="display: none;"></canvas>
 
 
@@ -1627,28 +1625,11 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
 
     <!-- Global Toast Notifications Container (Works in both Home & Editor) -->
     <div id="toastContainer" class="toast-container"></div>
-    <!-- Three.js & Particles Engine for John-T45 Interactive Background -->
-    <script>
-        // Prevent Monaco's AMD loader from intercepting Three.js or other UMD libraries
-        if (typeof window.define === 'function' && window.define.amd) {
-            window.__monaco_define = window.define;
-            window.define = undefined;
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.5/dat.gui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/particlesjs/2.2.3/particles.min.js"></script>
-    <script>
-        // Restore Monaco's AMD loader
-        if (window.__monaco_define) {
-            window.define = window.__monaco_define;
-        }
-    </script>
-    <script src="js/shootingstar.js?v=5.8"></script>
+
 
     <script src="js/languages.js?v=4.1"></script>
     <script src="js/boilerplates.js?v=4.1"></script>
-    <script src="js/particles.js?v=5.5"></script>
+    <script src="js/particles.js?v=5.9"></script>
     <script src="js/snippets.js?v=4.1"></script>
     <script src="js/ai_debugger.js?v=4.1"></script>
     <script src="js/executor.js?v=4.1"></script>

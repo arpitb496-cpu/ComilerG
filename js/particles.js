@@ -1,47 +1,7 @@
 /**
- * CompilerG - Interactive Particle Starfield & Dynamic Cosmic Background
- * Ported from John-T45 (https://github.com/John-T45/John-T45.github.io.git):
- * - Atmospheric floating stardust particles via Particles.js
- * - Interactive WebGL Shooting Star bursts on code execution & cursor move
+ * CompilerG - Background Adapter
  */
 
-function initParticleStarfield() {
-    if (typeof Particles !== 'undefined') {
-        const bgEl = document.querySelector('.background');
-        if (bgEl) {
-            try {
-                Particles.init({
-                    selector: '.background',
-                    color: ['#faebd7', '#ffffff', 'burlywood', '#ffd43f'],
-                    connectParticles: false,
-                    maxParticles: 75,
-                    sizeVariations: 3,
-                    speed: 0.35,
-                    responsive: [
-                        {
-                            breakpoint: 768,
-                            options: {
-                                maxParticles: 38,
-                                color: ['#faebd7', '#ffffff', 'burlywood'],
-                                connectParticles: false
-                            }
-                        }
-                    ]
-                });
-            } catch (err) {
-                console.warn('Particles.init notice:', err);
-            }
-        }
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initParticleStarfield);
-    window.addEventListener('load', initParticleStarfield);
-} else {
-    initParticleStarfield();
-    window.addEventListener('load', initParticleStarfield);
-}
 
 /**
  * Backward-compatible BackgroundCanvas adapter
