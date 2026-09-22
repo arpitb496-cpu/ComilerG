@@ -11,7 +11,7 @@ class EditorManager {
         this.fallbackTextarea = null;
         this.currentDecorations = [];
         const savedTheme = localStorage.getItem('compilerg_theme');
-        this.theme = savedTheme ? this.normalizeTheme(savedTheme) : 'compilerg-codedex';
+        this.theme = savedTheme ? this.normalizeTheme(savedTheme) : 'compilerg-dark';
         this.fontSize = parseInt(localStorage.getItem('compilerg_fontsize') || '15', 10);
         this.minimapEnabled = localStorage.getItem('compilerg_minimap') !== 'false';
         this.currentLanguage = 'python';
@@ -177,177 +177,7 @@ class EditorManager {
     registerCustomThemes() {
         if (!this.monaco) return;
 
-        // Codédex 16-bit RPG Fantasy Theme (Deep Midnight Purple, Gold Stars, Lilac & Mint)
-        this.monaco.editor.defineTheme('compilerg-codedex', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '120f22' },
-                { token: 'comment', foreground: '78719b', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'c084fc', fontStyle: 'bold' },
-                { token: 'string', foreground: 'ffd43f' },
-                { token: 'number', foreground: '38bdf8' },
-                { token: 'type', foreground: 'f472b6' },
-                { token: 'function', foreground: '34d399', fontStyle: 'bold' },
-                { token: 'variable', foreground: 'f3f0ff' },
-                { token: 'operator', foreground: 'fb7185' }
-            ],
-            colors: {
-                'editor.background': '#120f22',
-                'editor.foreground': '#f3f0ff',
-                'editorCursor.foreground': '#ffd43f',
-                'editor.lineHighlightBackground': '#1c173580',
-                'editorLineNumber.foreground': '#5c5480',
-                'editorLineNumber.activeForeground': '#ffd43f',
-                'editor.selectionBackground': '#a855f745',
-                'editor.inactiveSelectionBackground': '#a855f720',
-                'editorIndentGuide.background': '#262040',
-                'editorIndentGuide.activeBackground': '#ffd43f60'
-            }
-        });
-
-        // 0. OneCompiler Obsidian Theme (Pitch Black, Neon Mint, Rose Pink & Electric Cyan)
-        this.monaco.editor.defineTheme('compilerg-obsidian', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '08090d' },
-                { token: 'comment', foreground: '525969', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'c084fc', fontStyle: 'bold' },
-                { token: 'string', foreground: '34d399' },
-                { token: 'number', foreground: '38bdf8' },
-                { token: 'type', foreground: 'f43f5e' },
-                { token: 'function', foreground: '60a5fa' },
-                { token: 'variable', foreground: 'e2e8f0' },
-                { token: 'operator', foreground: 'f472b6' }
-            ],
-            colors: {
-                'editor.background': '#08090d',
-                'editor.foreground': '#f1f5f9',
-                'editorCursor.foreground': '#10b981',
-                'editor.lineHighlightBackground': '#11141e80',
-                'editorLineNumber.foreground': '#3e4451',
-                'editorLineNumber.activeForeground': '#10b981',
-                'editor.selectionBackground': '#10b98135',
-                'editor.inactiveSelectionBackground': '#10b98118',
-                'editorIndentGuide.background': '#1a1e28',
-                'editorIndentGuide.activeBackground': '#10b98150'
-            }
-        });
-
-        // 1. Tokyo Night Theme (Vibrant Indigo, Electric Cyan & Violet)
-        this.monaco.editor.defineTheme('compilerg-tokyo-night', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '1a1b26' },
-                { token: 'comment', foreground: '565f89', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'bb9af7', fontStyle: 'bold' },
-                { token: 'string', foreground: '9ece6a' },
-                { token: 'number', foreground: 'ff9e64' },
-                { token: 'type', foreground: '2ac3de' },
-                { token: 'function', foreground: '7aa2f7' },
-                { token: 'variable', foreground: 'c0caf5' }
-            ],
-            colors: {
-                'editor.background': '#1a1b26',
-                'editor.foreground': '#c0caf5',
-                'editorCursor.foreground': '#7dcfff',
-                'editor.lineHighlightBackground': '#24283b80',
-                'editorLineNumber.foreground': '#565f89',
-                'editorLineNumber.activeForeground': '#7dcfff',
-                'editor.selectionBackground': '#364a8280',
-                'editor.inactiveSelectionBackground': '#364a8240',
-                'editorIndentGuide.background': '#292e42',
-                'editorIndentGuide.activeBackground': '#7dcfff50'
-            }
-        });
-
-        // 2. Cyberpunk 2077 Synthwave (Neon Cyan, Glowing Pink & Violet)
-        this.monaco.editor.defineTheme('compilerg-cyberpunk', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '120422' },
-                { token: 'comment', foreground: '795290', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'ff007f', fontStyle: 'bold' },
-                { token: 'string', foreground: 'ffe600' },
-                { token: 'number', foreground: '00f5ff' },
-                { token: 'type', foreground: 'ff71ce' },
-                { token: 'function', foreground: '01cdfe' },
-                { token: 'variable', foreground: 'f8f9fa' }
-            ],
-            colors: {
-                'editor.background': '#120422',
-                'editor.foreground': '#f8f9fa',
-                'editorCursor.foreground': '#00f5ff',
-                'editor.lineHighlightBackground': '#26094280',
-                'editorLineNumber.foreground': '#795290',
-                'editorLineNumber.activeForeground': '#00f5ff',
-                'editor.selectionBackground': '#ff007f40',
-                'editor.inactiveSelectionBackground': '#ff007f20',
-                'editorIndentGuide.background': '#2d124d',
-                'editorIndentGuide.activeBackground': '#00f5ff50'
-            }
-        });
-
-        // 3. Dracula Pro (Classic Vampire Slate, Pink & Purple)
-        this.monaco.editor.defineTheme('compilerg-dracula', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '282a36' },
-                { token: 'comment', foreground: '6272a4', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'ff79c6', fontStyle: 'bold' },
-                { token: 'string', foreground: 'f1fa8c' },
-                { token: 'number', foreground: 'bd93f9' },
-                { token: 'type', foreground: '8be9fd' },
-                { token: 'function', foreground: '50fa7b' },
-                { token: 'variable', foreground: 'f8f8f2' }
-            ],
-            colors: {
-                'editor.background': '#282a36',
-                'editor.foreground': '#f8f8f2',
-                'editorCursor.foreground': '#f8f8f0',
-                'editor.lineHighlightBackground': '#44475a50',
-                'editorLineNumber.foreground': '#6272a4',
-                'editorLineNumber.activeForeground': '#bd93f9',
-                'editor.selectionBackground': '#44475a80',
-                'editor.inactiveSelectionBackground': '#44475a40',
-                'editorIndentGuide.background': '#44475a',
-                'editorIndentGuide.activeBackground': '#bd93f950'
-            }
-        });
-
-        // 4. One Dark Pro (Atom & VS Code Slate, Peach & Mint)
-        this.monaco.editor.defineTheme('compilerg-one-dark', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '21252b' },
-                { token: 'comment', foreground: '5c6370', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'c678dd', fontStyle: 'bold' },
-                { token: 'string', foreground: '98c379' },
-                { token: 'number', foreground: 'd19a66' },
-                { token: 'type', foreground: 'e5c07b' },
-                { token: 'function', foreground: '61afef' },
-                { token: 'variable', foreground: 'abb2bf' }
-            ],
-            colors: {
-                'editor.background': '#21252b',
-                'editor.foreground': '#abb2bf',
-                'editorCursor.foreground': '#528bff',
-                'editor.lineHighlightBackground': '#2c313a80',
-                'editorLineNumber.foreground': '#5c6370',
-                'editorLineNumber.activeForeground': '#61afef',
-                'editor.selectionBackground': '#3e445180',
-                'editor.inactiveSelectionBackground': '#3e445140',
-                'editorIndentGuide.background': '#2c313a',
-                'editorIndentGuide.activeBackground': '#61afef40'
-            }
-        });
-
-        // 5. CompilerG Modern Dark (Celestial Golden Obsidian)
+        // 1. CompilerG Modern Dark (Celestial Golden Obsidian)
         this.monaco.editor.defineTheme('compilerg-dark', {
             base: 'vs-dark',
             inherit: true,
@@ -375,7 +205,7 @@ class EditorManager {
             }
         });
 
-        // 6. CompilerG Pure Clean Light (Daylight Paper & Cobalt)
+        // 2. CompilerG Pure Clean Light (Daylight Paper & Cobalt)
         this.monaco.editor.defineTheme('compilerg-light', {
             base: 'vs',
             inherit: true,
@@ -392,117 +222,13 @@ class EditorManager {
                 'editorIndentGuide.activeBackground': '#2563eb40'
             }
         });
-
-        // 7. Nord (Frosty Arctic Blue & Slate)
-        this.monaco.editor.defineTheme('compilerg-nord', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '2e3440' },
-                { token: 'comment', foreground: '616e88', fontStyle: 'italic' },
-                { token: 'keyword', foreground: '81a1c1', fontStyle: 'bold' },
-                { token: 'string', foreground: 'a3be8c' },
-                { token: 'number', foreground: 'b48ead' },
-                { token: 'type', foreground: '8fbcbb' },
-                { token: 'function', foreground: '88c0d0' },
-                { token: 'variable', foreground: 'd8dee9' }
-            ],
-            colors: {
-                'editor.background': '#2e3440',
-                'editor.foreground': '#d8dee9',
-                'editorCursor.foreground': '#d8dee9',
-                'editor.lineHighlightBackground': '#3b425280',
-                'editorLineNumber.foreground': '#4c566a',
-                'editorLineNumber.activeForeground': '#88c0d0',
-                'editor.selectionBackground': '#434c5e80',
-                'editorIndentGuide.background': '#3b4252',
-                'editorIndentGuide.activeBackground': '#88c0d040'
-            }
-        });
-
-        // 8. Monokai (Classic Pro Neon)
-        this.monaco.editor.defineTheme('compilerg-monokai', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '272822' },
-                { token: 'comment', foreground: '75715e', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'f92672', fontStyle: 'bold' },
-                { token: 'string', foreground: 'e6db74' },
-                { token: 'number', foreground: 'ae81ff' },
-                { token: 'type', foreground: '66d9ef' },
-                { token: 'function', foreground: 'a6e22e' },
-                { token: 'variable', foreground: 'f8f8f2' }
-            ],
-            colors: {
-                'editor.background': '#272822',
-                'editor.foreground': '#f8f8f2',
-                'editorCursor.foreground': '#f8f8f0',
-                'editor.lineHighlightBackground': '#3e3d3280',
-                'editorLineNumber.foreground': '#75715e',
-                'editorLineNumber.activeForeground': '#a6e22e',
-                'editor.selectionBackground': '#49483e80',
-                'editorIndentGuide.background': '#3e3d32',
-                'editorIndentGuide.activeBackground': '#a6e22e40'
-            }
-        });
-
-        // 9. Solarized Dark (Balanced Scientific Teal)
-        this.monaco.editor.defineTheme('compilerg-solarized', {
-            base: 'vs-dark',
-            inherit: true,
-            rules: [
-                { token: '', background: '002b36' },
-                { token: 'comment', foreground: '586e75', fontStyle: 'italic' },
-                { token: 'keyword', foreground: '859900', fontStyle: 'bold' },
-                { token: 'string', foreground: '2aa198' },
-                { token: 'number', foreground: 'd33682' },
-                { token: 'type', foreground: 'b58900' },
-                { token: 'function', foreground: '268bd2' },
-                { token: 'variable', foreground: '839496' }
-            ],
-            colors: {
-                'editor.background': '#002b36',
-                'editor.foreground': '#839496',
-                'editorCursor.foreground': '#839496',
-                'editor.lineHighlightBackground': '#07364280',
-                'editorLineNumber.foreground': '#586e75',
-                'editorLineNumber.activeForeground': '#268bd2',
-                'editor.selectionBackground': '#073642',
-                'editorIndentGuide.background': '#073642',
-                'editorIndentGuide.activeBackground': '#268bd240'
-            }
-        });
     }
 
     normalizeTheme(themeName) {
-        const themeMap = {
-            'codedex': 'compilerg-codedex',
-            'compilerg-codedex': 'compilerg-codedex',
-            'obsidian': 'compilerg-obsidian',
-            'compilerg-obsidian': 'compilerg-obsidian',
-            'tokyo-night': 'compilerg-tokyo-night',
-            'compilerg-tokyo-night': 'compilerg-tokyo-night',
-            'cyberpunk': 'compilerg-cyberpunk',
-            'compilerg-cyberpunk': 'compilerg-cyberpunk',
-            'dracula': 'compilerg-dracula',
-            'compilerg-dracula': 'compilerg-dracula',
-            'one-dark': 'compilerg-one-dark',
-            'compilerg-one-dark': 'compilerg-one-dark',
-            'nord': 'compilerg-nord',
-            'compilerg-nord': 'compilerg-nord',
-            'monokai': 'compilerg-monokai',
-            'compilerg-monokai': 'compilerg-monokai',
-            'solarized': 'compilerg-solarized',
-            'compilerg-solarized': 'compilerg-solarized',
-            'light': 'compilerg-light',
-            'compilerg-light': 'compilerg-light',
-            'vs': 'compilerg-light',
-            'dark': 'compilerg-dark',
-            'compilerg-dark': 'compilerg-dark',
-            'vs-dark': 'compilerg-dark'
-        };
-        return themeMap[themeName] || 'compilerg-codedex';
+        if (themeName === 'light' || themeName === 'compilerg-light' || themeName === 'vs') {
+            return 'compilerg-light';
+        }
+        return 'compilerg-dark';
     }
 
     onDidChangeContent(callback) {

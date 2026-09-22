@@ -7,7 +7,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- State Management ---
     const rawSavedTheme = localStorage.getItem('compilerg_theme') || 'dark';
-    const initialTheme = rawSavedTheme.replace('compilerg-', '');
+    const initialTheme = (rawSavedTheme === 'light' || rawSavedTheme === 'compilerg-light') ? 'light' : 'dark';
 
     const state = {
         currentLanguage: localStorage.getItem('compilerg_lang') || 'python',
@@ -1215,21 +1215,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Theme System ---
     const themeMetadata = {
-        'obsidian': { label: 'Obsidian', icon: '🖤', color: '#10b981' },
-        'codedex': { label: 'Midnight Purple', icon: '✨', color: '#a855f7' },
-        'tokyo-night': { label: 'Tokyo Night', icon: '🌌', color: '#7aa2f7' },
-        'cyberpunk': { label: 'Cyberpunk', icon: '⚡', color: '#ff007f' },
-        'dracula': { label: 'Dracula', icon: '🧛', color: '#bd93f9' },
-        'one-dark': { label: 'One Dark', icon: '💎', color: '#61afef' },
-        'nord': { label: 'Nord Frost', icon: '❄️', color: '#88c0d0' },
-        'monokai': { label: 'Monokai Pro', icon: '🌿', color: '#a6e22e' },
-        'solarized': { label: 'Solarized', icon: '☀️', color: '#268bd2' },
         'dark': { label: 'Celestial Gold', icon: '✨', color: '#ffd43f' },
         'light': { label: 'Clean Light', icon: '☀️', color: '#2563eb' }
     };
 
     function applyTheme(themeKey, notify = true) {
-        const cleanKey = themeMetadata[themeKey] ? themeKey : 'obsidian';
+        const cleanKey = themeMetadata[themeKey] ? themeKey : 'dark';
         document.documentElement.setAttribute('data-theme', cleanKey);
         state.theme = cleanKey;
         localStorage.setItem('compilerg_theme', cleanKey);

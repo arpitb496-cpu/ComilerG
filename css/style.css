@@ -43,129 +43,35 @@
 }
 
 /* ==========================================================================
-   Codédex 16-Bit RPG Flagship Theme (Midnight Violet, Adventure Gold & 3D Tactile Buttons)
+   Celestial Gold Theme (Default Warm Cosmic Obsidian & Radiant Gold)
    ========================================================================== */
-[data-theme="codedex"] {
-    --bg-main: #0e0c18;
-    --bg-surface: rgba(19, 17, 36, 0.94);
-    --bg-surface-elevated: #1a1630;
-    --bg-editor: #120f22;
-    --border-color: rgba(192, 132, 252, 0.18);
-    --border-highlight: #ffd43f;
-    --text-primary: #f5f3ff;
-    --text-secondary: #c4b5fd;
-    --text-muted: #7c74a0;
+[data-theme="dark"] {
+    --bg-main: #070503;
+    --bg-surface: rgba(16, 12, 9, 0.85);
+    --bg-surface-elevated: rgba(24, 18, 13, 0.95);
+    --bg-editor: #0c0906;
+    --border-color: rgba(245, 166, 35, 0.14);
+    --border-highlight: rgba(245, 166, 35, 0.45);
+
+    --text-primary: #fffbeb;
+    --text-secondary: #e2d3b8;
+    --text-muted: #9c8b73;
     --text-accent: #ffd43f;
+
     --primary: #ffd43f;
-    --primary-hover: #fcc21b;
+    --primary-hover: #f5a623;
     --success: #34d399;
-    --success-glow: rgba(52, 211, 153, 0.45);
-    --danger: #fb7185;
-    --danger-glow: rgba(251, 113, 133, 0.45);
-    --warning: #f59e0b;
-    --ai-purple: #a855f7;
-    --ai-glow: rgba(168, 85, 247, 0.5);
+    --success-glow: rgba(52, 211, 153, 0.3);
+    --danger: #f87171;
+    --danger-glow: rgba(248, 113, 113, 0.28);
+    --warning: #fbbf24;
+    --ai-purple: #f59e0b;
+    --ai-glow: rgba(245, 158, 11, 0.28);
 }
 
-[data-theme="codedex"] .btn-run {
-    background: #ffd43f;
-    color: #120f22;
-    border: 2px solid #000000;
-    box-shadow: 0 4px 0 #000000, 0 0 16px rgba(255, 212, 63, 0.35);
-    font-weight: 800;
-    letter-spacing: 0.3px;
-}
-
-[data-theme="codedex"] .btn-run:hover {
-    background: #ffe066;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 0 #000000, 0 0 24px rgba(255, 212, 63, 0.55);
-}
-
-[data-theme="codedex"] .btn-run:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #000000;
-}
-
-[data-theme="codedex"] .btn-ai {
-    background: #a855f7;
-    color: #ffffff;
-    border: 2px solid #000000;
-    box-shadow: 0 4px 0 #000000, 0 0 14px rgba(168, 85, 247, 0.35);
-    font-weight: 700;
-    letter-spacing: 0.3px;
-}
-
-[data-theme="codedex"] .btn-ai:hover {
-    background: #b76bfb;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 0 #000000, 0 0 20px rgba(168, 85, 247, 0.55);
-}
-
-[data-theme="codedex"] .btn-ai:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #000000;
-}
-
-[data-theme="codedex"] .btn-icon,
-[data-theme="codedex"] .btn-theme-selector,
-[data-theme="codedex"] .lang-chip,
-[data-theme="codedex"] .btn-mode {
-    border: 2px solid rgba(192, 132, 252, 0.25);
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-theme="codedex"] .btn-icon:active,
-[data-theme="codedex"] .btn-theme-selector:active {
-    transform: translateY(2px);
-}
-
-/* OneCompiler Obsidian Flagship Theme (Pitch Obsidian, Emerald AI & Hot Magenta Run) */
-[data-theme="obsidian"] {
-    --bg-main: #06070a;
-    --bg-surface: rgba(11, 13, 19, 0.88);
-    --bg-surface-elevated: #11141d;
-    --bg-editor: #08090d;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-highlight: rgba(16, 185, 129, 0.45);
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --text-accent: #10b981;
-    --primary: #10b981;
-    --primary-hover: #059669;
-    --success: #10b981;
-    --success-glow: rgba(16, 185, 129, 0.45);
-    --danger: #f43f5e;
-    --danger-glow: rgba(244, 63, 94, 0.45);
-    --warning: #f59e0b;
-    --ai-purple: #10b981;
-    --ai-glow: rgba(16, 185, 129, 0.5);
-}
-
-[data-theme="obsidian"] .btn-run {
-    background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
-    box-shadow: 0 0 16px rgba(244, 63, 94, 0.4);
-}
-
-[data-theme="obsidian"] .btn-run:hover {
-    box-shadow: 0 0 24px rgba(244, 63, 94, 0.65);
-}
-
-[data-theme="obsidian"] .btn-ai {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(5, 150, 105, 0.22) 100%);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.45);
-    box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
-}
-
-[data-theme="obsidian"] .btn-ai:hover {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.32) 0%, rgba(5, 150, 105, 0.36) 100%);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-    color: #ffffff;
-}
-
-/* Light Theme Variables */
+/* ==========================================================================
+   Clean Light Theme (Daylight Minimal & Cobalt)
+   ========================================================================== */
 [data-theme="light"] {
     --bg-main: #f1f5f9;
     --bg-surface: #ffffff;
@@ -186,167 +92,6 @@
     --warning: #f59e0b;
     --ai-purple: #7c3aed;
     --ai-glow: rgba(124, 58, 237, 0.25);
-}
-
-/* Tokyo Night Theme (Vibrant Indigo, Electric Cyan & Violet) */
-[data-theme="tokyo-night"] {
-    --bg-main: #13141c;
-    --bg-surface: #1a1b26;
-    --bg-surface-elevated: #24283b;
-    --bg-editor: #1a1b26;
-    --border-color: rgba(125, 207, 255, 0.12);
-    --border-highlight: rgba(125, 207, 255, 0.45);
-    --text-primary: #c0caf5;
-    --text-secondary: #9aa5ce;
-    --text-muted: #565f89;
-    --text-accent: #7dcfff;
-    --primary: #7aa2f7;
-    --primary-hover: #89b4fa;
-    --success: #73daca;
-    --success-glow: rgba(115, 218, 202, 0.4);
-    --danger: #f7768e;
-    --danger-glow: rgba(247, 118, 142, 0.4);
-    --warning: #e0af68;
-    --ai-purple: #bb9af7;
-    --ai-glow: rgba(187, 154, 247, 0.4);
-}
-
-/* Cyberpunk 2077 Synthwave (Neon Cyan, Glowing Pink & Violet) */
-[data-theme="cyberpunk"] {
-    --bg-main: #0a0314;
-    --bg-surface: #120422;
-    --bg-surface-elevated: #20073b;
-    --bg-editor: #120422;
-    --border-color: rgba(255, 0, 127, 0.22);
-    --border-highlight: rgba(0, 245, 255, 0.55);
-    --text-primary: #f8f9fa;
-    --text-secondary: #d4a5ff;
-    --text-muted: #795290;
-    --text-accent: #00f5ff;
-    --primary: #ff007f;
-    --primary-hover: #ff2a9d;
-    --success: #00ffaa;
-    --success-glow: rgba(0, 255, 170, 0.45);
-    --danger: #ff0055;
-    --danger-glow: rgba(255, 0, 85, 0.45);
-    --warning: #ffe600;
-    --ai-purple: #b537f2;
-    --ai-glow: rgba(255, 0, 127, 0.5);
-}
-
-/* Dracula Pro (Classic Vampire Slate, Pink & Purple) */
-[data-theme="dracula"] {
-    --bg-main: #1e1f29;
-    --bg-surface: #282a36;
-    --bg-surface-elevated: #343746;
-    --bg-editor: #282a36;
-    --border-color: rgba(189, 147, 249, 0.16);
-    --border-highlight: rgba(189, 147, 249, 0.45);
-    --text-primary: #f8f8f2;
-    --text-secondary: #c8c9d4;
-    --text-muted: #6272a4;
-    --text-accent: #8be9fd;
-    --primary: #bd93f9;
-    --primary-hover: #caa7fc;
-    --success: #50fa7b;
-    --success-glow: rgba(80, 250, 123, 0.4);
-    --danger: #ff5555;
-    --danger-glow: rgba(255, 85, 85, 0.4);
-    --warning: #ffb86c;
-    --ai-purple: #ff79c6;
-    --ai-glow: rgba(255, 121, 198, 0.4);
-}
-
-/* One Dark Pro (Atom & VS Code Slate, Peach & Mint) */
-[data-theme="one-dark"] {
-    --bg-main: #181a1f;
-    --bg-surface: #21252b;
-    --bg-surface-elevated: #2c313a;
-    --bg-editor: #21252b;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-highlight: rgba(97, 175, 239, 0.45);
-    --text-primary: #abb2bf;
-    --text-secondary: #828997;
-    --text-muted: #5c6370;
-    --text-accent: #61afef;
-    --primary: #61afef;
-    --primary-hover: #4d9ae8;
-    --success: #98c379;
-    --success-glow: rgba(152, 195, 121, 0.35);
-    --danger: #e06c75;
-    --danger-glow: rgba(224, 108, 117, 0.35);
-    --warning: #d19a66;
-    --ai-purple: #c678dd;
-    --ai-glow: rgba(198, 120, 221, 0.35);
-}
-
-/* Nord (Frosty Arctic Blue & Slate) */
-[data-theme="nord"] {
-    --bg-main: #2e3440;
-    --bg-surface: #3b4252;
-    --bg-surface-elevated: #434c5e;
-    --bg-editor: #2e3440;
-    --border-color: rgba(136, 192, 208, 0.15);
-    --border-highlight: rgba(136, 192, 208, 0.5);
-    --text-primary: #d8dee9;
-    --text-secondary: #e5e9f0;
-    --text-muted: #616e88;
-    --text-accent: #88c0d0;
-    --primary: #81a1c1;
-    --primary-hover: #88c0d0;
-    --success: #a3be8c;
-    --success-glow: rgba(163, 190, 140, 0.35);
-    --danger: #bf616a;
-    --danger-glow: rgba(191, 97, 106, 0.35);
-    --warning: #ebcb8b;
-    --ai-purple: #b48ead;
-    --ai-glow: rgba(180, 142, 173, 0.35);
-}
-
-/* Monokai (Classic Pro Neon) */
-[data-theme="monokai"] {
-    --bg-main: #191919;
-    --bg-surface: #272822;
-    --bg-surface-elevated: #3e3d32;
-    --bg-editor: #272822;
-    --border-color: rgba(249, 38, 114, 0.15);
-    --border-highlight: rgba(166, 226, 46, 0.5);
-    --text-primary: #f8f8f2;
-    --text-secondary: #e6db74;
-    --text-muted: #75715e;
-    --text-accent: #a6e22e;
-    --primary: #f92672;
-    --primary-hover: #ff3e83;
-    --success: #a6e22e;
-    --success-glow: rgba(166, 226, 46, 0.35);
-    --danger: #f92672;
-    --danger-glow: rgba(249, 38, 114, 0.35);
-    --warning: #fd971f;
-    --ai-purple: #ae81ff;
-    --ai-glow: rgba(174, 129, 255, 0.35);
-}
-
-/* Solarized Dark (Balanced Scientific Teal) */
-[data-theme="solarized"] {
-    --bg-main: #00212b;
-    --bg-surface: #002b36;
-    --bg-surface-elevated: #073642;
-    --bg-editor: #002b36;
-    --border-color: rgba(38, 139, 210, 0.15);
-    --border-highlight: rgba(42, 161, 152, 0.5);
-    --text-primary: #839496;
-    --text-secondary: #93a1a1;
-    --text-muted: #586e75;
-    --text-accent: #268bd2;
-    --primary: #2aa198;
-    --primary-hover: #31c1b4;
-    --success: #859900;
-    --success-glow: rgba(133, 153, 0, 0.35);
-    --danger: #dc322f;
-    --danger-glow: rgba(220, 50, 47, 0.35);
-    --warning: #b58900;
-    --ai-purple: #6c71c4;
-    --ai-glow: rgba(108, 113, 196, 0.35);
 }
 
 /* ==========================================================================
