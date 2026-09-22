@@ -17,10 +17,10 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23ffd43f'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='60' font-weight='900' fill='%23120f22' font-family='sans-serif'>G</text></svg>">
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><rect width='36' height='36' rx='9' fill='%23120d08' stroke='%23f5a623' stroke-width='1.5'/><path d='M26.5 13.5C25 9.5 21.2 7 16.5 7C10.1 7 5 12.1 5 18.5C5 24.9 10.1 30 16.5 30C22.2 30 26.8 25.8 27.5 20.2H17' stroke='%23ffd43f' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/><path d='M20 12L14 20H20L15.5 27' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=6.3">
+    <link rel="stylesheet" href="css/style.css?v=6.4">
 
     <script>
         try {
@@ -53,8 +53,28 @@
             <div class="home-nav-container">
                 <div class="home-nav-left">
                     <a href="#home" class="home-brand">
-                        <div class="brand-icon-hex">⚡</div>
-                        <span class="brand-name">CompilerG</span>
+                        <svg class="brand-mark-svg" width="32" height="32" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="homeLogoBg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#2c1f12"/>
+                                    <stop offset="100%" stop-color="#0e0a06"/>
+                                </linearGradient>
+                                <linearGradient id="homeLogoBorder" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#ffe082"/>
+                                    <stop offset="50%" stop-color="#f5a623"/>
+                                    <stop offset="100%" stop-color="#b45309"/>
+                                </linearGradient>
+                                <linearGradient id="homeLogoGold" x1="5" y1="7" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0%" stop-color="#fff8db"/>
+                                    <stop offset="35%" stop-color="#ffd43f"/>
+                                    <stop offset="100%" stop-color="#f59e0b"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="1.5" y="1.5" width="33" height="33" rx="9" fill="url(#homeLogoBg)" stroke="url(#homeLogoBorder)" stroke-width="1.8"/>
+                            <path d="M26.5 13.5C25 9.5 21.2 7 16.5 7C10.1 7 5 12.1 5 18.5C5 24.9 10.1 30 16.5 30C22.2 30 26.8 25.8 27.5 20.2H17" stroke="url(#homeLogoGold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20 12L14 20H20L15.5 27" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="brand-name">Compiler<span class="brand-g-spark">G</span></span>
                     </a>
                     <div class="home-nav-links">
                         <a href="#challenges" id="navChallengesBtn" class="home-nav-link">Challenges</a>
@@ -648,8 +668,12 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
                     <!-- Column 1 -->
                     <div class="footer-col">
                         <div class="footer-brand">
-                            <span class="footer-logo-icon">⚡</span>
-                            <span class="footer-logo-text">CompilerG</span>
+                            <svg class="brand-mark-svg" width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="1.5" y="1.5" width="33" height="33" rx="9" fill="url(#homeLogoBg)" stroke="url(#homeLogoBorder)" stroke-width="1.8"/>
+                                <path d="M26.5 13.5C25 9.5 21.2 7 16.5 7C10.1 7 5 12.1 5 18.5C5 24.9 10.1 30 16.5 30C22.2 30 26.8 25.8 27.5 20.2H17" stroke="url(#homeLogoGold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M20 12L14 20H20L15.5 27" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="footer-logo-text">Compiler<span class="brand-g-spark">G</span></span>
                         </div>
                         <p class="footer-desc">
                             High-speed multi-language online compiler, Monaco editor, and developer IDE powered by local
@@ -831,8 +855,28 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
         <header class="header-navbar">
             <div class="nav-left">
                 <a href="#" class="brand-logo" id="brandLogo">
-                    <div class="brand-icon">⚡</div>
-                    <span class="brand-title">CompilerG</span>
+                    <svg class="brand-mark-svg" width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="edLogoBg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#2c1f12"/>
+                                <stop offset="100%" stop-color="#0e0a06"/>
+                            </linearGradient>
+                            <linearGradient id="edLogoBorder" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#ffe082"/>
+                                <stop offset="50%" stop-color="#f5a623"/>
+                                <stop offset="100%" stop-color="#b45309"/>
+                            </linearGradient>
+                            <linearGradient id="edLogoGold" x1="5" y1="7" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                                <stop offset="0%" stop-color="#fff8db"/>
+                                <stop offset="35%" stop-color="#ffd43f"/>
+                                <stop offset="100%" stop-color="#f59e0b"/>
+                            </linearGradient>
+                        </defs>
+                        <rect x="1.5" y="1.5" width="33" height="33" rx="9" fill="url(#edLogoBg)" stroke="url(#edLogoBorder)" stroke-width="1.8"/>
+                        <path d="M26.5 13.5C25 9.5 21.2 7 16.5 7C10.1 7 5 12.1 5 18.5C5 24.9 10.1 30 16.5 30C22.2 30 26.8 25.8 27.5 20.2H17" stroke="url(#edLogoGold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 12L14 20H20L15.5 27" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="brand-title">Compiler<span class="brand-g-spark">G</span></span>
                 </a>
                 <button id="editorHomeBtn" class="btn-home-nav" title="Back to Homepage">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1162,7 +1206,15 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
 
                         <pre id="outputScreen" class="output-screen"><div class="terminal-welcome-card">
     <div class="welcome-header">
-        <span class="welcome-icon">💻</span>
+        <div class="welcome-icon-badge">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="3" ry="3" stroke="#ffd43f" stroke-width="1.8" />
+                <line x1="8" y1="21" x2="16" y2="21" stroke="#ffd43f" stroke-width="1.8" />
+                <line x1="12" y1="17" x2="12" y2="21" stroke="#ffd43f" stroke-width="1.8" />
+                <polyline points="6 9 9 11 6 13" stroke="#ffd43f" stroke-width="1.8" />
+                <line x1="11" y1="13" x2="15" y2="13" stroke="#ffd43f" stroke-width="1.8" />
+            </svg>
+        </div>
         <div>
             <div class="welcome-title">Console Output Ready</div>
             <div class="welcome-sub">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> or click <strong>Run</strong> to compile and execute</div>
