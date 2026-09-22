@@ -1192,8 +1192,8 @@ function $a87C$var$_createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-var $a87C$var$PER_MOUSE = 800;
-var $a87C$var$COUNT = $a87C$var$PER_MOUSE * 400;
+var $a87C$var$PER_MOUSE = 40;
+var $a87C$var$COUNT = $a87C$var$PER_MOUSE * 120;
 var $a87C$var$MOUSE_ATTRIBUTE_COUNT = 4;
 var $a87C$var$FRONT_ATTRIBUTE_COUNT = 2;
 var $a87C$var$data = {
@@ -1324,6 +1324,7 @@ function () {
     // ])
 
     this.mouseI = 0;
+    this.mouseFrontI = 0;
     this.lineCoordinateList = [];
     this.enableSaveCoordinate = false;
     root.addResizeCallback(function () {
@@ -1365,33 +1366,46 @@ function () {
     value: function draw(_ref) {
       var clientX = _ref.clientX,
           clientY = _ref.clientY;
-      this.enableSaveCoordinate && this.lineCoordinateList.push({
-        clientX: clientX,
-        clientY: clientY
-      });
 
       var x = clientX * this.rate + $mrfc$export$default.clientHalfWidth;
       var y = $mrfc$export$default.clientHeight - (clientY * this.rate + $mrfc$export$default.clientHalfHeight);
-      var newPosition = new THREE.Vector2(x, y);
-      var diff = this.oldPosition ? newPosition.clone().sub(this.oldPosition) : new THREE.Vector2();
-      var length = diff.length();
-      var front = diff.clone().normalize();
+
+      var oldX = this.oldX !== undefined ? this.oldX : x;
+      var oldY = this.oldY !== undefined ? this.oldY : y;
+      var dx = x - oldX;
+      var dy = y - oldY;
+      var length = Math.sqrt(dx * dx + dy * dy);
+      var fx = length > 0.0001 ? dx / length : 0;
+      var fy = length > 0.0001 ? dy / length : 0;
+
+      var mouseArr = this.geometry.attributes['mouse'].array;
+      var frontArr = this.geometry.attributes['aFront'].array;
+      var totalAttrs = $a87C$var$COUNT * $a87C$var$MOUSE_ATTRIBUTE_COUNT;
+      var totalFrontAttrs = $a87C$var$COUNT * $a87C$var$FRONT_ATTRIBUTE_COUNT;
+      var ts = this.timestamp || 0;
 
       for (var i = 0; i < $a87C$var$PER_MOUSE; i++) {
-        var ci = this.mouseI % ($a87C$var$COUNT * $a87C$var$MOUSE_ATTRIBUTE_COUNT) + i * $a87C$var$MOUSE_ATTRIBUTE_COUNT;
-        var position = this.oldPosition ? this.oldPosition.clone().add(diff.clone().multiplyScalar(i / $a87C$var$PER_MOUSE)) : newPosition;
-        this.geometry.attributes['mouse'].array[ci] = position.x;
-        this.geometry.attributes['mouse'].array[ci + 1] = position.y;
-        this.geometry.attributes['mouse'].array[ci + 2] = this.timestamp;
-        this.geometry.attributes['mouse'].array[ci + 3] = length;
-        this.geometry.attributes['aFront'].array[ci] = front.x;
-        this.geometry.attributes['aFront'].array[ci + 1] = front.y;
+        var t = i / $a87C$var$PER_MOUSE;
+        var px = oldX + dx * t;
+        var py = oldY + dy * t;
+        var ci = (this.mouseI + i * $a87C$var$MOUSE_ATTRIBUTE_COUNT) % totalAttrs;
+        var cfi = (this.mouseFrontI + i * $a87C$var$FRONT_ATTRIBUTE_COUNT) % totalFrontAttrs;
+
+        mouseArr[ci] = px;
+        mouseArr[ci + 1] = py;
+        mouseArr[ci + 2] = ts;
+        mouseArr[ci + 3] = length;
+
+        frontArr[cfi] = fx;
+        frontArr[cfi + 1] = fy;
       }
 
-      this.oldPosition = newPosition;
+      this.oldX = x;
+      this.oldY = y;
       this.geometry.attributes['mouse'].needsUpdate = true;
       this.geometry.attributes['aFront'].needsUpdate = true;
-      this.mouseI += $a87C$var$MOUSE_ATTRIBUTE_COUNT * $a87C$var$PER_MOUSE;
+      this.mouseI = (this.mouseI + $a87C$var$MOUSE_ATTRIBUTE_COUNT * $a87C$var$PER_MOUSE) % totalAttrs;
+      this.mouseFrontI = (this.mouseFrontI + $a87C$var$FRONT_ATTRIBUTE_COUNT * $a87C$var$PER_MOUSE) % totalFrontAttrs;
     }
   }, {
     key: "start",
@@ -1399,32 +1413,34 @@ function () {
       var _this3 = this;
       if (this.isStarted) return;
       this.isStarted = true;
-      this.oldPosition = null;
+      this.oldX = undefined;
+      this.oldY = undefined;
 
-      var onMove = function(clientX, clientY) {
+      var pendingX = null, pendingY = null, scheduled = false;
+      var handleMove = function(clientX, clientY) {
         if (clientX === undefined || clientY === undefined) return;
-        _this3.draw({
-          clientX: clientX - $mrfc$export$default.clientHalfWidth,
-          clientY: clientY - $mrfc$export$default.clientHalfHeight
-        });
+        pendingX = clientX;
+        pendingY = clientY;
+        if (!scheduled) {
+          scheduled = true;
+          requestAnimationFrame(function() {
+            scheduled = false;
+            if (pendingX !== null && pendingY !== null) {
+              _this3.draw({
+                clientX: pendingX - $mrfc$export$default.clientHalfWidth,
+                clientY: pendingY - $mrfc$export$default.clientHalfHeight
+              });
+            }
+          });
+        }
       };
 
-      ['pointermove', 'mousemove', 'pointerdown'].forEach(function (evt) {
-        window.addEventListener(evt, function (e) {
-          onMove(e.clientX, e.clientY);
-        }, { passive: true });
-        document.addEventListener(evt, function (e) {
-          onMove(e.clientX, e.clientY);
-        }, { passive: true });
-      });
-      window.addEventListener('touchmove', function (e) {
-        if (e.touches && e.touches[0]) {
-          onMove(e.touches[0].clientX, e.touches[0].clientY);
-        }
+      window.addEventListener('pointermove', function(e) {
+        handleMove(e.clientX, e.clientY);
       }, { passive: true });
-      document.addEventListener('touchmove', function (e) {
+      window.addEventListener('touchmove', function(e) {
         if (e.touches && e.touches[0]) {
-          onMove(e.touches[0].clientX, e.touches[0].clientY);
+          handleMove(e.touches[0].clientX, e.touches[0].clientY);
         }
       }, { passive: true });
     }

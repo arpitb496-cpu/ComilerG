@@ -461,10 +461,10 @@ body {
 }
 
 .home-navbar {
-    background: rgba(7, 12, 22, 0.8);
+    background: rgba(14, 10, 8, 0.85);
     backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-    box-shadow: 0 6px 25px rgba(2, 6, 23, 0.22);
+    border-bottom: 1px solid rgba(245, 166, 35, 0.14);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
 }
 
 body.in-editor-mode {
@@ -3135,17 +3135,18 @@ body.in-editor-mode {
     position: relative;
     display: flex;
     align-items: center;
-    background: rgba(15, 20, 32, 0.85);
-    border: 1px solid rgba(222, 184, 135, 0.2);
+    background: rgba(20, 15, 11, 0.85);
+    border: 1px solid rgba(245, 166, 35, 0.25);
     border-radius: 12px;
     padding: 0 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 15px rgba(245, 166, 35, 0.08);
     transition: border-color 0.2s, box-shadow 0.2s;
+    backdrop-filter: blur(12px);
 }
 
 .home-search-box:focus-within {
     border-color: #ffd43f;
-    box-shadow: 0 0 0 3px rgba(255, 212, 63, 0.25), 0 8px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 3px rgba(255, 212, 63, 0.25), 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
 .search-icon {
@@ -3229,22 +3230,22 @@ body.in-editor-mode {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(15, 20, 32, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(22, 17, 12, 0.72);
+    border: 1px solid rgba(245, 166, 35, 0.15);
     border-radius: 12px;
     padding: 12px 14px;
     cursor: pointer;
     text-align: left;
     position: relative;
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
 }
 
 .lang-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(222, 184, 135, 0.45);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 212, 63, 0.18);
-    background: rgba(22, 18, 28, 0.95);
+    border-color: rgba(245, 166, 35, 0.55);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 166, 35, 0.2);
+    background: rgba(32, 23, 15, 0.95);
 }
 
 .lang-card-icon {
@@ -3255,16 +3256,16 @@ body.in-editor-mode {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(245, 166, 35, 0.06);
+    border: 1px solid rgba(245, 166, 35, 0.15);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
 
 .lang-card:hover .lang-card-icon {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.16);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    background: rgba(245, 166, 35, 0.14);
+    border-color: rgba(245, 166, 35, 0.4);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(245, 166, 35, 0.2);
 }
 
 .lang-logo-img {
@@ -3353,9 +3354,9 @@ body.in-editor-mode {
 .home-trust-section {
     padding: 4.8rem 1.5rem 3.8rem;
     text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(10, 14, 22, 0.65);
+    border-top: 1px solid rgba(245, 166, 35, 0.1);
+    border-bottom: 1px solid rgba(245, 166, 35, 0.1);
+    background: rgba(14, 10, 8, 0.5);
 }
 
 .home-trust-container {
@@ -3366,7 +3367,7 @@ body.in-editor-mode {
 .trust-heading {
     font-size: 1.15rem;
     font-weight: 500;
-    color: #94a3b8;
+    color: #c4b5a0;
     margin-bottom: 2.8rem;
     letter-spacing: -0.2px;
 }
@@ -3386,17 +3387,18 @@ body.in-editor-mode {
     padding: 0.75rem 1rem;
     width: 100%;
     height: 64px;
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(22, 17, 13, 0.65);
+    border: 1px solid rgba(245, 166, 35, 0.12);
     border-radius: 12px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
 }
 
 .trust-logo-box:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(32, 24, 17, 0.9);
+    border-color: rgba(245, 166, 35, 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), 0 0 16px rgba(245, 166, 35, 0.12);
 }
 
 .trust-logo-img {
@@ -3448,20 +3450,21 @@ body.in-editor-mode {
 }
 
 .feature-trio-card {
-    background: rgba(15, 20, 32, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(22, 17, 12, 0.75);
+    border: 1px solid rgba(245, 166, 35, 0.16);
     border-radius: 16px;
     padding: 2rem;
     position: relative;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
+    backdrop-filter: blur(10px);
 }
 
 .feature-trio-card:hover {
-    border-color: rgba(222, 184, 135, 0.45);
+    border-color: rgba(245, 166, 35, 0.5);
     transform: translateY(-3px);
-    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(255, 212, 63, 0.12);
-    background: rgba(22, 20, 32, 0.9);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 22px rgba(245, 166, 35, 0.15);
+    background: rgba(32, 23, 15, 0.95);
 }
 
 .feature-trio-icon {
@@ -3511,9 +3514,9 @@ body.in-editor-mode {
 /* Partners Logos */
 .home-partners-section {
     padding: 2.2rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(10, 14, 22, 0.5);
+    border-top: 1px solid rgba(245, 166, 35, 0.1);
+    border-bottom: 1px solid rgba(245, 166, 35, 0.1);
+    background: rgba(14, 10, 8, 0.45);
 }
 
 .partners-logos-row {
@@ -3570,14 +3573,15 @@ body.in-editor-mode {
 }
 
 .gradient-text-teal {
-    background: linear-gradient(135deg, #2dd4bf, #38bdf8);
+    background: linear-gradient(135deg, #ffd768 0%, #f5a623 50%, #f7b731 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(245, 166, 35, 0.4));
 }
 
 .showcase-desc {
     font-size: 1.05rem;
-    color: #94a3b8;
+    color: #c4b5a0;
     max-width: 680px;
     margin: 0 auto 2rem;
     line-height: 1.6;
@@ -3595,11 +3599,11 @@ body.in-editor-mode {
 .interactive-mockup-window {
     max-width: 960px;
     margin: 0 auto 3.5rem;
-    background: #0b0f17;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #0d0a07;
+    border: 1px solid rgba(245, 166, 35, 0.2);
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 35px rgba(56, 189, 248, 0.08);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(245, 166, 35, 0.1);
     text-align: left;
 }
 
@@ -3608,8 +3612,8 @@ body.in-editor-mode {
     align-items: center;
     justify-content: space-between;
     padding: 10px 16px;
-    background: #080c14;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: #090705;
+    border-bottom: 1px solid rgba(245, 166, 35, 0.12);
 }
 
 .mockup-window-controls {
@@ -3684,19 +3688,19 @@ body.in-editor-mode {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.82rem;
     line-height: 1.6;
-    background: #0b0f17;
-    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    background: #0d0a07;
+    border-right: 1px solid rgba(245, 166, 35, 0.12);
     overflow-x: auto;
 }
 
 .c-kw { color: #c084fc; font-weight: 600; }
-.c-fn { color: #38bdf8; font-weight: 600; }
+.c-fn { color: #ffd43f; font-weight: 600; }
 .c-str { color: #fde047; }
 .c-comment { color: #64748b; font-style: italic; }
 .c-doc { color: #94a3b8; }
 
 .mockup-output-pane {
-    background: #080c13;
+    background: #070503;
     padding: 1.1rem;
     display: flex;
     flex-direction: column;
@@ -3709,10 +3713,10 @@ body.in-editor-mode {
     align-items: center;
     justify-content: space-between;
     font-size: 0.7rem;
-    color: #64748b;
+    color: #deb887;
     font-weight: 700;
     margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(245, 166, 35, 0.12);
     padding-bottom: 8px;
     letter-spacing: 0.5px;
 }
@@ -3733,10 +3737,10 @@ body.in-editor-mode {
     line-height: 1.55;
 }
 
-.term-dim { color: #64748b; }
+.term-dim { color: #8a7a68; }
 .term-out { color: #e2e8f0; }
 .term-success { color: #4ade80; font-weight: 600; }
-.term-info { color: #38bdf8; font-size: 0.72rem; margin-top: 6px; }
+.term-info { color: #deb887; font-size: 0.72rem; margin-top: 6px; }
 
 /* 6 Showcase Feature Tiles */
 .showcase-features-grid {
@@ -3750,24 +3754,33 @@ body.in-editor-mode {
     display: flex;
     align-items: flex-start;
     gap: 14px;
-    background: rgba(15, 20, 32, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(22, 17, 12, 0.72);
+    border: 1px solid rgba(245, 166, 35, 0.14);
     border-radius: 12px;
     padding: 1.25rem;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(8px);
 }
 
 .showcase-feat-tile:hover {
-    background: rgba(20, 28, 46, 0.9);
-    border-color: rgba(56, 189, 248, 0.35);
+    background: rgba(32, 23, 15, 0.95);
+    border-color: rgba(245, 166, 35, 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 0 18px rgba(245, 166, 35, 0.15);
 }
 
 .feat-tile-icon {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 166, 35, 0.08);
+    border: 1px solid rgba(245, 166, 35, 0.2);
 }
 
 .feat-tile-text h4 {
@@ -3779,14 +3792,14 @@ body.in-editor-mode {
 
 .feat-tile-text p {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #c4b5a0;
     line-height: 1.5;
 }
 
 /* Footer */
 .home-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background: #05070b;
+    border-top: 1px solid rgba(245, 166, 35, 0.12);
+    background: #080604;
     padding: 4.5rem 1.5rem 2.5rem;
 }
 
