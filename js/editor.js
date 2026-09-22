@@ -347,31 +347,31 @@ class EditorManager {
             }
         });
 
-        // 5. CompilerG Modern Dark (Original Deep Azure Slate)
+        // 5. CompilerG Modern Dark (Celestial Golden Obsidian)
         this.monaco.editor.defineTheme('compilerg-dark', {
             base: 'vs-dark',
             inherit: true,
             rules: [
-                { token: '', background: '0b0f19' },
-                { token: 'comment', foreground: '6e7681', fontStyle: 'italic' },
-                { token: 'keyword', foreground: 'ff7b72', fontStyle: 'bold' },
-                { token: 'string', foreground: 'a5d6ff' },
-                { token: 'number', foreground: '79c0ff' },
-                { token: 'type', foreground: 'ffa657' },
-                { token: 'function', foreground: 'd2a8ff' },
-                { token: 'variable', foreground: 'c9d1d9' }
+                { token: '', background: '0c0906' },
+                { token: 'comment', foreground: '8c7e6d', fontStyle: 'italic' },
+                { token: 'keyword', foreground: 'ffd43f', fontStyle: 'bold' },
+                { token: 'string', foreground: 'fde68a' },
+                { token: 'number', foreground: 'f59e0b' },
+                { token: 'type', foreground: 'deb887' },
+                { token: 'function', foreground: 'fcd34d' },
+                { token: 'variable', foreground: 'fffbeb' }
             ],
             colors: {
-                'editor.background': '#0b0f19',
-                'editor.foreground': '#f1f5f9',
-                'editorCursor.foreground': '#38bdf8',
-                'editor.lineHighlightBackground': '#161e2e80',
-                'editorLineNumber.foreground': '#475569',
-                'editorLineNumber.activeForeground': '#38bdf8',
-                'editor.selectionBackground': '#3b82f640',
-                'editor.inactiveSelectionBackground': '#3b82f620',
-                'editorIndentGuide.background': '#1e293b',
-                'editorIndentGuide.activeBackground': '#38bdf840'
+                'editor.background': '#0c0906',
+                'editor.foreground': '#fffbeb',
+                'editorCursor.foreground': '#ffd43f',
+                'editor.lineHighlightBackground': '#1f160e70',
+                'editorLineNumber.foreground': '#6b5c4c',
+                'editorLineNumber.activeForeground': '#ffd43f',
+                'editor.selectionBackground': '#f5a62340',
+                'editor.inactiveSelectionBackground': '#f5a62320',
+                'editorIndentGuide.background': '#292017',
+                'editorIndentGuide.activeBackground': '#ffd43f40'
             }
         });
 

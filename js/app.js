@@ -1224,7 +1224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'nord': { label: 'Nord Frost', icon: '❄️', color: '#88c0d0' },
         'monokai': { label: 'Monokai Pro', icon: '🌿', color: '#a6e22e' },
         'solarized': { label: 'Solarized', icon: '☀️', color: '#268bd2' },
-        'dark': { label: 'Modern Dark', icon: '🌙', color: '#38bdf8' },
+        'dark': { label: 'Celestial Gold', icon: '✨', color: '#ffd43f' },
         'light': { label: 'Clean Light', icon: '☀️', color: '#2563eb' }
     };
 
