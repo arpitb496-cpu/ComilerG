@@ -278,18 +278,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem(`compilerg_u_${uid}_langs`, JSON.stringify(userLangs));
                 }
 
-                // Cloud sync to server backend (non-blocking)
-                fetch('/api/user/save-code', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        uid: uid,
-                        email: window.currentUser.email || '',
-                        language: state.currentLanguage,
-                        files: state.files,
-                        code: activeFile ? activeFile.content : ''
-                    })
-                }).catch(() => { /* silent fail if offline */ });
+                // Cloud sync to Firestore & server backend (non-blocking)
+                if (window.CompilerGCloud) {
+                    window.CompilerGCloud.saveActiveCode(
+                        state.currentLanguage,
+                        state.files,
+                        activeFile ? activeFile.content : ''
+                    );
+                } else {
+                    fetch('/api/user/save-code', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            uid: uid,
+                            email: window.currentUser.email || '',
+                            language: state.currentLanguage,
+                            files: state.files,
+                            code: activeFile ? activeFile.content : ''
+                        })
+                    }).catch(() => {});
+                }
             }
         } catch (e) {
             // In case localStorage is full
@@ -2062,41 +2070,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── User Auth & Cloud Auto-Save Sync Listener ────────────────────────────
     window.addEventListener('compilerg:user-change', async (e) => {
         const user = e.detail?.user;
-        if (user) {
-            // 1. Save whatever is currently in the editor to this user
-            saveCurrentFiles();
+        updateMyCodesBadge();
 
-            // 2. Fetch all saved codes from server backend (if running)
-            try {
-                const resp = await fetch(`/api/user/get-all-codes?uid=${encodeURIComponent(user.uid)}`);
-                if (resp.ok) {
-                    const res = await resp.json();
-                    if (res.found && res.codes) {
-                        for (const [lang, item] of Object.entries(res.codes)) {
-                            if (item.files) {
-                                localStorage.setItem(`compilerg_u_${user.uid}_files_${lang}`, JSON.stringify(item.files));
-                            }
-                            if (item.code) {
-                                localStorage.setItem(`compilerg_u_${user.uid}_code_${lang}`, item.code);
-                            }
-                        }
-                    }
+        if (user && user.uid) {
+            updateAutoSaveStatus('saving');
+
+            // 1. Fetch active codes from Cloud (Firestore + Server backend)
+            let cloudCodes = {};
+            if (window.CompilerGCloud) {
+                try {
+                    cloudCodes = await window.CompilerGCloud.fetchAllActiveCodes(user.uid);
+                } catch (e) {
+                    console.warn('[CompilerG] fetchAllActiveCodes error:', e);
                 }
-            } catch (err) {
-                // Offline or static host — localStorage handles it seamlessly
             }
 
-            // 3. Reload files for current active language so user's saved code appears
+            if (cloudCodes && Object.keys(cloudCodes).length > 0) {
+                // Populate local storage with codes from other computers
+                for (const [lang, item] of Object.entries(cloudCodes)) {
+                    if (item.files) {
+                        localStorage.setItem(`compilerg_u_${user.uid}_files_${lang}`, JSON.stringify(item.files));
+                    }
+                    if (item.code) {
+                        localStorage.setItem(`compilerg_u_${user.uid}_code_${lang}`, item.code);
+                    }
+                }
+            } else {
+                // First time on cloud: save current files if existing
+                saveCurrentFiles();
+            }
+
+            // 2. Fetch saved snippets from Cloud
+            if (typeof syncUserSnippetsFromCloud === 'function') {
+                await syncUserSnippetsFromCloud();
+            }
+
+            // 3. Reload files for current active language so user's code from cloud appears in editor
             const activeFile = loadFilesForLanguage(state.currentLanguage);
             if (activeFile) {
                 editorManager.setLanguage(getMonacoLangFromFilename(activeFile.name));
                 editorManager.setCode(activeFile.content || '');
             }
 
+            updateMyCodesBadge();
             updateAutoSaveStatus('saved');
-            showToast(`Cloud auto-save enabled for ${user.displayName || 'your account'}! ☁️`, 'success');
+            showToast(`Cloud sync active for ${user.displayName || 'your account'}! ☁️`, 'success');
         } else {
             updateAutoSaveStatus('saved');
+            updateMyCodesBadge();
         }
     });
 
@@ -2317,6 +2338,12 @@ int main() {
     }
 
     function saveSnippetToStorage(snippet) {
+        if (window.currentUser && window.currentUser.uid) {
+            snippet.uid = window.currentUser.uid;
+            snippet.userEmail = window.currentUser.email || '';
+        }
+        snippet.updatedAt = snippet.updatedAt || new Date().toISOString();
+
         const snippets = getAllSnippets();
         const existingIdx = snippets.findIndex(s => s.id === snippet.id);
         if (existingIdx >= 0) {
@@ -2332,13 +2359,9 @@ int main() {
             localStorage.setItem('compilerg_saved_snippets_v2', jsonStr);
         } catch (e) {}
 
-        // Cloud sync to server if running
-        if (window.currentUser && window.currentUser.uid) {
-            fetch('/api/user/save-snippet', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(snippet)
-            }).catch(() => {});
+        // Cloud sync to Firestore & Server backend
+        if (window.CompilerGCloud && window.currentUser && window.currentUser.uid) {
+            window.CompilerGCloud.saveSnippet(snippet);
         }
 
         updateMyCodesBadge();
@@ -2358,12 +2381,9 @@ int main() {
             state.activeSnippetId = null;
         }
 
-        if (window.currentUser && window.currentUser.uid) {
-            fetch('/api/user/delete-snippet', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id, uid: window.currentUser.uid })
-            }).catch(() => {});
+        // Cloud delete from Firestore & Server backend
+        if (window.CompilerGCloud && window.currentUser && window.currentUser.uid) {
+            window.CompilerGCloud.deleteSnippet(id);
         }
 
         updateMyCodesBadge();
@@ -2376,6 +2396,57 @@ int main() {
         }
         if (myCodesTotalCount) {
             myCodesTotalCount.textContent = `${count} saved code${count === 1 ? '' : 's'}`;
+        }
+    }
+
+    async function syncUserSnippetsFromCloud(showFeedback = false) {
+        const uid = window.currentUser?.uid;
+        if (!uid || !window.CompilerGCloud) return;
+
+        try {
+            const cloudSnippets = await window.CompilerGCloud.fetchAllSnippets(uid);
+            if (Array.isArray(cloudSnippets)) {
+                const local = getAllSnippets();
+                const map = new Map();
+
+                // 1. Put cloud snippets in map
+                cloudSnippets.forEach(s => {
+                    if (s && s.id) map.set(s.id, s);
+                });
+
+                // 2. Merge local snippets: if missing in cloud or newer locally, update cloud
+                local.forEach(l => {
+                    if (l && l.id) {
+                        const existing = map.get(l.id);
+                        if (!existing) {
+                            map.set(l.id, l);
+                            window.CompilerGCloud.saveSnippet(l);
+                        } else {
+                            const localTime = new Date(l.updatedAt || l.createdAt || 0).getTime();
+                            const cloudTime = new Date(existing.updatedAt || existing.createdAt || 0).getTime();
+                            if (localTime > cloudTime) {
+                                map.set(l.id, l);
+                                window.CompilerGCloud.saveSnippet(l);
+                            }
+                        }
+                    }
+                });
+
+                const merged = Array.from(map.values()).sort((a, b) =>
+                    new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
+                );
+
+                const currentKey = getStorageKey(uid);
+                localStorage.setItem(currentKey, JSON.stringify(merged));
+                localStorage.setItem('compilerg_saved_snippets_v2', JSON.stringify(merged));
+                updateMyCodesBadge();
+                renderMyCodesList();
+                if (showFeedback && typeof showToast === 'function') {
+                    showToast(`Synced ${merged.length} codes from cloud! ☁️`, 'info');
+                }
+            }
+        } catch (err) {
+            console.warn('[CompilerG] Cloud snippet sync error:', err);
         }
     }
 
@@ -2623,6 +2694,11 @@ int main() {
         setTimeout(() => {
             if (myCodesSearchInput) myCodesSearchInput.focus();
         }, 100);
+
+        // Background cloud sync to pull codes saved from other devices
+        if (window.currentUser && window.currentUser.uid) {
+            syncUserSnippetsFromCloud();
+        }
     }
 
     // Modal Triggers
@@ -2757,32 +2833,7 @@ int main() {
         editorUserAreaEl.addEventListener('click', openMyCodesModal);
     }
 
-    // Connect auth change to badge update & sync
-    window.addEventListener('compilerg:user-change', async (e) => {
-        updateMyCodesBadge();
-        const user = e.detail?.user;
-        if (user && user.uid) {
-            // Fetch saved snippets from backend if server running
-            try {
-                const res = await fetch(`/api/user/snippets?uid=${encodeURIComponent(user.uid)}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.found && Array.isArray(data.snippets)) {
-                        const local = getAllSnippets();
-                        const merged = [...data.snippets];
-                        local.forEach(loc => {
-                            if (!merged.some(m => m.id === loc.id)) {
-                                merged.push(loc);
-                            }
-                        });
-                        localStorage.setItem(getStorageKey(user.uid), JSON.stringify(merged));
-                        updateMyCodesBadge();
-                    }
-                }
-            } catch (err) {}
-        }
-    });
-
+    // Update My Codes badge on startup
     updateMyCodesBadge();
 
     // 12. Hash Routing

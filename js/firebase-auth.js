@@ -19,6 +19,17 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+// Initialize Cloud Firestore for Cross-Device Code Sync
+let db = null;
+try {
+    if (typeof firebase.firestore === 'function') {
+        db = firebase.firestore();
+    }
+} catch (e) {
+    console.warn('[CompilerG Auth] Firestore init:', e);
+}
+window.firebaseDb = db;
+
 // ── Auth Providers ──────────────────────────────────────────────────────────
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.addScope('profile');
@@ -334,6 +345,200 @@ async function signOutUser() {
         console.error('[CompilerG Auth] Sign out error:', error);
     }
 }
+
+// ── CompilerG Cloud Code & Snippet Sync System ──────────────────────────────
+window.CompilerGCloud = {
+    // 1. Save snippet to Cloud (Firestore + Server backend)
+    async saveSnippet(snippet) {
+        if (!snippet || !snippet.id) return;
+        const user = window.currentUser;
+        if (!user || !user.uid) return;
+
+        snippet.uid = user.uid;
+        snippet.userEmail = user.email || '';
+        snippet.updatedAt = snippet.updatedAt || new Date().toISOString();
+
+        // A. Firestore Cloud Save
+        if (window.firebaseDb) {
+            try {
+                await window.firebaseDb
+                    .collection('users')
+                    .doc(user.uid)
+                    .collection('snippets')
+                    .doc(snippet.id)
+                    .set(snippet, { merge: true });
+                console.log('[CompilerG Cloud] Snippet synced to Firestore:', snippet.id);
+            } catch (err) {
+                console.warn('[CompilerG Cloud] Firestore save error:', err.message);
+            }
+        }
+
+        // B. Backend Server Save (local/Render)
+        try {
+            await fetch('/api/user/save-snippet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(snippet)
+            });
+        } catch (e) {}
+    },
+
+    // 2. Delete snippet from Cloud
+    async deleteSnippet(id) {
+        const user = window.currentUser;
+        if (!user || !user.uid || !id) return;
+
+        if (window.firebaseDb) {
+            try {
+                await window.firebaseDb
+                    .collection('users')
+                    .doc(user.uid)
+                    .collection('snippets')
+                    .doc(id)
+                    .delete();
+                console.log('[CompilerG Cloud] Snippet deleted from Firestore:', id);
+            } catch (err) {
+                console.warn('[CompilerG Cloud] Firestore delete error:', err.message);
+            }
+        }
+
+        try {
+            await fetch('/api/user/delete-snippet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, uid: user.uid })
+            });
+        } catch (e) {}
+    },
+
+    // 3. Save active language code to Cloud
+    async saveActiveCode(lang, files, code) {
+        const user = window.currentUser;
+        if (!user || !user.uid || !lang) return;
+
+        const payload = {
+            uid: user.uid,
+            email: user.email || '',
+            language: lang,
+            files: files || [],
+            code: code || '',
+            updatedAt: new Date().toISOString()
+        };
+
+        if (window.firebaseDb) {
+            try {
+                await window.firebaseDb
+                    .collection('users')
+                    .doc(user.uid)
+                    .collection('codes')
+                    .doc(lang)
+                    .set(payload, { merge: true });
+            } catch (err) {
+                console.warn('[CompilerG Cloud] Firestore code save error:', err.message);
+            }
+        }
+
+        try {
+            await fetch('/api/user/save-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } catch (e) {}
+    },
+
+    // 4. Fetch all snippets for the logged in user from Cloud
+    async fetchAllSnippets(uid) {
+        if (!uid) return [];
+        const snippets = [];
+        const seen = new Set();
+
+        // A. Try Firestore first (True cross-device cloud)
+        if (window.firebaseDb) {
+            try {
+                const snap = await window.firebaseDb
+                    .collection('users')
+                    .doc(uid)
+                    .collection('snippets')
+                    .get();
+                if (!snap.empty) {
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        if (data && data.id && !seen.has(data.id)) {
+                            seen.add(data.id);
+                            snippets.push(data);
+                        }
+                    });
+                    console.log(`[CompilerG Cloud] Retrieved ${snippets.length} snippets from Firestore.`);
+                }
+            } catch (err) {
+                console.warn('[CompilerG Cloud] Firestore fetch snippets error:', err.message);
+            }
+        }
+
+        // B. Also check backend server (merges any snippets saved there)
+        try {
+            const resp = await fetch(`/api/user/snippets?uid=${encodeURIComponent(uid)}`);
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data && data.found && Array.isArray(data.snippets)) {
+                    data.snippets.forEach(s => {
+                        if (s && s.id && !seen.has(s.id)) {
+                            seen.add(s.id);
+                            snippets.push(s);
+                        }
+                    });
+                }
+            }
+        } catch (e) {}
+
+        // Sort by updatedAt descending
+        snippets.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+        return snippets;
+    },
+
+    // 5. Fetch all active language codes for user from Cloud
+    async fetchAllActiveCodes(uid) {
+        if (!uid) return {};
+        const codes = {};
+
+        // A. Try Firestore
+        if (window.firebaseDb) {
+            try {
+                const snap = await window.firebaseDb
+                    .collection('users')
+                    .doc(uid)
+                    .collection('codes')
+                    .get();
+                if (!snap.empty) {
+                    snap.forEach(doc => {
+                        codes[doc.id] = doc.data();
+                    });
+                    console.log(`[CompilerG Cloud] Retrieved ${Object.keys(codes).length} active codes from Firestore.`);
+                }
+            } catch (err) {
+                console.warn('[CompilerG Cloud] Firestore fetch codes error:', err.message);
+            }
+        }
+
+        // B. Try server backend
+        try {
+            const resp = await fetch(`/api/user/get-all-codes?uid=${encodeURIComponent(uid)}`);
+            if (resp.ok) {
+                const res = await resp.json();
+                if (res.found && res.codes) {
+                    for (const [lang, item] of Object.entries(res.codes)) {
+                        if (!codes[lang]) {
+                            codes[lang] = item;
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+
+        return codes;
+    }
+};
 
 // ── Initialize Auth Event Listeners ─────────────────────────────────────────
 function initFirebaseAuth() {
