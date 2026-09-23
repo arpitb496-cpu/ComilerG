@@ -20,7 +20,7 @@
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><rect width='36' height='36' rx='9' fill='%23120d08' stroke='%23f5a623' stroke-width='1.5'/><path d='M26.5 13.5C25 9.5 21.2 7 16.5 7C10.1 7 5 12.1 5 18.5C5 24.9 10.1 30 16.5 30C22.2 30 26.8 25.8 27.5 20.2H17' stroke='%23ffd43f' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/><path d='M20 12L14 20H20L15.5 27' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 
     <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=6.5">
+    <link rel="stylesheet" href="css/style.css?v=6.6">
 
     <script>
         try {
@@ -39,9 +39,9 @@
 </head>
 
 <body>
-    <!-- John-T45 Cosmic Background: Animated Clouds Layer -->
+    <!-- Celestial Gold Cosmic Meteor & Shooting Star Stream (Full-Page Canvas) -->
     <div class="clouds"></div>
-    <canvas id="bgCanvas" style="display: none;"></canvas>
+    <canvas id="bgCanvas" class="celestial-stars-canvas"></canvas>
 
 
     <!-- ═══════════════════════════════════════════════════════════════════ -->
@@ -530,107 +530,6 @@
                             <path d="M8 16V8l8 8V8" stroke="currentColor" stroke-width="2" />
                         </svg>
                         <span>Neon</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Bespoke 3D Turbo Execution Architecture -->
-        <section class="home-engine-3d-section" id="engine3dSection">
-            <div class="engine-3d-container">
-                <div class="engine-3d-header">
-                    <div class="engine-3d-badge">
-                        <span class="engine-pulse-dot"></span>
-                        <span>Next-Gen WebGL Architecture</span>
-                    </div>
-                    <h2 class="engine-3d-title">
-                        Engineered for Pure Velocity.<br>
-                        <span class="gradient-text-gold">Interactive Execution Core.</span>
-                    </h2>
-                    <p class="engine-3d-desc">
-                        Explore CompilerG's reactive execution topology in real-time 3D space. Drag to inspect the dual-layer quantum orbital compiler nodes and multi-tier sandbox isolation.
-                    </p>
-                </div>
-
-                <div class="engine-3d-grid">
-                    <!-- Left: Interactive 3D Canvas Visualizer -->
-                    <div class="engine-canvas-card">
-                        <div class="engine-canvas-topbar">
-                            <div class="canvas-status">
-                                <span class="canvas-indicator"></span>
-                                <span class="canvas-status-text">QUANTUM_CORE_ACTIVE // 60 FPS</span>
-                            </div>
-                            <div class="canvas-interaction-hint">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-                                </svg>
-                                <span>Drag to Rotate &bull; Click to Burst</span>
-                            </div>
-                        </div>
-
-                        <div id="engine3dCanvasContainer" class="canvas-container">
-                            <!-- Three.js Canvas injected here -->
-                            <div class="engine-3d-controls-overlay">
-                                <button type="button" class="engine-ctrl-btn active" data-mode="quantum">
-                                    <span class="btn-dot"></span> Quantum Core
-                                </button>
-                                <button type="button" class="engine-ctrl-btn" data-mode="obsidian">
-                                    <span class="btn-dot"></span> Obsidian Glass
-                                </button>
-                                <button type="button" class="engine-ctrl-btn" data-mode="wireframe">
-                                    <span class="btn-dot"></span> Blueprint Wire
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right: Technical Engine Capabilities -->
-                    <div class="engine-specs-column">
-                        <div class="engine-spec-card">
-                            <div class="spec-icon-box">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                                </svg>
-                            </div>
-                            <div class="spec-content">
-                                <div class="spec-header">
-                                    <h4 class="spec-title">Sub-Millisecond Cold Starts</h4>
-                                    <span class="spec-metric">&lt; 14ms</span>
-                                </div>
-                                <p class="spec-text">Instant container warmup across 15+ modern runtimes with memory-efficient process isolation.</p>
-                            </div>
-                        </div>
-
-                        <div class="engine-spec-card">
-                            <div class="spec-icon-box">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                </svg>
-                            </div>
-                            <div class="spec-content">
-                                <div class="spec-header">
-                                    <h4 class="spec-title">Hardware-Level Sandboxing</h4>
-                                    <span class="spec-metric">eBPF + seccomp</span>
-                                </div>
-                                <p class="spec-text">Zero-trust execution perimeter preventing unauthorized network escapes and file leaks.</p>
-                            </div>
-                        </div>
-
-                        <div class="engine-spec-card">
-                            <div class="spec-icon-box">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="3"/>
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                                </svg>
-                            </div>
-                            <div class="spec-content">
-                                <div class="spec-header">
-                                    <h4 class="spec-title">Streamed Live I/O Multiplex</h4>
-                                    <span class="spec-metric">WebSocket Turbo</span>
-                                </div>
-                                <p class="spec-text">Bidirectional binary frame streaming for real-time interactive terminal input and high-throughput logging.</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1683,28 +1582,13 @@ print(<span class="c-str">"Test 2:"</span>, two_sum([3, 2, 4], 6))</code></pre>
 
     <script src="js/languages.js?v=4.1"></script>
     <script src="js/boilerplates.js?v=4.1"></script>
-    <script src="js/particles.js?v=5.9"></script>
+    <script src="js/particles.js?v=6.0"></script>
     <script src="js/snippets.js?v=4.1"></script>
     <script src="js/ai_debugger.js?v=4.1"></script>
     <script src="js/executor.js?v=4.1"></script>
     <script src="js/editor.js?v=6.2"></script>
     <script src="js/app.js?v=6.2"></script>
     <script src="js/firebase-auth.js?v=4.1"></script>
-
-    <!-- Three.js (Protected against Monaco AMD define clash) & 3D Interactive Engine -->
-    <script>
-        if (typeof window.define === 'function' && window.define.amd) {
-            window.__monaco_define = window.define;
-            window.define = undefined;
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        if (window.__monaco_define) {
-            window.define = window.__monaco_define;
-        }
-    </script>
-    <script src="js/engine_3d.js?v=1.0"></script>
 </body>
 
 </html>
