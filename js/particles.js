@@ -225,21 +225,27 @@
 
         renderAmbientStars(timestamp, isLight) {
             const ctx = this.ctx;
+            // Pure Celestial Golden Palette
+            const goldPalette = [
+                '255, 212, 63',  // #ffd43f Celestial Radiant Gold
+                '251, 191, 36',  // #fbbf24 Warm Gold
+                '245, 158, 11',  // #f59e0b Amber Honey Gold
+                '255, 224, 130'  // #ffe082 Soft Gold
+            ];
+
             for (let i = 0; i < this.ambientStars.length; i++) {
                 const s = this.ambientStars[i];
                 const twinkle = Math.sin(timestamp * s.twinkleSpeed + s.phase);
-                const alpha = Math.max(0.08, Math.min(1, s.baseAlpha + twinkle * 0.25));
+                const alpha = Math.max(0.12, Math.min(1, s.baseAlpha + twinkle * 0.28));
+                const rgb = goldPalette[i % goldPalette.length];
 
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
 
                 if (isLight) {
-                    ctx.fillStyle = `rgba(37, 99, 235, ${alpha * 0.35})`;
+                    ctx.fillStyle = `rgba(${rgb}, ${alpha * 0.55})`;
                 } else {
-                    // Warm golden celestial star
-                    ctx.fillStyle = (i % 3 === 0)
-                        ? `rgba(255, 212, 63, ${alpha})`
-                        : `rgba(255, 248, 220, ${alpha * 0.9})`;
+                    ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
                 }
                 ctx.fill();
             }
@@ -286,19 +292,19 @@
                 const tailX = m.x - ux * m.length;
                 const tailY = m.y - uy * m.length;
 
-                // Create radiant linear gradient along the tail
+                // Create radiant PURE GOLDEN linear gradient along the tail
                 const grad = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
 
                 if (isLight) {
-                    grad.addColorStop(0, `rgba(37, 99, 235, 0)`);
-                    grad.addColorStop(0.5, `rgba(245, 158, 11, ${m.alpha * 0.3})`);
-                    grad.addColorStop(0.85, `rgba(37, 99, 235, ${m.alpha * 0.8})`);
-                    grad.addColorStop(1, `rgba(2, 132, 199, ${m.alpha})`);
+                    grad.addColorStop(0, `rgba(217, 119, 6, 0)`);
+                    grad.addColorStop(0.35, `rgba(217, 119, 6, ${m.alpha * 0.25})`);
+                    grad.addColorStop(0.75, `rgba(245, 158, 11, ${m.alpha * 0.7})`);
+                    grad.addColorStop(1, `rgba(217, 119, 6, ${m.alpha * 0.95})`);
                 } else {
-                    grad.addColorStop(0, `rgba(245, 158, 11, 0)`);
-                    grad.addColorStop(0.35, `rgba(245, 158, 11, ${m.alpha * 0.35})`);
-                    grad.addColorStop(0.8, `rgba(255, 212, 63, ${m.alpha * 0.85})`);
-                    grad.addColorStop(1, `rgba(255, 255, 255, ${m.alpha})`);
+                    grad.addColorStop(0, `rgba(217, 119, 6, 0)`);
+                    grad.addColorStop(0.3, `rgba(245, 158, 11, ${m.alpha * 0.35})`);
+                    grad.addColorStop(0.75, `rgba(255, 193, 7, ${m.alpha * 0.85})`);
+                    grad.addColorStop(1, `rgba(255, 212, 63, ${m.alpha})`);
                 }
 
                 // Draw Meteor Tail
@@ -310,20 +316,20 @@
                 ctx.lineCap = 'round';
                 ctx.stroke();
 
-                // Draw Radiant Meteor Head
+                // Draw Radiant PURE GOLDEN Meteor Head (No white, 100% celestial gold)
                 ctx.beginPath();
-                ctx.arc(m.x, m.y, m.thickness * 0.8, 0, Math.PI * 2);
-                ctx.fillStyle = isLight ? `rgba(2, 132, 199, ${m.alpha})` : `rgba(255, 255, 255, ${m.alpha})`;
+                ctx.arc(m.x, m.y, m.thickness * 0.85, 0, Math.PI * 2);
+                ctx.fillStyle = isLight ? `rgba(217, 119, 6, ${m.alpha})` : `rgba(255, 212, 63, ${m.alpha})`;
                 ctx.fill();
 
-                // Extra glow bloom for Bolides
+                // Extra Golden Glow bloom for Bolides
                 if (m.type === 'bolide') {
                     ctx.beginPath();
                     ctx.arc(m.x, m.y, m.thickness * 2.4, 0, Math.PI * 2);
-                    ctx.fillStyle = isLight ? `rgba(37, 99, 235, ${m.alpha * 0.25})` : `rgba(255, 212, 63, ${m.alpha * 0.32})`;
+                    ctx.fillStyle = isLight ? `rgba(245, 158, 11, ${m.alpha * 0.22})` : `rgba(255, 193, 7, ${m.alpha * 0.35})`;
                     ctx.fill();
 
-                    // Drop occasional ember
+                    // Drop occasional pure golden ember
                     if (Math.random() < 0.4) {
                         this.spawnEmber(m.x, m.y);
                     }
@@ -347,7 +353,7 @@
                 ctx.beginPath();
                 ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
                 ctx.fillStyle = isLight
-                    ? `rgba(245, 158, 11, ${e.alpha * 0.6})`
+                    ? `rgba(217, 119, 6, ${e.alpha * 0.7})`
                     : `rgba(255, 212, 63, ${e.alpha})`;
                 ctx.fill();
             }
